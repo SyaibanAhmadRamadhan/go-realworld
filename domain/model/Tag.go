@@ -1,6 +1,6 @@
 package model
 
 type Tag struct {
-	ID   int    `bson:"id"`
+	ID   string `bson:"id"`
 	Name string `bson:"name"`
 }
