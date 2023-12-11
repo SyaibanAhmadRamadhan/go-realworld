@@ -17,7 +17,9 @@ type articleRepositoryImpl struct {
 }
 
 func NewArticleRepositoryImpl(db *mongo.Database) repository.ArticleRepository {
-	return &articleRepositoryImpl{db: db}
+	return &articleRepositoryImpl{
+		db: db,
+	}
 }
 
 func (a *articleRepositoryImpl) collection() *mongo.Collection {
@@ -25,28 +27,28 @@ func (a *articleRepositoryImpl) collection() *mongo.Collection {
 	return a.db.Collection(article.TableName())
 }
 
-func (a *articleRepositoryImpl) FindAllByTag(ctx context.Context, paginate repository.PaginationParam, tag string, columns ...string) (
-	articles []model.Article, total int64, err error) {
-	projection := bson.D{}
-	for _, column := range columns {
-		projection = append(projection, bson.E{Key: column, Value: 1})
+func (a *articleRepositoryImpl) FindAllByIDS(ctx context.Context, ids []string, columns ...string) (
+	articles []model.Article, err error) {
+	opts := options.Find()
+
+	if columns != nil {
+		projection := bson.D{}
+		for _, column := range columns {
+			projection = append(projection, bson.E{Key: column, Value: 1})
+		}
+		opts.SetProjection(projection)
 	}
 
-	filter := bson.D{}
-	if tag != "" {
-		filter = append(filter, bson.E{Key: "tagID", Value: tag})
+	filter := bson.D{
+		bson.E{
+			Key: "_id",
+			Value: bson.E{
+				Key: "$in", Value: ids,
+			},
+		},
 	}
 
-	total, err = a.collection().CountDocuments(ctx, filter)
-	if err != nil {
-		return
-	}
-
-	cur, err := a.collection().Find(ctx, filter, &options.FindOptions{
-		Limit:      &paginate.Limit,
-		Projection: projection,
-		Skip:       &paginate.Offset,
-	})
+	cur, err := a.collection().Find(ctx, filter, opts)
 	if err != nil {
 		return
 	}
@@ -63,20 +65,21 @@ func (a *articleRepositoryImpl) FindAllByTag(ctx context.Context, paginate repos
 }
 
 func (a *articleRepositoryImpl) FindById(ctx context.Context, id int, columns ...string) (art model.Article, err error) {
-	projection := bson.D{}
-	for _, column := range columns {
-		projection = append(projection, bson.E{Key: column, Value: 1})
+	opts := options.FindOne()
+
+	if columns != nil {
+		projection := bson.D{}
+		for _, column := range columns {
+			projection = append(projection, bson.E{Key: column, Value: 1})
+		}
+		opts.SetProjection(projection)
 	}
 
-	opts := options.FindOne()
-	opts.SetProjection(projection)
 	err = a.collection().FindOne(ctx, bson.D{bson.E{Key: "_id", Value: id}}, opts).Decode(&art)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			err = repository.ErrDataNotFound
 		}
-
-		return
 	}
 
 	return
@@ -84,23 +87,19 @@ func (a *articleRepositoryImpl) FindById(ctx context.Context, id int, columns ..
 
 func (a *articleRepositoryImpl) Create(ctx context.Context, article model.Article) (err error) {
 	_, err = a.collection().InsertOne(ctx, article)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
-func (a *articleRepositoryImpl) UpdateByID(ctx context.Context, article model.Article, columns ...string) (err error) {
+func (a *articleRepositoryImpl) UpdateByID(ctx context.Context, article model.Article, columns []string) (err error) {
 	filter := bson.D{bson.E{Key: "_id", Value: article.ID}}
-	set := bson.M{}
+	set := bson.D{}
 	value := article.GetValuesByColums(columns...)
 
 	for i, column := range columns {
 		if column == "_id" {
 			continue
 		}
-		set[column] = value[i]
+		set = append(set, bson.E{Key: column, Value: value[i]})
 	}
 
 	update := bson.D{{"$set", set}}
@@ -117,7 +116,7 @@ func (a *articleRepositoryImpl) UpdateByID(ctx context.Context, article model.Ar
 	return
 }
 
-func (a *articleRepositoryImpl) DeleteByID(ctx context.Context, article model.Article, columns ...string) (err error) {
+func (a *articleRepositoryImpl) DeleteByID(ctx context.Context, article model.Article) (err error) {
 	filter := bson.D{bson.E{Key: "_id", Value: article.ID}}
 
 	res, err := a.collection().DeleteOne(ctx, filter)

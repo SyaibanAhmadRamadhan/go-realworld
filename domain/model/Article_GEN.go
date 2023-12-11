@@ -21,26 +21,6 @@ func (a *Article) TableName() (table string) {
 	return "article"
 }
 
-// FieldID is a field or column in the table Article.
-func (a *Article) FieldID() string {
-	return "_id"
-}
-
-// SetID is a setter for the field or column ID in the table Article.
-func (a *Article) SetID(param string) {
-	a.ID = param
-}
-
-// FieldSlug is a field or column in the table Article.
-func (a *Article) FieldSlug() string {
-	return "slug"
-}
-
-// SetSlug is a setter for the field or column Slug in the table Article.
-func (a *Article) SetSlug(param string) {
-	a.Slug = param
-}
-
 // FieldTitle is a field or column in the table Article.
 func (a *Article) FieldTitle() string {
 	return "title"
@@ -91,14 +71,14 @@ func (a *Article) SetUpdatedAt(param string) {
 	a.UpdatedAt = param
 }
 
-// FieldTagID is a field or column in the table Article.
-func (a *Article) FieldTagID() string {
-	return "tagID"
+// FieldID is a field or column in the table Article.
+func (a *Article) FieldID() string {
+	return "_id"
 }
 
-// SetTagID is a setter for the field or column TagID in the table Article.
-func (a *Article) SetTagID(param []string) {
-	a.TagID = param
+// SetID is a setter for the field or column ID in the table Article.
+func (a *Article) SetID(param string) {
+	a.ID = param
 }
 
 // FieldAuthorID is a field or column in the table Article.
@@ -111,18 +91,27 @@ func (a *Article) SetAuthorID(param int) {
 	a.AuthorID = param
 }
 
+// FieldSlug is a field or column in the table Article.
+func (a *Article) FieldSlug() string {
+	return "slug"
+}
+
+// SetSlug is a setter for the field or column Slug in the table Article.
+func (a *Article) SetSlug(param string) {
+	a.Slug = param
+}
+
 // AllField is a function to get all field or column in the table Article.
 func (a *Article) AllField() (str []string) {
 	str = []string{ 
-		`tagID`,
-		`authorID`,
+		`updatedAt`,
 		`_id`,
+		`authorID`,
 		`slug`,
 		`title`,
 		`description`,
 		`body`,
 		`createdAt`,
-		`updatedAt`,
 	}
 	return
 }
@@ -132,8 +121,8 @@ func (a *Article) GetValuesByColums(columns ...string) []any {
 	var values []any
 	for _, column := range columns {
 		switch column {
-		case a.FieldID():
-			values = append(values, a.ID)
+		case a.FieldAuthorID():
+			values = append(values, a.AuthorID)
 		case a.FieldSlug():
 			values = append(values, a.Slug)
 		case a.FieldTitle():
@@ -146,10 +135,8 @@ func (a *Article) GetValuesByColums(columns ...string) []any {
 			values = append(values, a.CreatedAt)
 		case a.FieldUpdatedAt():
 			values = append(values, a.UpdatedAt)
-		case a.FieldTagID():
-			values = append(values, a.TagID)
-		case a.FieldAuthorID():
-			values = append(values, a.AuthorID)
+		case a.FieldID():
+			values = append(values, a.ID)
 		}
 	}
 	return values
@@ -159,24 +146,6 @@ func (a *Article) GetValuesByColums(columns ...string) []any {
 func (a *Article) ScanMap(data map[string]any) (err error) {
 	for key, value := range data {
 		switch key {
-		case a.FieldAuthorID():
-			val, ok := value.(int)
-			if !ok {
-				return errors.New("invalid type int. field AuthorID")
-			}
-			a.SetAuthorID(val)
-		case a.FieldTagID():
-			val, ok := value.([]string)
-			if !ok {
-				return errors.New("invalid type []string. field TagID")
-			}
-			a.SetTagID(val)
-		case a.FieldSlug():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field Slug")
-			}
-			a.SetSlug(val)
 		case a.FieldTitle():
 			val, ok := value.(string)
 			if !ok {
@@ -213,6 +182,18 @@ func (a *Article) ScanMap(data map[string]any) (err error) {
 				return errors.New("invalid type string. field ID")
 			}
 			a.SetID(val)
+		case a.FieldAuthorID():
+			val, ok := value.(int)
+			if !ok {
+				return errors.New("invalid type int. field AuthorID")
+			}
+			a.SetAuthorID(val)
+		case a.FieldSlug():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field Slug")
+			}
+			a.SetSlug(val)
 		default:
 			return errors.New("invalid column")
 		}

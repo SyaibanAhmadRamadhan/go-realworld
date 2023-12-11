@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/signal"
@@ -8,9 +9,10 @@ import (
 
 	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
 	"github.com/SyaibanAhmadRamadhan/gocatch/genv"
+	"github.com/SyaibanAhmadRamadhan/gocatch/ginfra/gdb/gmongodb"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"realworld-go/conf"
-	"realworld-go/infra"
 )
 
 func main() {
@@ -18,25 +20,24 @@ func main() {
 	gcommon.PanicIfError(err)
 
 	mongoConf := conf.EnvMongodb()
+	mClient, err := gmongodb.OpenConnMongoClient(mongoConf.URI())
+	gcommon.PanicIfError(err)
 
-	db, err := infra.OpenConnMongoDB(*mongoConf)
-	if err != nil {
-		err := fmt.Errorf("failed to open connection to mongodb: %v", err)
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	go graceFullShutdown(mClient)
 
+	time.Sleep(10 * time.Second)
+}
+
+func graceFullShutdown(mClient *mongo.Client) {
 	exitSignal := make(chan os.Signal, 1)
 	signal.Notify(exitSignal, os.Interrupt)
 	go func() {
 		<-exitSignal
 		fmt.Println("Interrupt signal received, existing...")
 
-		if err := db.Client().Disconnect(nil); err != nil {
+		if err := mClient.Disconnect(context.Background()); err != nil {
 			fmt.Printf("failed graceful shutdown: %v\n", err)
 		}
 		fmt.Println("graceful shutdown")
 	}()
-
-	time.Sleep(10 * time.Second)
 }
