@@ -22,8 +22,29 @@ func NewArticleTagRepositoryImpl(db *mongo.Database) repository.ArticleTagReposi
 	}
 }
 
-func (a *articleTagRepositoryImpl) Create(ctx context.Context, articleTag model.ArticleTag) (err error) {
-	_, err = a.collection().InsertOne(ctx, articleTag)
+func (a *articleTagRepositoryImpl) collection() *mongo.Collection {
+	articleTag := model.ArticleTag{}
+	return a.db.Collection(articleTag.TableName())
+}
+
+func (a *articleTagRepositoryImpl) UpSert(ctx context.Context, articleTag model.ArticleTag) (err error) {
+	res, err := a.FindByArticleID(ctx, articleTag.ArticleID)
+	if err != nil {
+		if !errors.Is(err, repository.ErrDataNotFound) {
+			return
+		}
+	}
+
+	if res.ArticleID == "" {
+		_, err = a.collection().InsertOne(ctx, articleTag)
+	} else {
+		update := bson.D{
+			bson.E{Key: "$set", Value: bson.D{
+				bson.E{Key: "tagIDs", Value: articleTag.TagIDs},
+			}},
+		}
+		_, err = a.collection().UpdateOne(ctx, bson.D{{Key: "articleID", Value: res.ArticleID}}, update)
+	}
 	if err != nil {
 		return
 	}
@@ -31,17 +52,12 @@ func (a *articleTagRepositoryImpl) Create(ctx context.Context, articleTag model.
 	return
 }
 
-func (a *articleTagRepositoryImpl) collection() *mongo.Collection {
-	article := model.ArticleTag{}
-	return a.db.Collection(article.TableName())
-}
-
 func (a *articleTagRepositoryImpl) FindByTagID(ctx context.Context, tagID string, paginate repository.PaginationParam) (articleTags []model.ArticleTag, total int64, err error) {
 	opts := options.Find().SetLimit(paginate.Limit).SetSkip(paginate.Offset)
 
 	filter := bson.D{}
 	if tagID != "" {
-		filter = append(filter, bson.E{Key: "tagID", Value: tagID})
+		filter = append(filter, bson.E{Key: "tagIDs", Value: tagID})
 	}
 
 	total, err = a.collection().CountDocuments(ctx, filter)
@@ -82,13 +98,20 @@ func (a *articleTagRepositoryImpl) FindByArticleID(ctx context.Context, articleI
 }
 
 func (a *articleTagRepositoryImpl) FindTagPopuler(ctx context.Context, limit int64) (popularTagRes []repository.PopularTagRes, err error) {
-	unwindStage := bson.D{bson.E{Key: "$unwind", Value: "tagID"}}
+	unwindStage := bson.D{bson.E{Key: "$unwind", Value: "$tagIDs"}}
 	groupStage := bson.D{
 		bson.E{Key: "$group", Value: bson.D{
-			bson.E{Key: "tagIDs", Value: "$tagID"},
+			bson.E{Key: "_id", Value: "$tagIDs"},
 			bson.E{Key: "count", Value: bson.D{
 				bson.E{Key: "$sum", Value: 1},
 			}},
+		}},
+	}
+	projectStage := bson.D{
+		{Key: "$project", Value: bson.D{
+			{Key: "tagIDs", Value: "$_id"},
+			{Key: "count", Value: "$count"},
+			{Key: "_id", Value: 0},
 		}},
 	}
 	sortStage := bson.D{
@@ -97,11 +120,11 @@ func (a *articleTagRepositoryImpl) FindTagPopuler(ctx context.Context, limit int
 		}},
 	}
 	limitStage := bson.D{
-		bson.E{Key: "$limit", Value: 10},
+		bson.E{Key: "$limit", Value: limit},
 	}
 
 	cur, err := a.collection().Aggregate(ctx, mongo.Pipeline{
-		unwindStage, groupStage, sortStage, limitStage,
+		unwindStage, groupStage, projectStage, sortStage, limitStage,
 	})
 
 	err = cur.All(ctx, &popularTagRes)

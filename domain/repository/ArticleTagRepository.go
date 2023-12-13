@@ -7,7 +7,7 @@ import (
 )
 
 type ArticleTagRepository interface {
-	Create(ctx context.Context, articleTag model.ArticleTag) (err error)
+	UpSert(ctx context.Context, articleTag model.ArticleTag) (err error)
 	FindByTagID(ctx context.Context, tagID string, paginate PaginationParam) (articleTags []model.ArticleTag, total int64, err error)
 	FindByArticleID(ctx context.Context, articleID string) (articleTag model.ArticleTag, err error)
 	FindTagPopuler(ctx context.Context, limit int64) (popularTagRes []PopularTagRes, err error)

@@ -23,7 +23,7 @@ func (t *Tag) TableName() (table string) {
 
 // FieldID is a field or column in the table Tag.
 func (t *Tag) FieldID() string {
-	return "id"
+	return "_id"
 }
 
 // SetID is a setter for the field or column ID in the table Tag.
@@ -44,7 +44,7 @@ func (t *Tag) SetName(param string) {
 // AllField is a function to get all field or column in the table Tag.
 func (t *Tag) AllField() (str []string) {
 	str = []string{ 
-		`id`,
+		`_id`,
 		`name`,
 	}
 	return

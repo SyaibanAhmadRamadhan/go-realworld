@@ -42,8 +42,10 @@ func (a *articleRepositoryImpl) FindAllByIDS(ctx context.Context, ids []string, 
 	filter := bson.D{
 		bson.E{
 			Key: "_id",
-			Value: bson.E{
-				Key: "$in", Value: ids,
+			Value: bson.D{
+				bson.E{
+					Key: "$in", Value: ids,
+				},
 			},
 		},
 	}
@@ -64,18 +66,19 @@ func (a *articleRepositoryImpl) FindAllByIDS(ctx context.Context, ids []string, 
 	return
 }
 
-func (a *articleRepositoryImpl) FindById(ctx context.Context, id int, columns ...string) (art model.Article, err error) {
-	opts := options.FindOne()
-
-	if columns != nil {
-		projection := bson.D{}
+func (a *articleRepositoryImpl) FindById(ctx context.Context, id string, columns ...string) (art model.Article, err error) {
+	projection := bson.D{}
+	if len(columns) > 0 {
 		for _, column := range columns {
 			projection = append(projection, bson.E{Key: column, Value: 1})
 		}
-		opts.SetProjection(projection)
 	}
 
-	err = a.collection().FindOne(ctx, bson.D{bson.E{Key: "_id", Value: id}}, opts).Decode(&art)
+	opts := options.FindOne().SetProjection(projection)
+
+	filter := bson.D{{Key: "_id", Value: id}}
+
+	err = a.collection().FindOne(ctx, filter, opts).Decode(&art)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			err = repository.ErrDataNotFound

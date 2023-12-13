@@ -28,7 +28,7 @@ func (t *tagRepositoryImpl) collection() *mongo.Collection {
 
 func (t *tagRepositoryImpl) FindAllByIDS(ctx context.Context, ids []string) (tags []model.Tag, err error) {
 	filter := bson.D{
-		bson.E{Key: "_id", Value: bson.E{Key: "$in", Value: ids}},
+		bson.E{Key: "_id", Value: bson.D{bson.E{Key: "$in", Value: ids}}},
 	}
 
 	cur, err := t.collection().Find(ctx, filter)
