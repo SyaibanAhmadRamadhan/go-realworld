@@ -6,7 +6,7 @@ import (
 
 type Article struct {
 	ID          string    `bson:"_id"`
-	AuthorID    int64     `bson:"authorID"`
+	AuthorID    string    `bson:"authorID"`
 	Slug        string    `bson:"slug"`
 	Title       string    `bson:"title"`
 	Description string    `bson:"description"`

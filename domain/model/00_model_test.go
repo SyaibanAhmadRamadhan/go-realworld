@@ -10,6 +10,7 @@ func TestGenerator(t *testing.T) {
 	gen := []gdb.GeneratorModelForStructParam{
 		articleModel(),
 		tagModel(),
+		userModel(),
 	}
 
 	gdb.GeneratorModelFromStruct(gen...)
@@ -34,5 +35,16 @@ func tagModel() gdb.GeneratorModelForStructParam {
 		},
 		Tag:      "bson",
 		FileName: "Tag",
+	}
+}
+
+func userModel() gdb.GeneratorModelForStructParam {
+	return gdb.GeneratorModelForStructParam{
+		Src: &User{},
+		SpecifiationTable: gdb.SpecifiationTable{
+			TableName: "user",
+		},
+		Tag:      "bson",
+		FileName: "User",
 	}
 }

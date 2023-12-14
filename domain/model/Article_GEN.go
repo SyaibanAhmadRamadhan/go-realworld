@@ -1,9 +1,10 @@
 package model
 
-// DO NOT EDIT, will be overwritten by https://github.com/SyaibanAhmadRamadhan/jolly/blob/main/Jdb/JOpg/postgres_generator.go.
+// DO NOT EDIT, will be overwritten by https://github.com/SyaibanAhmadRamadhan/jolly/blob/main/Jdb/JOpg/postgres_generator.go. 
 
 import (
 	"errors"
+
 	"time"
 )
 
@@ -20,16 +21,6 @@ func NewArticleWithOutPtr() Article {
 // TableName is a function to get table name
 func (a *Article) TableName() (table string) {
 	return "article"
-}
-
-// FieldDescription is a field or column in the table Article.
-func (a *Article) FieldDescription() string {
-	return "description"
-}
-
-// SetDescription is a setter for the field or column Description in the table Article.
-func (a *Article) SetDescription(param string) {
-	a.Description = param
 }
 
 // FieldBody is a field or column in the table Article.
@@ -78,7 +69,7 @@ func (a *Article) FieldAuthorID() string {
 }
 
 // SetAuthorID is a setter for the field or column AuthorID in the table Article.
-func (a *Article) SetAuthorID(param int64) {
+func (a *Article) SetAuthorID(param string) {
 	a.AuthorID = param
 }
 
@@ -102,9 +93,20 @@ func (a *Article) SetTitle(param string) {
 	a.Title = param
 }
 
+// FieldDescription is a field or column in the table Article.
+func (a *Article) FieldDescription() string {
+	return "description"
+}
+
+// SetDescription is a setter for the field or column Description in the table Article.
+func (a *Article) SetDescription(param string) {
+	a.Description = param
+}
+
 // AllField is a function to get all field or column in the table Article.
 func (a *Article) AllField() (str []string) {
-	str = []string{
+	str = []string{ 
+		`description`,
 		`body`,
 		`createdAt`,
 		`updatedAt`,
@@ -112,7 +114,6 @@ func (a *Article) AllField() (str []string) {
 		`authorID`,
 		`slug`,
 		`title`,
-		`description`,
 	}
 	return
 }
@@ -122,10 +123,6 @@ func (a *Article) GetValuesByColums(columns ...string) []any {
 	var values []any
 	for _, column := range columns {
 		switch column {
-		case a.FieldBody():
-			values = append(values, a.Body)
-		case a.FieldCreatedAt():
-			values = append(values, a.CreatedAt)
 		case a.FieldUpdatedAt():
 			values = append(values, a.UpdatedAt)
 		case a.FieldID():
@@ -138,6 +135,10 @@ func (a *Article) GetValuesByColums(columns ...string) []any {
 			values = append(values, a.Title)
 		case a.FieldDescription():
 			values = append(values, a.Description)
+		case a.FieldBody():
+			values = append(values, a.Body)
+		case a.FieldCreatedAt():
+			values = append(values, a.CreatedAt)
 		}
 	}
 	return values
@@ -147,30 +148,6 @@ func (a *Article) GetValuesByColums(columns ...string) []any {
 func (a *Article) ScanMap(data map[string]any) (err error) {
 	for key, value := range data {
 		switch key {
-		case a.FieldID():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field ID")
-			}
-			a.SetID(val)
-		case a.FieldAuthorID():
-			val, ok := value.(int64)
-			if !ok {
-				return errors.New("invalid type int64. field AuthorID")
-			}
-			a.SetAuthorID(val)
-		case a.FieldSlug():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field Slug")
-			}
-			a.SetSlug(val)
-		case a.FieldTitle():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field Title")
-			}
-			a.SetTitle(val)
 		case a.FieldDescription():
 			val, ok := value.(string)
 			if !ok {
@@ -195,9 +172,34 @@ func (a *Article) ScanMap(data map[string]any) (err error) {
 				return errors.New("invalid type time.Time. field UpdatedAt")
 			}
 			a.SetUpdatedAt(val)
+		case a.FieldID():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field ID")
+			}
+			a.SetID(val)
+		case a.FieldAuthorID():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field AuthorID")
+			}
+			a.SetAuthorID(val)
+		case a.FieldSlug():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field Slug")
+			}
+			a.SetSlug(val)
+		case a.FieldTitle():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field Title")
+			}
+			a.SetTitle(val)
 		default:
 			return errors.New("invalid column")
 		}
 	}
 	return nil
 }
+

@@ -19,9 +19,13 @@ func ArticleRepository_Create(t *testing.T) {
 	for i := 0; i < 50; i++ {
 		createdAt := gofakeit.Date()
 		createdAt = gtime.NormalizeTimeUnit(createdAt, gtime.Milliseconds)
+		var userIDs []string
+		for _, user := range users {
+			userIDs = append(userIDs, user.ID)
+		}
 		article := model.Article{
 			ID:          gcommon.NewUlid(),
-			AuthorID:    gofakeit.Int64(),
+			AuthorID:    gcommon.RandomFromArray(userIDs),
 			Slug:        gofakeit.Username(),
 			Title:       gofakeit.Sentence(5),
 			Description: gofakeit.Paragraph(2, 2, 10, "\n"),

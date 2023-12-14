@@ -71,11 +71,13 @@ func createCollection() {
 }
 
 var tagRepository repository.TagRepository
+var userRepository repository.UserRepository
 var articleRepository repository.ArticleRepository
 var articleTagRepository repository.ArticleTagRepository
 
 func initRepository() {
 	tagRepository = repositoryimpl.NewTagRepositoryImpl(mongodb)
+	userRepository = repositoryimpl.NewUserRepositoryImpl(mongodb)
 	articleRepository = repositoryimpl.NewArticleRepositoryImpl(mongodb)
 	articleTagRepository = repositoryimpl.NewArticleTagRepositoryImpl(mongodb)
 }
@@ -89,6 +91,12 @@ func TestRun(t *testing.T) {
 		t.Run("DeleteByID", TagRepository_DeleteByID)
 	})
 
+	t.Run("UserRepository", func(t *testing.T) {
+		t.Run("Create", UserRepository_Create)
+		t.Run("FindByOneColumn", UserRepository_FindByOneColumn)
+		t.Run("UpdateByID", UserRepository_UpdateByID)
+	})
+
 	t.Run("ArticleRepository", func(t *testing.T) {
 		t.Run("Create", ArticleRepository_Create)
 		t.Run("FindByID", ArticleRepository_FindById)
@@ -96,6 +104,7 @@ func TestRun(t *testing.T) {
 		t.Run("UpdateByID", ArticleRepository_UpdateByID)
 		t.Run("DeleteByID", ArticleRepository_DeleteByID)
 	})
+
 	t.Run("ArticleTagRepository", func(t *testing.T) {
 		t.Run("UpSert", ArticleTagRepository_UpSert)
 		t.Run("FindByTagID", ArticleTagRepository_FindByTagID)

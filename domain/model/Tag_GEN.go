@@ -68,18 +68,18 @@ func (t *Tag) GetValuesByColums(columns ...string) []any {
 func (t *Tag) ScanMap(data map[string]any) (err error) {
 	for key, value := range data {
 		switch key {
-		case t.FieldID():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field ID")
-			}
-			t.SetID(val)
 		case t.FieldName():
 			val, ok := value.(string)
 			if !ok {
 				return errors.New("invalid type string. field Name")
 			}
 			t.SetName(val)
+		case t.FieldID():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field ID")
+			}
+			t.SetID(val)
 		default:
 			return errors.New("invalid column")
 		}
