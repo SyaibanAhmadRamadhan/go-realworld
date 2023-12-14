@@ -2,11 +2,11 @@ package repository
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
+	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"realworld-go/domain/model"
 	"realworld-go/domain/repository"
@@ -22,86 +22,179 @@ func NewArticleTagRepositoryImpl(db *mongo.Database) repository.ArticleTagReposi
 	}
 }
 
-func (a *articleTagRepositoryImpl) collection() *mongo.Collection {
+func (a *articleTagRepositoryImpl) articleColl() *mongo.Collection {
+	article := model.Article{}
+	return a.db.Collection(article.TableName())
+}
+
+func (a *articleTagRepositoryImpl) articleTagColl() *mongo.Collection {
 	articleTag := model.ArticleTag{}
 	return a.db.Collection(articleTag.TableName())
 }
 
-func (a *articleTagRepositoryImpl) UpSert(ctx context.Context, articleTag model.ArticleTag) (err error) {
-	res, err := a.FindByArticleID(ctx, articleTag.ArticleID)
-	if err != nil {
-		if !errors.Is(err, repository.ErrDataNotFound) {
-			return
-		}
-	}
-
-	if res.ArticleID == "" {
-		_, err = a.collection().InsertOne(ctx, articleTag)
-	} else {
-		update := bson.D{
-			bson.E{Key: "$set", Value: bson.D{
-				bson.E{Key: "tagIDs", Value: articleTag.TagIDs},
-			}},
-		}
-		_, err = a.collection().UpdateOne(ctx, bson.D{{Key: "articleID", Value: res.ArticleID}}, update)
-	}
-	if err != nil {
-		return
-	}
-
-	return
+func (a *articleTagRepositoryImpl) tagColl() *mongo.Collection {
+	article := model.Tag{}
+	return a.db.Collection(article.TableName())
 }
 
-func (a *articleTagRepositoryImpl) FindByTagID(ctx context.Context, tagID string, paginate repository.PaginationParam) (articleTags []model.ArticleTag, total int64, err error) {
-	opts := options.Find().SetLimit(paginate.Limit).SetSkip(paginate.Offset)
+func (a *articleTagRepositoryImpl) FindAllDetail(ctx context.Context, param repository.ParamFindAllDetailAT, articleColumns ...string) (res repository.ResultFindAllDetailAT, err error) {
+	pipeline := mongo.Pipeline{}
 
-	filter := bson.D{}
-	if tagID != "" {
-		filter = append(filter, bson.E{Key: "tagIDs", Value: tagID})
+	if len(param.TagIDs) > 0 {
+		pipeline = append(pipeline, bson.D{
+			{"$match", bson.D{
+				{"tagID", bson.D{{"$in", param.TagIDs}}},
+			}},
+		})
 	}
 
-	total, err = a.collection().CountDocuments(ctx, filter)
+	pipeline = append(pipeline,
+		// set group
+		bson.D{bson.E{Key: "$group", Value: bson.D{
+			bson.E{Key: "_id", Value: "$articleID"},
+			bson.E{Key: "tagIDs", Value: bson.D{
+				bson.E{Key: "$addToSet", Value: "$tagID"},
+			}},
+		}}},
+		// set project from group
+		bson.D{bson.E{Key: "$project", Value: bson.D{
+			bson.E{Key: "articleID", Value: "$_id"},
+			bson.E{Key: "tagIDs", Value: "$tagIDs"},
+			bson.E{Key: "_id", Value: 0},
+		}}},
+		// set lookup article
+		bson.D{bson.E{Key: "$lookup", Value: bson.D{
+			bson.E{Key: "from", Value: a.articleColl().Name()},
+			bson.E{Key: "localField", Value: "articleID"},
+			bson.E{Key: "foreignField", Value: "_id"},
+			bson.E{Key: "pipeline", Value: bson.A{
+				bson.D{bson.E{Key: "$project", Value: a.lookupProjectionArticle(articleColumns...)}},
+			}},
+			bson.E{Key: "as", Value: "article"},
+		}}},
+		// set lookup tag
+		bson.D{bson.E{Key: "$lookup", Value: bson.D{
+			bson.E{Key: "from", Value: a.articleColl().Name()},
+			bson.E{Key: "localField", Value: "tagIDs"},
+			bson.E{Key: "foreignField", Value: "_id"},
+			bson.E{Key: "as", Value: "tags"},
+		}}},
+	)
+
+	curTotal, err := a.articleTagColl().Aggregate(ctx, append(pipeline, bson.D{bson.E{Key: "$count", Value: "total"}}))
 	if err != nil {
+		fmt.Println("error aggregate", err)
 		return
 	}
+	if curTotal.Next(ctx) {
+		totalMap := bson.M{}
+		if err = curTotal.Decode(&totalMap); err != nil {
+			return
+		}
 
-	cur, err := a.collection().Find(ctx, filter, opts)
+		total, ok := totalMap["total"].(int32)
+		if !ok {
+			return res, repository.ErrInvalidTotalType
+		}
+		res.Total = int64(total)
+	}
+
+	pipeline = append(pipeline,
+		bson.D{bson.E{Key: "$sort", Value: bson.D{
+			bson.E{Key: "article." + param.OrderBy.Column, Value: gcommon.Ternary(param.OrderBy.IsAscending, 1, -1)},
+		}}},
+		bson.D{bson.E{Key: "$skip", Value: param.Pagination.Offset}},
+		bson.D{bson.E{Key: "$limit", Value: param.Pagination.Limit}},
+	)
+	cur, err := a.articleTagColl().Aggregate(ctx, pipeline)
 	if err != nil {
 		return
 	}
 
 	for cur.Next(ctx) {
-		var articleTag model.ArticleTag
-		if err = cur.Decode(&articleTag); err != nil {
+		resData := struct {
+			Article []model.Article `bson:"article"`
+			Tags    []model.Tag     `bson:"tags"`
+		}{}
+		if err = cur.Decode(&resData); err != nil {
 			return
 		}
-		articleTags = append(articleTags, articleTag)
+
+		var resOne repository.ResultFindOneAT
+		resOne.Tags = resData.Tags
+		if resData.Article != nil {
+			resOne.Article = resData.Article[0]
+		}
+
+		res.Articles = append(res.Articles, resOne)
 	}
 
 	return
-
 }
 
-func (a *articleTagRepositoryImpl) FindByArticleID(ctx context.Context, articleID string) (articleTag model.ArticleTag, err error) {
-	filter := bson.D{bson.E{Key: "articleID", Value: articleID}}
-	err = a.collection().FindOne(ctx, filter).Decode(&articleTag)
+func (a *articleTagRepositoryImpl) FindOneByArticleID(ctx context.Context, articleID string, articleColumns ...string) (res repository.ResultFindOneAT, err error) {
+	pipeline := mongo.Pipeline{}
 
+	pipeline = append(pipeline,
+		bson.D{{Key: "$match", Value: bson.D{
+			{Key: "articleID", Value: bson.D{
+				{Key: "$eq", Value: articleID},
+			}},
+		}}},
+		// bson.D{{Key: "$limit", Value: 1}},
+		bson.D{{Key: "$group", Value: bson.D{
+			{Key: "_id", Value: "$articleID"},
+			{Key: "tagIDs", Value: bson.D{
+				{Key: "$addToSet", Value: "$tagID"},
+			}},
+		}}},
+		bson.D{{Key: "$project", Value: bson.D{
+			{Key: "articleID", Value: "$_id"},
+			{Key: "tagIDs", Value: "$tagIDs"},
+			bson.E{Key: "_id", Value: 0},
+		}}},
+		bson.D{{Key: "$lookup", Value: bson.D{
+			{Key: "from", Value: a.articleColl().Name()},
+			{Key: "localField", Value: "articleID"},
+			{Key: "foreignField", Value: "_id"},
+			{Key: "pipeline", Value: bson.A{
+				bson.D{{Key: "$project", Value: a.lookupProjectionArticle(articleColumns...)}},
+			}},
+			{Key: "as", Value: "article"},
+		}}},
+		bson.D{{Key: "$lookup", Value: bson.D{
+			{Key: "from", Value: a.tagColl().Name()},
+			{Key: "localField", Value: "tagIDs"},
+			{Key: "foreignField", Value: "_id"},
+			{Key: "as", Value: "tags"},
+		}}},
+		bson.D{{Key: "$unwind", Value: "$article"}},
+	)
+
+	cur, err := a.articleTagColl().Aggregate(ctx, pipeline)
 	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			err = repository.ErrDataNotFound
-		}
-
 		return
 	}
 
+	if cur.Next(ctx) {
+		resData := struct {
+			Article model.Article `bson:"article"`
+			Tags    []model.Tag   `bson:"tags"`
+		}{}
+		if err = cur.Decode(&resData); err != nil {
+			return
+		}
+		res.Article = resData.Article
+		res.Tags = resData.Tags
+	}
+
 	return
 }
 
-func (a *articleTagRepositoryImpl) FindTagPopuler(ctx context.Context, limit int64) (popularTagRes []repository.PopularTagRes, err error) {
-	unwindStage := bson.D{bson.E{Key: "$unwind", Value: "$tagIDs"}}
+func (a *articleTagRepositoryImpl) FindTagPopuler(ctx context.Context, limit int64) (res []repository.ResultPopularTagRes, err error) {
 	groupStage := bson.D{
 		bson.E{Key: "$group", Value: bson.D{
-			bson.E{Key: "_id", Value: "$tagIDs"},
+			bson.E{Key: "_id", Value: "$tagID"},
 			bson.E{Key: "count", Value: bson.D{
 				bson.E{Key: "$sum", Value: 1},
 			}},
@@ -109,7 +202,7 @@ func (a *articleTagRepositoryImpl) FindTagPopuler(ctx context.Context, limit int
 	}
 	projectStage := bson.D{
 		{Key: "$project", Value: bson.D{
-			{Key: "tagIDs", Value: "$_id"},
+			{Key: "tagID", Value: "$_id"},
 			{Key: "count", Value: "$count"},
 			{Key: "_id", Value: 0},
 		}},
@@ -123,11 +216,45 @@ func (a *articleTagRepositoryImpl) FindTagPopuler(ctx context.Context, limit int
 		bson.E{Key: "$limit", Value: limit},
 	}
 
-	cur, err := a.collection().Aggregate(ctx, mongo.Pipeline{
-		unwindStage, groupStage, projectStage, sortStage, limitStage,
+	cur, err := a.articleTagColl().Aggregate(ctx, mongo.Pipeline{
+		groupStage, projectStage, sortStage, limitStage,
 	})
 
-	err = cur.All(ctx, &popularTagRes)
+	err = cur.All(ctx, &res)
 
 	return
+}
+
+func (a *articleTagRepositoryImpl) ReplaceAll(ctx context.Context, articleTags []model.ArticleTag) (err error) {
+	if articleTags == nil {
+		return
+	}
+	_, err = a.articleTagColl().DeleteMany(ctx, bson.D{{Key: "articleID", Value: articleTags[0].ArticleID}})
+	if err != nil {
+		return
+	}
+
+	for _, articleTag := range articleTags {
+		_, err = a.articleTagColl().InsertOne(ctx, articleTag)
+		if err != nil {
+			break
+		}
+	}
+
+	return
+}
+
+func (a *articleTagRepositoryImpl) lookupProjectionArticle(articleColumns ...string) bson.D {
+	lookupProjection := bson.D{}
+	if articleColumns != nil {
+		for _, column := range articleColumns {
+			lookupProjection = append(lookupProjection, bson.E{Key: column, Value: 1})
+		}
+	} else {
+		article := model.NewArticle()
+		for _, column := range article.AllField() {
+			lookupProjection = append(lookupProjection, bson.E{Key: column, Value: 1})
+		}
+	}
+	return lookupProjection
 }

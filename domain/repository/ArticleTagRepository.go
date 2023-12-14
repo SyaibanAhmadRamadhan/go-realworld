@@ -7,13 +7,29 @@ import (
 )
 
 type ArticleTagRepository interface {
-	UpSert(ctx context.Context, articleTag model.ArticleTag) (err error)
-	FindByTagID(ctx context.Context, tagID string, paginate PaginationParam) (articleTags []model.ArticleTag, total int64, err error)
-	FindByArticleID(ctx context.Context, articleID string) (articleTag model.ArticleTag, err error)
-	FindTagPopuler(ctx context.Context, limit int64) (popularTagRes []PopularTagRes, err error)
+	FindAllDetail(ctx context.Context, param ParamFindAllDetailAT, articleColumns ...string) (res ResultFindAllDetailAT, err error)
+	FindOneByArticleID(ctx context.Context, articleID string, articleColumns ...string) (res ResultFindOneAT, err error)
+	FindTagPopuler(ctx context.Context, limit int64) (res []ResultPopularTagRes, err error)
+	ReplaceAll(ctx context.Context, articleTags []model.ArticleTag) (err error)
 }
 
-type PopularTagRes struct {
-	TagIDs string `bson:"tagIDs"`
-	Count  int64  `bson:"count"`
+type ParamFindAllDetailAT struct {
+	TagIDs     []string
+	OrderBy    OrderBy
+	Pagination PaginationParam
+}
+
+type ResultFindAllDetailAT struct {
+	Articles []ResultFindOneAT
+	Total    int64 `bson:"total"`
+}
+
+type ResultFindOneAT struct {
+	Article model.Article `bson:"article"`
+	Tags    []model.Tag   `bson:"tags"`
+}
+
+type ResultPopularTagRes struct {
+	TagID string `bson:"tagID"`
+	Count int64  `bson:"count"`
 }

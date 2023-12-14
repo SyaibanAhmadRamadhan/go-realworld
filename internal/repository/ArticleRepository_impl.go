@@ -27,7 +27,12 @@ func (a *articleRepositoryImpl) collection() *mongo.Collection {
 	return a.db.Collection(article.TableName())
 }
 
-func (a *articleRepositoryImpl) FindAllByIDS(ctx context.Context, ids []string, columns ...string) (
+func (a *articleRepositoryImpl) articleTagColl() *mongo.Collection {
+	articleTag := model.ArticleTag{}
+	return a.db.Collection(articleTag.TableName())
+}
+
+func (a *articleRepositoryImpl) FindAllByIDs(ctx context.Context, ids []string, columns ...string) (
 	articles []model.Article, err error) {
 	opts := options.Find()
 

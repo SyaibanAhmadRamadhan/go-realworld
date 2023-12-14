@@ -24,7 +24,7 @@ func ArticleRepository_Create(t *testing.T) {
 			userIDs = append(userIDs, user.ID)
 		}
 		article := model.Article{
-			ID:          gcommon.NewUlid(),
+			ID:          gcommon.NewUlid() + "_article",
 			AuthorID:    gcommon.RandomFromArray(userIDs),
 			Slug:        gofakeit.Username(),
 			Title:       gofakeit.Sentence(5),
@@ -60,7 +60,7 @@ func ArticleRepository_FindById(t *testing.T) {
 	})
 }
 
-func ArticleRepository_FindAllByIDS(t *testing.T) {
+func ArticleRepository_FindAllByIDs(t *testing.T) {
 	var articleSelectedColumns []model.Article
 	var ids []string
 	for _, article := range articles {
@@ -73,12 +73,12 @@ func ArticleRepository_FindAllByIDS(t *testing.T) {
 
 	}
 
-	res, err := articleRepository.FindAllByIDS(context.Background(), ids)
+	res, err := articleRepository.FindAllByIDs(context.Background(), ids)
 	assert.NoError(t, err)
 	assert.Equal(t, articles, res)
 
 	var article model.Article
-	res, err = articleRepository.FindAllByIDS(context.Background(), ids, article.FieldSlug(), article.FieldBody())
+	res, err = articleRepository.FindAllByIDs(context.Background(), ids, article.FieldSlug(), article.FieldBody())
 	assert.NoError(t, err)
 	assert.Equal(t, articleSelectedColumns, res)
 }
@@ -141,7 +141,7 @@ func ArticleRepository_DeleteByID(t *testing.T) {
 		gcommon.PanicIfError(err)
 	}
 
-	res, err := articleRepository.FindAllByIDS(context.Background(), ids)
+	res, err := articleRepository.FindAllByIDs(context.Background(), ids)
 	assert.NoError(t, err)
 	assert.Equal(t, len(articleDeleteds), len(res))
 
@@ -162,7 +162,7 @@ func ArticleRepository_DeleteByID(t *testing.T) {
 		assert.Equal(t, repository.ErrDelDataNotFound, err)
 	})
 
-	res, err = articleRepository.FindAllByIDS(context.Background(), ids)
+	res, err = articleRepository.FindAllByIDs(context.Background(), ids)
 	assert.NoError(t, err)
 	assert.Equal(t, 0, len(res))
 }

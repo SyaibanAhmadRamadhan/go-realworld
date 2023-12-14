@@ -21,9 +21,14 @@ func NewTagRepositoryImpl(db *mongo.Database) repository.TagRepository {
 	}
 }
 
-func (t *tagRepositoryImpl) collection() *mongo.Collection {
-	article := model.Tag{}
-	return t.db.Collection(article.TableName())
+func (t *tagRepositoryImpl) tagColl() *mongo.Collection {
+	tag := model.Tag{}
+	return t.db.Collection(tag.TableName())
+}
+
+func (t *tagRepositoryImpl) articleTagColl() *mongo.Collection {
+	articleTag := model.ArticleTag{}
+	return t.db.Collection(articleTag.TableName())
 }
 
 func (t *tagRepositoryImpl) FindAllByIDS(ctx context.Context, ids []string) (tags []model.Tag, err error) {
@@ -31,7 +36,7 @@ func (t *tagRepositoryImpl) FindAllByIDS(ctx context.Context, ids []string) (tag
 		bson.E{Key: "_id", Value: bson.D{bson.E{Key: "$in", Value: ids}}},
 	}
 
-	cur, err := t.collection().Find(ctx, filter)
+	cur, err := t.tagColl().Find(ctx, filter)
 	for cur.Next(ctx) {
 		var tag model.Tag
 		if err = cur.Decode(&tag); err != nil {
@@ -49,7 +54,7 @@ func (t *tagRepositoryImpl) FindByID(ctx context.Context, id string) (tag model.
 		bson.E{Key: "_id", Value: id},
 	}
 
-	err = t.collection().FindOne(ctx, filter).Decode(&tag)
+	err = t.tagColl().FindOne(ctx, filter).Decode(&tag)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			err = repository.ErrDataNotFound
@@ -60,7 +65,7 @@ func (t *tagRepositoryImpl) FindByID(ctx context.Context, id string) (tag model.
 }
 
 func (t *tagRepositoryImpl) Create(ctx context.Context, tag model.Tag) (err error) {
-	_, err = t.collection().InsertOne(ctx, tag)
+	_, err = t.tagColl().InsertOne(ctx, tag)
 	return
 }
 
@@ -80,7 +85,7 @@ func (t *tagRepositoryImpl) UpdateByID(ctx context.Context, tag model.Tag, colum
 
 	update := bson.D{{"$set", set}}
 
-	res, err := t.collection().UpdateOne(ctx, filter, update)
+	res, err := t.tagColl().UpdateOne(ctx, filter, update)
 	if err != nil {
 		return
 	}
@@ -95,7 +100,7 @@ func (t *tagRepositoryImpl) UpdateByID(ctx context.Context, tag model.Tag, colum
 func (t *tagRepositoryImpl) DeleteByID(ctx context.Context, tag model.Tag) (err error) {
 	filter := bson.D{bson.E{Key: "_id", Value: tag.ID}}
 
-	res, err := t.collection().DeleteOne(ctx, filter)
+	res, err := t.tagColl().DeleteOne(ctx, filter)
 	if err != nil {
 		return
 	}

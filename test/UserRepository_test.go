@@ -43,7 +43,7 @@ func UserRepository_FindByOneColumn(t *testing.T) {
 	}
 	for _, user := range users {
 		var columnSelected []string
-		for i := 0; i < gcommon.RandomFromArray([]int{1, 2, 3, 4}); i++ {
+		for i := 0; i < gcommon.RandomFromArray([]int{1, 2, 3}); i++ {
 			random := gcommon.RandomFromArray(user.AllField())
 			if random == "bio" {
 				i--

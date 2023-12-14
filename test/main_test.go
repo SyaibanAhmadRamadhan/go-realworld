@@ -86,7 +86,7 @@ func TestRun(t *testing.T) {
 	t.Run("TagRepository", func(t *testing.T) {
 		t.Run("Create", TagRepository_Create)
 		t.Run("FindByID", TagRepository_FindByID)
-		t.Run("FindAllByIDS", TagRepository_FindAllByIDS)
+		t.Run("FindAllByIDs", TagRepository_FindAllByIDS)
 		t.Run("UpdateByID", TagRepository_UpdateByID)
 		t.Run("DeleteByID", TagRepository_DeleteByID)
 	})
@@ -100,15 +100,16 @@ func TestRun(t *testing.T) {
 	t.Run("ArticleRepository", func(t *testing.T) {
 		t.Run("Create", ArticleRepository_Create)
 		t.Run("FindByID", ArticleRepository_FindById)
-		t.Run("FindAllByIDS", ArticleRepository_FindAllByIDS)
+		t.Run("FindAllByIDs", ArticleRepository_FindAllByIDs)
 		t.Run("UpdateByID", ArticleRepository_UpdateByID)
 		t.Run("DeleteByID", ArticleRepository_DeleteByID)
+
 	})
 
 	t.Run("ArticleTagRepository", func(t *testing.T) {
-		t.Run("UpSert", ArticleTagRepository_UpSert)
-		t.Run("FindByTagID", ArticleTagRepository_FindByTagID)
-		t.Run("FindByArticleID", ArticleTagRepository_FindByArticleID)
+		t.Run("ReplaceAll", ArticleTagRepository_ReplaceAll)
+		t.Run("FindAllDetail", ArticleTagRepository_FindAllDetail)
+		t.Run("FindOneByArticleID", ArticleTagRepository_FindOneByArticleID)
 		t.Run("FindTagPopuler", ArticleTagRepository_FindTagPopuler)
 	})
 }

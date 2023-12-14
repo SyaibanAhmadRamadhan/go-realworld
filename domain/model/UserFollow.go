@@ -1,6 +1,6 @@
 package model
 
 type UserFollow struct {
-	UserID     int `bson:"userID"`
-	FollowedID int `bson:"followedID"`
+	UserID     string   `bson:"userID"`
+	FollowedID []string `bson:"followedID"`
 }

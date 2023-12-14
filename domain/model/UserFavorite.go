@@ -1,6 +1,10 @@
 package model
 
 type UserFavorite struct {
-	UserID    int `bson:"userID"`
-	ArticleID int `bson:"articleID"`
+	UserID    string   `bson:"userID"`
+	ArticleID []string `bson:"articleID"`
+}
+
+func (u *UserFavorite) TableName() string {
+	return "user_favorite"
 }
