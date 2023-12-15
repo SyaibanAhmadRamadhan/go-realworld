@@ -34,7 +34,7 @@ func tagModel() gdb.GeneratorModelForStructParam {
 			TableName: "tag",
 		},
 		Tag:      "bson",
-		FileName: "Tags",
+		FileName: "Tag",
 	}
 }
 

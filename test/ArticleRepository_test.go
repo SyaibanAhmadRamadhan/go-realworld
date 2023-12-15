@@ -4,7 +4,9 @@ import (
 	"context"
 	"testing"
 
+	"github.com/SyaibanAhmadRamadhan/gocatch/garray"
 	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
+	"github.com/SyaibanAhmadRamadhan/gocatch/ginfra/gdb"
 	"github.com/SyaibanAhmadRamadhan/gocatch/gtime"
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
@@ -40,47 +42,59 @@ func ArticleRepository_Create(t *testing.T) {
 	}
 }
 
-func ArticleRepository_FindById(t *testing.T) {
+func ArticleRepository_FindOneByID(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		for _, article := range articles {
-			res, err := articleRepository.FindById(context.Background(), article.ID)
+			res, err := articleRepository.FindOneByID(context.Background(), repository.ParamFindOneByID{
+				ArticleID: article.ID,
+				AggregationOpt: repository.ParamFindAllPaginateOpt{
+					Tag:      false,
+					Favorite: false,
+				},
+			}, "slug")
 			assert.NoError(t, err)
-			assert.Equal(t, article, res)
+			assert.Equal(t, article.Slug, res.Article.Slug)
+			assert.NotEqual(t, article, res.Article)
 
-			res1, err := articleRepository.FindById(context.Background(), article.ID, article.FieldBody())
+			res1, err := articleRepository.FindOneByID(context.Background(), repository.ParamFindOneByID{
+				ArticleID:      article.ID,
+				AggregationOpt: repository.ParamFindAllPaginateOpt{},
+			})
 			assert.NoError(t, err)
-			assert.Equal(t, res1.Body, article.Body)
-			assert.NotEqual(t, res1.Slug, article.Slug)
+			assert.Equal(t, res1.Article, article)
 		}
 	})
 
 	t.Run("Failed", func(t *testing.T) {
-		_, err := articleRepository.FindById(context.Background(), "article.ID")
+		_, err := articleRepository.FindOneByID(context.Background(), repository.ParamFindOneByID{
+			ArticleID: "article.ID",
+		})
 		assert.Equal(t, repository.ErrDataNotFound, err)
 	})
 }
 
-func ArticleRepository_FindAllByIDs(t *testing.T) {
-	var articleSelectedColumns []model.Article
-	var ids []string
-	for _, article := range articles {
-		ids = append(ids, article.ID)
-		articleSelectedColumns = append(articleSelectedColumns, model.Article{
-			ID:   article.ID,
-			Body: article.Body,
-			Slug: article.Slug,
-		})
-
+func ArticleRepository_FindAllPaginate(t *testing.T) {
+	var tagIDs []string
+	for _, tag := range tags {
+		tagIDs = garray.AppendUniqueVal(tagIDs, tag.ID)
 	}
-
-	res, err := articleRepository.FindAllByIDs(context.Background(), ids)
+	res, err := articleRepository.FindAllPaginate(context.Background(), repository.ParamFindAllPaginate{
+		TagIDs: tagIDs,
+		Orders: gdb.OrderByParams{
+			{Column: "slug", IsAscending: true},
+			{Column: "asal", IsAscending: true},
+		},
+		Pagination: repository.PaginationParam{
+			Limit:  5,
+			Offset: 0,
+		},
+		AggregationOpt: repository.ParamFindAllPaginateOpt{
+			Tag:      false,
+			Favorite: false,
+		},
+	}, "slug")
 	assert.NoError(t, err)
-	assert.Equal(t, articles, res)
-
-	var article model.Article
-	res, err = articleRepository.FindAllByIDs(context.Background(), ids, article.FieldSlug(), article.FieldBody())
-	assert.NoError(t, err)
-	assert.Equal(t, articleSelectedColumns, res)
+	assert.Equal(t, len(articles), int(res.Total))
 }
 
 func ArticleRepository_UpdateByID(t *testing.T) {
@@ -111,9 +125,11 @@ func ArticleRepository_UpdateByID(t *testing.T) {
 			err := articleRepository.UpdateByID(context.Background(), articleUpdate.Article, columns)
 			assert.NoError(t, err)
 
-			res, err := articleRepository.FindById(context.Background(), articleUpdate.Article.ID)
+			res, err := articleRepository.FindOneByID(context.Background(), repository.ParamFindOneByID{
+				ArticleID: articleUpdate.Article.ID,
+			})
 			assert.NoError(t, err)
-			assert.Equal(t, articleUpdate.Expected, res.Slug)
+			assert.Equal(t, articleUpdate.Expected, res.Article.Slug)
 		}
 	})
 
@@ -141,16 +157,27 @@ func ArticleRepository_DeleteByID(t *testing.T) {
 		gcommon.PanicIfError(err)
 	}
 
-	res, err := articleRepository.FindAllByIDs(context.Background(), ids)
+	res, err := articleRepository.FindAllPaginate(context.Background(), repository.ParamFindAllPaginate{
+		TagIDs: nil,
+		Orders: gdb.OrderByParams{
+			{Column: "slug", IsAscending: true},
+		},
+		Pagination: repository.PaginationParam{
+			Limit:  5,
+			Offset: 0,
+		},
+	}, "slug")
 	assert.NoError(t, err)
-	assert.Equal(t, len(articleDeleteds), len(res))
+	assert.Equal(t, len(articles)+5, int(res.Total))
 
 	t.Run("Success", func(t *testing.T) {
 		for _, articleDeleted := range articleDeleteds {
 			err = articleRepository.DeleteByID(context.Background(), articleDeleted)
 			assert.NoError(t, err)
 
-			_, err = articleRepository.FindById(context.Background(), articleDeleted.ID)
+			_, err = articleRepository.FindOneByID(context.Background(), repository.ParamFindOneByID{
+				ArticleID: articleDeleted.ID,
+			})
 			assert.Equal(t, repository.ErrDataNotFound, err)
 		}
 	})
@@ -162,7 +189,16 @@ func ArticleRepository_DeleteByID(t *testing.T) {
 		assert.Equal(t, repository.ErrDelDataNotFound, err)
 	})
 
-	res, err = articleRepository.FindAllByIDs(context.Background(), ids)
+	res, err = articleRepository.FindAllPaginate(context.Background(), repository.ParamFindAllPaginate{
+		TagIDs: nil,
+		Orders: gdb.OrderByParams{
+			{Column: "slug", IsAscending: true},
+		},
+		Pagination: repository.PaginationParam{
+			Limit:  5,
+			Offset: 0,
+		},
+	}, "slug")
 	assert.NoError(t, err)
-	assert.Equal(t, 0, len(res))
+	assert.Equal(t, len(articles), int(res.Total))
 }

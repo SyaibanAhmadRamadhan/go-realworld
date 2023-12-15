@@ -6,6 +6,9 @@ import (
 	"errors"
 )
 
+// TagTableName this table or collection name
+const TagTableName string = "tag"
+
 // NewTag is a struct with pointer that represents the table Tag in the database.
 func NewTag() *Tag {
 	return &Tag{}
@@ -14,11 +17,6 @@ func NewTag() *Tag {
 // NewTagWithOutPtr is a struct without pointer that represents the table Tag in the database.
 func NewTagWithOutPtr() Tag {
 	return Tag{}
-}
-
-// TableName is a function to get table name
-func (t *Tag) TableName() (table string) {
-	return "tag"
 }
 
 // FieldID is a field or column in the table Tag.
@@ -44,6 +42,15 @@ func (t *Tag) SetName(param string) {
 // AllField is a function to get all field or column in the table Tag.
 func (t *Tag) AllField() (str []string) {
 	str = []string{ 
+		`name`,
+		`_id`,
+	}
+	return
+}
+
+// OrderFields is a function to get all field or column in the table Tag.
+func (t *Tag) OrderFields() (str []string) {
+	str = []string{ 
 		`_id`,
 		`name`,
 	}
@@ -55,10 +62,10 @@ func (t *Tag) GetValuesByColums(columns ...string) []any {
 	var values []any
 	for _, column := range columns {
 		switch column {
-		case t.FieldID():
-			values = append(values, t.ID)
 		case t.FieldName():
 			values = append(values, t.Name)
+		case t.FieldID():
+			values = append(values, t.ID)
 		}
 	}
 	return values
@@ -68,18 +75,18 @@ func (t *Tag) GetValuesByColums(columns ...string) []any {
 func (t *Tag) ScanMap(data map[string]any) (err error) {
 	for key, value := range data {
 		switch key {
-		case t.FieldName():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field Name")
-			}
-			t.SetName(val)
 		case t.FieldID():
 			val, ok := value.(string)
 			if !ok {
 				return errors.New("invalid type string. field ID")
 			}
 			t.SetID(val)
+		case t.FieldName():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field Name")
+			}
+			t.SetName(val)
 		default:
 			return errors.New("invalid column")
 		}

@@ -52,19 +52,13 @@ func createCollection() {
 	ctx := context.Background()
 	mongodb = mongoClient.Database(mongoNameDB)
 
-	// tag collection
-	tag := model.Tag{}
-	err := mongodb.CreateCollection(ctx, tag.TableName())
+	err := mongodb.CreateCollection(ctx, model.TagTableName)
 	gcommon.PanicIfError(err)
 
-	// article collection
-	article := model.Article{}
-	err = mongodb.CreateCollection(ctx, article.TableName())
+	err = mongodb.CreateCollection(ctx, model.ArticleTableName)
 	gcommon.PanicIfError(err)
 
-	// articleTag collection
-	articleTag := model.ArticleTag{}
-	err = mongodb.CreateCollection(ctx, articleTag.TableName())
+	err = mongodb.CreateCollection(ctx, model.ArticleTagTableName)
 	gcommon.PanicIfError(err)
 
 	fmt.Println("finished created collection")
@@ -85,7 +79,7 @@ func initRepository() {
 func TestRun(t *testing.T) {
 	t.Run("TagRepository", func(t *testing.T) {
 		t.Run("Create", TagRepository_Create)
-		t.Run("FindByID", TagRepository_FindByID)
+		t.Run("FindOneByID", TagRepository_FindByID)
 		t.Run("FindAllByIDs", TagRepository_FindAllByIDS)
 		t.Run("UpdateByID", TagRepository_UpdateByID)
 		t.Run("DeleteByID", TagRepository_DeleteByID)
@@ -99,17 +93,20 @@ func TestRun(t *testing.T) {
 
 	t.Run("ArticleRepository", func(t *testing.T) {
 		t.Run("Create", ArticleRepository_Create)
-		t.Run("FindByID", ArticleRepository_FindById)
-		t.Run("FindAllByIDs", ArticleRepository_FindAllByIDs)
-		t.Run("UpdateByID", ArticleRepository_UpdateByID)
-		t.Run("DeleteByID", ArticleRepository_DeleteByID)
-
 	})
 
 	t.Run("ArticleTagRepository", func(t *testing.T) {
 		t.Run("ReplaceAll", ArticleTagRepository_ReplaceAll)
-		t.Run("FindAllDetail", ArticleTagRepository_FindAllDetail)
-		t.Run("FindOneByArticleID", ArticleTagRepository_FindOneByArticleID)
-		t.Run("FindTagPopuler", ArticleTagRepository_FindTagPopuler)
+	})
+
+	t.Run("TagRepository", func(t *testing.T) {
+		t.Run("FindTagPopuler", TagRepository_FindTagPopuler)
+	})
+
+	t.Run("ArticleRepository", func(t *testing.T) {
+		t.Run("FindOneByID", ArticleRepository_FindOneByID)
+		t.Run("FindAllPaginate", ArticleRepository_FindAllPaginate)
+		t.Run("UpdateByID", ArticleRepository_UpdateByID)
+		t.Run("DeleteByID", ArticleRepository_DeleteByID)
 	})
 }

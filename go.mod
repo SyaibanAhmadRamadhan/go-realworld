@@ -3,7 +3,7 @@ module realworld-go
 go 1.21
 
 require (
-	github.com/SyaibanAhmadRamadhan/gocatch v1.2.1
+	github.com/SyaibanAhmadRamadhan/gocatch v1.231215.2308
 	go.mongodb.org/mongo-driver v1.13.1
 )
 

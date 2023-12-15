@@ -20,10 +20,6 @@ func NewUserRepositoryImpl(db *mongo.Database) repository.UserRepository {
 	return &userRepositoryImpl{db: db}
 }
 
-func (u *userRepositoryImpl) collection() *mongo.Collection {
-	user := model.User{}
-	return u.db.Collection(user.TableName())
-}
 func (u *userRepositoryImpl) FindByOneColumn(ctx context.Context, param repository.FindByOneColumnParam, columns ...string) (user model.User, err error) {
 	filter := bson.D{{Key: param.Column, Value: param.Value}}
 	projection := bson.D{}
@@ -35,7 +31,7 @@ func (u *userRepositoryImpl) FindByOneColumn(ctx context.Context, param reposito
 
 	opts := options.FindOne().SetProjection(projection)
 
-	err = u.collection().FindOne(ctx, filter, opts).Decode(&user)
+	err = u.db.Collection(model.UserTableName).FindOne(ctx, filter, opts).Decode(&user)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			err = repository.ErrDataNotFound
@@ -46,7 +42,7 @@ func (u *userRepositoryImpl) FindByOneColumn(ctx context.Context, param reposito
 }
 
 func (u *userRepositoryImpl) Create(ctx context.Context, user model.User) (err error) {
-	_, err = u.collection().InsertOne(ctx, user)
+	_, err = u.db.Collection(model.UserTableName).InsertOne(ctx, user)
 	return
 }
 
@@ -62,7 +58,7 @@ func (u *userRepositoryImpl) UpdateByID(ctx context.Context, user model.User, co
 	}
 
 	update := bson.D{{Key: "$set", Value: set}}
-	res, err := u.collection().UpdateByID(ctx, user.ID, update)
+	res, err := u.db.Collection(model.UserTableName).UpdateByID(ctx, user.ID, update)
 	if err != nil {
 		return
 	}

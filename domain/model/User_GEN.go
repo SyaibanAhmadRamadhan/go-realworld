@@ -6,6 +6,9 @@ import (
 	"errors"
 )
 
+// UserTableName this table or collection name
+const UserTableName string = "user"
+
 // NewUser is a struct with pointer that represents the table User in the database.
 func NewUser() *User {
 	return &User{}
@@ -14,31 +17,6 @@ func NewUser() *User {
 // NewUserWithOutPtr is a struct without pointer that represents the table User in the database.
 func NewUserWithOutPtr() User {
 	return User{}
-}
-
-// TableName is a function to get table name
-func (u *User) TableName() (table string) {
-	return "user"
-}
-
-// FieldImage is a field or column in the table User.
-func (u *User) FieldImage() string {
-	return "image"
-}
-
-// SetImage is a setter for the field or column Image in the table User.
-func (u *User) SetImage(param string) {
-	u.Image = param
-}
-
-// FieldBio is a field or column in the table User.
-func (u *User) FieldBio() string {
-	return "bio"
-}
-
-// SetBio is a setter for the field or column Bio in the table User.
-func (u *User) SetBio(param *string) {
-	u.Bio = param
 }
 
 // FieldDemo is a field or column in the table User.
@@ -91,16 +69,43 @@ func (u *User) SetPassword(param string) {
 	u.Password = param
 }
 
+// FieldImage is a field or column in the table User.
+func (u *User) FieldImage() string {
+	return "image"
+}
+
+// SetImage is a setter for the field or column Image in the table User.
+func (u *User) SetImage(param string) {
+	u.Image = param
+}
+
+// FieldBio is a field or column in the table User.
+func (u *User) FieldBio() string {
+	return "bio"
+}
+
+// SetBio is a setter for the field or column Bio in the table User.
+func (u *User) SetBio(param *string) {
+	u.Bio = param
+}
+
 // AllField is a function to get all field or column in the table User.
 func (u *User) AllField() (str []string) {
 	str = []string{ 
+		`_id`,
+		`email`,
+		`username`,
 		`password`,
 		`image`,
 		`bio`,
 		`demo`,
-		`_id`,
-		`email`,
-		`username`,
+	}
+	return
+}
+
+// OrderFields is a function to get all field or column in the table User.
+func (u *User) OrderFields() (str []string) {
+	str = []string{ 
 	}
 	return
 }
@@ -110,6 +115,10 @@ func (u *User) GetValuesByColums(columns ...string) []any {
 	var values []any
 	for _, column := range columns {
 		switch column {
+		case u.FieldID():
+			values = append(values, u.ID)
+		case u.FieldEmail():
+			values = append(values, u.Email)
 		case u.FieldUsername():
 			values = append(values, u.Username)
 		case u.FieldPassword():
@@ -120,10 +129,6 @@ func (u *User) GetValuesByColums(columns ...string) []any {
 			values = append(values, u.Bio)
 		case u.FieldDemo():
 			values = append(values, u.Demo)
-		case u.FieldID():
-			values = append(values, u.ID)
-		case u.FieldEmail():
-			values = append(values, u.Email)
 		}
 	}
 	return values
@@ -133,6 +138,18 @@ func (u *User) GetValuesByColums(columns ...string) []any {
 func (u *User) ScanMap(data map[string]any) (err error) {
 	for key, value := range data {
 		switch key {
+		case u.FieldImage():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field Image")
+			}
+			u.SetImage(val)
+		case u.FieldBio():
+			val, ok := value.(*string)
+			if !ok {
+				return errors.New("invalid type *string. field Bio")
+			}
+			u.SetBio(val)
 		case u.FieldDemo():
 			val, ok := value.(bool)
 			if !ok {
@@ -163,18 +180,6 @@ func (u *User) ScanMap(data map[string]any) (err error) {
 				return errors.New("invalid type string. field Password")
 			}
 			u.SetPassword(val)
-		case u.FieldImage():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field Image")
-			}
-			u.SetImage(val)
-		case u.FieldBio():
-			val, ok := value.(*string)
-			if !ok {
-				return errors.New("invalid type *string. field Bio")
-			}
-			u.SetBio(val)
 		default:
 			return errors.New("invalid column")
 		}

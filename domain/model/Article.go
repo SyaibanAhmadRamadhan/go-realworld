@@ -5,12 +5,12 @@ import (
 )
 
 type Article struct {
-	ID          string    `bson:"_id"`
-	AuthorID    string    `bson:"authorID"`
-	Slug        string    `bson:"slug"`
-	Title       string    `bson:"title"`
-	Description string    `bson:"description"`
-	Body        string    `bson:"body"`
-	CreatedAt   time.Time `bson:"createdAt"`
-	UpdatedAt   time.Time `bson:"updatedAt"`
+	ID          string    `bson:"_id"          order:"true"`
+	AuthorID    string    `bson:"authorID"     order:"false"`
+	Slug        string    `bson:"slug"         order:"true"`
+	Title       string    `bson:"title"        order:"true"`
+	Description string    `bson:"description"  order:"false"`
+	Body        string    `bson:"body"         order:"false"`
+	CreatedAt   time.Time `bson:"createdAt"    order:"true"`
+	UpdatedAt   time.Time `bson:"updatedAt"    order:"true"`
 }

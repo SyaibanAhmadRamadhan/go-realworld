@@ -16,7 +16,8 @@ type userFavoriteRepositoryImpl struct {
 func NewUserFavoriteRepositoryImpl(db *mongo.Database) repository.UserFavoriteRepository {
 	return &userFavoriteRepositoryImpl{db: db}
 }
-func (u *userFavoriteRepositoryImpl) collection() *mongo.Collection {
+
+func (u *userFavoriteRepositoryImpl) userFavoriteColl() *mongo.Collection {
 	userFavorite := model.UserFavorite{}
 	return u.db.Collection(userFavorite.TableName())
 }

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
+	"github.com/SyaibanAhmadRamadhan/gocatch/ginfra/gdb"
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 
@@ -50,6 +51,29 @@ func TagRepository_FindAllByIDS(t *testing.T) {
 	res, err := tagRepository.FindAllByIDS(context.Background(), ids)
 	assert.NoError(t, err)
 	assert.Equal(t, tags, res)
+}
+
+func TagRepository_FindTagPopuler(t *testing.T) {
+	res, err := tagRepository.FindTagPopuler(context.Background(), 5)
+	assert.NoError(t, err)
+	for _, re := range res {
+		resArticle, errArticle := articleRepository.FindAllPaginate(context.Background(), repository.ParamFindAllPaginate{
+			TagIDs: []string{re.TagID},
+			Orders: gdb.OrderByParams{
+				{Column: "slug", IsAscending: true},
+			},
+			Pagination: repository.PaginationParam{
+				Limit:  2,
+				Offset: 0,
+			},
+			AggregationOpt: repository.ParamFindAllPaginateOpt{
+				Tag:      true,
+				Favorite: false,
+			},
+		})
+		assert.NoError(t, errArticle)
+		assert.Equal(t, re.Count, resArticle.Total)
+	}
 }
 
 func TagRepository_UpdateByID(t *testing.T) {

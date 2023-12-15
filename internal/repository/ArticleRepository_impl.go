@@ -2,11 +2,11 @@ package repository
 
 import (
 	"context"
-	"errors"
 
+	"github.com/SyaibanAhmadRamadhan/gocatch/garray"
+	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"realworld-go/domain/model"
 	"realworld-go/domain/repository"
@@ -22,79 +22,159 @@ func NewArticleRepositoryImpl(db *mongo.Database) repository.ArticleRepository {
 	}
 }
 
-func (a *articleRepositoryImpl) collection() *mongo.Collection {
-	article := model.Article{}
-	return a.db.Collection(article.TableName())
-}
+func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param repository.ParamFindAllPaginate, articleColumns ...string) (
+	res repository.ResultFindAllArticle, err error) {
+	pipeline := mongo.Pipeline{}
 
-func (a *articleRepositoryImpl) articleTagColl() *mongo.Collection {
-	articleTag := model.ArticleTag{}
-	return a.db.Collection(articleTag.TableName())
-}
+	pipeline = append(pipeline,
+		bson.D{{Key: "$lookup", Value: bson.D{
+			{Key: "from", Value: model.ArticleTagTableName},
+			{Key: "localField", Value: "_id"},
+			{Key: "foreignField", Value: "articleID"},
+			{Key: "pipeline", Value: bson.A{
+				bson.D{{Key: "$project", Value: bson.D{
+					{Key: "tagID", Value: 1},
+					{Key: "articleID", Value: 1},
+				}}},
+			}},
+			{Key: "as", Value: "article_tag"},
+		}}},
+	)
 
-func (a *articleRepositoryImpl) FindAllByIDs(ctx context.Context, ids []string, columns ...string) (
-	articles []model.Article, err error) {
-	opts := options.Find()
-
-	if columns != nil {
-		projection := bson.D{}
-		for _, column := range columns {
-			projection = append(projection, bson.E{Key: column, Value: 1})
-		}
-		opts.SetProjection(projection)
+	if len(param.TagIDs) > 0 {
+		pipeline = append(pipeline, bson.D{
+			{"$match", bson.D{
+				{"article_tag.tagID", bson.D{{"$in", param.TagIDs}}},
+			}},
+		})
 	}
 
-	filter := bson.D{
-		bson.E{
-			Key: "_id",
-			Value: bson.D{
-				bson.E{
-					Key: "$in", Value: ids,
-				},
-			},
+	if param.AggregationOpt.Tag {
+		pipeline = append(pipeline,
+			bson.D{{Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: model.TagTableName},
+				{Key: "localField", Value: "article_tag.tagID"},
+				{Key: "foreignField", Value: "_id"},
+				{Key: "as", Value: "tags"},
+			}}},
+		)
+	}
+
+	pipeline = append(pipeline,
+		bson.D{
+			{Key: "$project", Value: bson.D{
+				{Key: "tags", Value: "$tags"},
+				{Key: "article", Value: a.projectionArticle(true, articleColumns...)},
+			}},
 		},
+	)
+
+	curTotal, err := a.db.Collection(model.ArticleTableName).Aggregate(ctx, append(pipeline, bson.D{bson.E{Key: "$count", Value: "total"}}))
+	if err != nil {
+		return
+	}
+	if curTotal.Next(ctx) {
+		totalMap := bson.M{}
+		if err = curTotal.Decode(&totalMap); err != nil {
+			return
+		}
+
+		total, ok := totalMap["total"].(int32)
+		if !ok {
+			return res, repository.ErrInvalidTotalType
+		}
+		res.Total = int64(total)
 	}
 
-	cur, err := a.collection().Find(ctx, filter, opts)
+	orderArticles := param.Orders.FilterDifferent(model.NewArticle().OrderFields())
+	if orderArticles != nil {
+		sort := bson.D{}
+		for _, orderArticle := range orderArticles {
+			sort = append(sort,
+				bson.E{Key: "article." + orderArticle.Column, Value: gcommon.Ternary(orderArticle.IsAscending, 1, -1)},
+			)
+		}
+		pipeline = append(pipeline,
+			bson.D{bson.E{Key: "$sort", Value: sort}},
+		)
+	}
+
+	pipeline = append(pipeline,
+		bson.D{bson.E{Key: "$skip", Value: param.Pagination.Offset}},
+		bson.D{bson.E{Key: "$limit", Value: param.Pagination.Limit}},
+	)
+	cur, err := a.db.Collection(model.ArticleTableName).Aggregate(ctx, pipeline)
 	if err != nil {
 		return
 	}
 
-	for cur.Next(ctx) {
-		var article model.Article
-		if err = cur.Decode(&article); err != nil {
-			return
-		}
-		articles = append(articles, article)
-	}
-
+	err = cur.All(ctx, &res.Articles)
 	return
 }
 
-func (a *articleRepositoryImpl) FindById(ctx context.Context, id string, columns ...string) (art model.Article, err error) {
-	projection := bson.D{}
-	if len(columns) > 0 {
-		for _, column := range columns {
-			projection = append(projection, bson.E{Key: column, Value: 1})
-		}
+func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param repository.ParamFindOneByID, articleColumns ...string) (
+	res repository.ResultFindOneArticle, err error) {
+	pipeline := mongo.Pipeline{}
+
+	pipeline = append(pipeline,
+		bson.D{{Key: "$match", Value: bson.D{
+			{Key: "_id", Value: bson.D{
+				{Key: "$eq", Value: param.ArticleID},
+			}},
+		}}},
+	)
+	if param.AggregationOpt.Tag || param.AggregationOpt.Favorite {
+		pipeline = append(pipeline,
+			bson.D{{Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: model.ArticleTagTableName},
+				{Key: "localField", Value: "_id"},
+				{Key: "foreignField", Value: "articleID"},
+				{Key: "as", Value: "article_tag"},
+			}}},
+		)
 	}
 
-	opts := options.FindOne().SetProjection(projection)
+	if param.AggregationOpt.Tag {
+		pipeline = append(pipeline,
+			bson.D{{Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: model.TagTableName},
+				{Key: "localField", Value: "article_tag.tagID"},
+				{Key: "foreignField", Value: "_id"},
+				{Key: "as", Value: "tags"},
+			}}},
+		)
+	}
 
-	filter := bson.D{{Key: "_id", Value: id}}
+	project := a.projectionArticle(true, articleColumns...)
+	project = garray.AppendUniqueVal(project, bson.E{Key: "_id", Value: "$$ROOT._id"})
+	pipeline = append(pipeline,
+		bson.D{
+			{Key: "$project", Value: bson.D{
+				{Key: "tags", Value: "$tags"},
+				{Key: "_id", Value: 0},
+				{Key: "article", Value: project},
+			}},
+		},
+		bson.D{{Key: "$limit", Value: 1}},
+	)
 
-	err = a.collection().FindOne(ctx, filter, opts).Decode(&art)
+	cur, err := a.db.Collection(model.ArticleTableName).Aggregate(ctx, pipeline)
 	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			err = repository.ErrDataNotFound
-		}
+		return
 	}
 
-	return
+	if cur.Next(ctx) {
+		if err = cur.Decode(&res); err != nil {
+			return
+		}
+		return
+	}
+
+	return res, repository.ErrDataNotFound
 }
 
 func (a *articleRepositoryImpl) Create(ctx context.Context, article model.Article) (err error) {
-	_, err = a.collection().InsertOne(ctx, article)
+	_, err = a.db.Collection(model.ArticleTableName).InsertOne(ctx, article)
 	return
 }
 
@@ -112,7 +192,7 @@ func (a *articleRepositoryImpl) UpdateByID(ctx context.Context, article model.Ar
 
 	update := bson.D{{"$set", set}}
 
-	res, err := a.collection().UpdateOne(ctx, filter, update)
+	res, err := a.db.Collection(model.ArticleTableName).UpdateOne(ctx, filter, update)
 	if err != nil {
 		return
 	}
@@ -127,7 +207,12 @@ func (a *articleRepositoryImpl) UpdateByID(ctx context.Context, article model.Ar
 func (a *articleRepositoryImpl) DeleteByID(ctx context.Context, article model.Article) (err error) {
 	filter := bson.D{bson.E{Key: "_id", Value: article.ID}}
 
-	res, err := a.collection().DeleteOne(ctx, filter)
+	res, err := a.db.Collection(model.ArticleTableName).DeleteOne(ctx, filter)
+	if err != nil {
+		return
+	}
+
+	_, err = a.db.Collection(model.ArticleTagTableName).DeleteMany(ctx, bson.D{{Key: "articleID", Value: article.ID}})
 	if err != nil {
 		return
 	}
@@ -137,4 +222,21 @@ func (a *articleRepositoryImpl) DeleteByID(ctx context.Context, article model.Ar
 	}
 
 	return
+}
+
+func (a *articleRepositoryImpl) projectionArticle(root bool, articleColumns ...string) bson.D {
+	lookupProjection := bson.D{}
+	if articleColumns != nil {
+		for _, column := range articleColumns {
+			lookupProjection = append(lookupProjection,
+				bson.E{Key: column, Value: gcommon.Ternary[any](root, "$$ROOT."+column, 1)})
+		}
+	} else {
+		article := model.NewArticle()
+		for _, column := range article.AllField() {
+			lookupProjection = append(lookupProjection,
+				bson.E{Key: column, Value: gcommon.Ternary[any](root, "$$ROOT."+column, 1)})
+		}
+	}
+	return lookupProjection
 }

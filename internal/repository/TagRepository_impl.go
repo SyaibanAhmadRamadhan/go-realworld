@@ -21,22 +21,12 @@ func NewTagRepositoryImpl(db *mongo.Database) repository.TagRepository {
 	}
 }
 
-func (t *tagRepositoryImpl) tagColl() *mongo.Collection {
-	tag := model.Tag{}
-	return t.db.Collection(tag.TableName())
-}
-
-func (t *tagRepositoryImpl) articleTagColl() *mongo.Collection {
-	articleTag := model.ArticleTag{}
-	return t.db.Collection(articleTag.TableName())
-}
-
 func (t *tagRepositoryImpl) FindAllByIDS(ctx context.Context, ids []string) (tags []model.Tag, err error) {
 	filter := bson.D{
 		bson.E{Key: "_id", Value: bson.D{bson.E{Key: "$in", Value: ids}}},
 	}
 
-	cur, err := t.tagColl().Find(ctx, filter)
+	cur, err := t.db.Collection(model.TagTableName).Find(ctx, filter)
 	for cur.Next(ctx) {
 		var tag model.Tag
 		if err = cur.Decode(&tag); err != nil {
@@ -54,7 +44,7 @@ func (t *tagRepositoryImpl) FindByID(ctx context.Context, id string) (tag model.
 		bson.E{Key: "_id", Value: id},
 	}
 
-	err = t.tagColl().FindOne(ctx, filter).Decode(&tag)
+	err = t.db.Collection(model.TagTableName).FindOne(ctx, filter).Decode(&tag)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			err = repository.ErrDataNotFound
@@ -64,8 +54,42 @@ func (t *tagRepositoryImpl) FindByID(ctx context.Context, id string) (tag model.
 	return
 }
 
+func (t *tagRepositoryImpl) FindTagPopuler(ctx context.Context, limit int64) (res []repository.ResultPopularTagRes, err error) {
+	groupStage := bson.D{
+		bson.E{Key: "$group", Value: bson.D{
+			bson.E{Key: "_id", Value: "$tagID"},
+			bson.E{Key: "count", Value: bson.D{
+				bson.E{Key: "$sum", Value: 1},
+			}},
+		}},
+	}
+	projectStage := bson.D{
+		{Key: "$project", Value: bson.D{
+			{Key: "tagID", Value: "$_id"},
+			{Key: "count", Value: "$count"},
+			{Key: "_id", Value: 0},
+		}},
+	}
+	sortStage := bson.D{
+		bson.E{Key: "$sort", Value: bson.D{
+			bson.E{Key: "count", Value: -1},
+		}},
+	}
+	limitStage := bson.D{
+		bson.E{Key: "$limit", Value: limit},
+	}
+
+	cur, err := t.db.Collection(model.ArticleTagTableName).Aggregate(ctx, mongo.Pipeline{
+		groupStage, projectStage, sortStage, limitStage,
+	})
+
+	err = cur.All(ctx, &res)
+
+	return
+}
+
 func (t *tagRepositoryImpl) Create(ctx context.Context, tag model.Tag) (err error) {
-	_, err = t.tagColl().InsertOne(ctx, tag)
+	_, err = t.db.Collection(model.TagTableName).InsertOne(ctx, tag)
 	return
 }
 
@@ -85,7 +109,7 @@ func (t *tagRepositoryImpl) UpdateByID(ctx context.Context, tag model.Tag, colum
 
 	update := bson.D{{"$set", set}}
 
-	res, err := t.tagColl().UpdateOne(ctx, filter, update)
+	res, err := t.db.Collection(model.TagTableName).UpdateOne(ctx, filter, update)
 	if err != nil {
 		return
 	}
@@ -100,7 +124,7 @@ func (t *tagRepositoryImpl) UpdateByID(ctx context.Context, tag model.Tag, colum
 func (t *tagRepositoryImpl) DeleteByID(ctx context.Context, tag model.Tag) (err error) {
 	filter := bson.D{bson.E{Key: "_id", Value: tag.ID}}
 
-	res, err := t.tagColl().DeleteOne(ctx, filter)
+	res, err := t.db.Collection(model.TagTableName).DeleteOne(ctx, filter)
 	if err != nil {
 		return
 	}
