@@ -3,11 +3,13 @@ package repository
 import (
 	"context"
 
+	"github.com/SyaibanAhmadRamadhan/gocatch/ginfra/gdb"
+
 	"realworld-go/domain/model"
 )
 
 type UserRepository interface {
-	FindByOneColumn(ctx context.Context, param FindByOneColumnParam, columns ...string) (user model.User, err error)
+	FindByOneColumn(ctx context.Context, param gdb.FindByOneColumnParam, columns ...string) (user model.User, err error)
 	Create(ctx context.Context, user model.User) (err error)
 	UpdateByID(ctx context.Context, user model.User, columns []string) (err error)
 }

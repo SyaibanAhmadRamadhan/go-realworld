@@ -60,10 +60,25 @@ func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param repos
 		)
 	}
 
+	if param.AggregationOpt.Favorite {
+		pipeline = append(pipeline,
+			bson.D{{Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: model.UserFavoriteTableName},
+				{Key: "localField", Value: "_id"},
+				{Key: "foreignField", Value: "articleID"},
+				{Key: "as", Value: "userFavorites"},
+			}}},
+			bson.D{{Key: "$addFields", Value: bson.D{
+				{Key: "userFavoritesCount", Value: bson.D{{Key: "$size", Value: "$userFavorites"}}},
+			}}},
+		)
+	}
+
 	pipeline = append(pipeline,
 		bson.D{
 			{Key: "$project", Value: bson.D{
 				{Key: "tags", Value: "$tags"},
+				{Key: "favorite", Value: "$userFavoritesCount"},
 				{Key: "article", Value: a.projectionArticle(true, articleColumns...)},
 			}},
 		},
@@ -144,6 +159,19 @@ func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param repositor
 			}}},
 		)
 	}
+	if param.AggregationOpt.Favorite {
+		pipeline = append(pipeline,
+			bson.D{{Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: model.UserFavoriteTableName},
+				{Key: "localField", Value: "_id"},
+				{Key: "foreignField", Value: "articleID"},
+				{Key: "as", Value: "userFavorites"},
+			}}},
+			bson.D{{Key: "$addFields", Value: bson.D{
+				{Key: "userFavoritesCount", Value: bson.D{{Key: "$size", Value: "$userFavorites"}}},
+			}}},
+		)
+	}
 
 	project := a.projectionArticle(true, articleColumns...)
 	project = garray.AppendUniqueVal(project, bson.E{Key: "_id", Value: "$$ROOT._id"})
@@ -151,6 +179,7 @@ func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param repositor
 		bson.D{
 			{Key: "$project", Value: bson.D{
 				{Key: "tags", Value: "$tags"},
+				{Key: "favorite", Value: "$userFavoritesCount"},
 				{Key: "_id", Value: 0},
 				{Key: "article", Value: project},
 			}},
@@ -165,8 +194,9 @@ func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param repositor
 
 	if cur.Next(ctx) {
 		if err = cur.Decode(&res); err != nil {
-			return
+			// return
 		}
+
 		return
 	}
 
@@ -198,7 +228,7 @@ func (a *articleRepositoryImpl) UpdateByID(ctx context.Context, article model.Ar
 	}
 
 	if res.MatchedCount == 0 {
-		return repository.ErrUpdateDataNotFound
+		err = repository.ErrUpdateDataNotFound
 	}
 
 	return

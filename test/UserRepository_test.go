@@ -7,11 +7,11 @@ import (
 
 	"github.com/SyaibanAhmadRamadhan/gocatch/garray"
 	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
+	"github.com/SyaibanAhmadRamadhan/gocatch/ginfra/gdb"
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 
 	"realworld-go/domain/model"
-	"realworld-go/domain/repository"
 )
 
 var users []model.User
@@ -37,7 +37,7 @@ func UserRepository_Create(t *testing.T) {
 
 func UserRepository_FindByOneColumn(t *testing.T) {
 	var param []struct {
-		filter         []repository.FindByOneColumnParam
+		filter         []gdb.FindByOneColumnParam
 		expected       model.User
 		columnSelected []string
 	}
@@ -57,11 +57,11 @@ func UserRepository_FindByOneColumn(t *testing.T) {
 			columnSelected = resc
 		}
 		param = append(param, struct {
-			filter         []repository.FindByOneColumnParam
+			filter         []gdb.FindByOneColumnParam
 			expected       model.User
 			columnSelected []string
 		}{
-			filter: []repository.FindByOneColumnParam{
+			filter: []gdb.FindByOneColumnParam{
 				{
 					Column: "email",
 					Value:  user.Email,
@@ -123,7 +123,7 @@ func UserRepository_UpdateByID(t *testing.T) {
 
 	users = newUsers
 	for _, user := range users {
-		res, err := userRepository.FindByOneColumn(context.Background(), repository.FindByOneColumnParam{
+		res, err := userRepository.FindByOneColumn(context.Background(), gdb.FindByOneColumnParam{
 			Column: "_id",
 			Value:  user.ID,
 		})

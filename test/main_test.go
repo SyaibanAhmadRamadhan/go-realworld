@@ -68,12 +68,14 @@ var tagRepository repository.TagRepository
 var userRepository repository.UserRepository
 var articleRepository repository.ArticleRepository
 var articleTagRepository repository.ArticleTagRepository
+var userFavoriteRepository repository.UserFavoriteRepository
 
 func initRepository() {
 	tagRepository = repositoryimpl.NewTagRepositoryImpl(mongodb)
 	userRepository = repositoryimpl.NewUserRepositoryImpl(mongodb)
 	articleRepository = repositoryimpl.NewArticleRepositoryImpl(mongodb)
 	articleTagRepository = repositoryimpl.NewArticleTagRepositoryImpl(mongodb)
+	userFavoriteRepository = repositoryimpl.NewUserFavoriteRepositoryImpl(mongodb)
 }
 
 func TestRun(t *testing.T) {
@@ -81,14 +83,14 @@ func TestRun(t *testing.T) {
 		t.Run("Create", TagRepository_Create)
 		t.Run("FindOneByID", TagRepository_FindByID)
 		t.Run("FindAllByIDs", TagRepository_FindAllByIDS)
-		t.Run("UpdateByID", TagRepository_UpdateByID)
+		t.Run("UpSertByID", TagRepository_UpdateByID)
 		t.Run("DeleteByID", TagRepository_DeleteByID)
 	})
 
 	t.Run("UserRepository", func(t *testing.T) {
 		t.Run("Create", UserRepository_Create)
 		t.Run("FindByOneColumn", UserRepository_FindByOneColumn)
-		t.Run("UpdateByID", UserRepository_UpdateByID)
+		t.Run("UpSertByID", UserRepository_UpdateByID)
 	})
 
 	t.Run("ArticleRepository", func(t *testing.T) {
@@ -103,10 +105,15 @@ func TestRun(t *testing.T) {
 		t.Run("FindTagPopuler", TagRepository_FindTagPopuler)
 	})
 
+	t.Run("UserFavoriteRepository", func(t *testing.T) {
+		t.Run("UpSertByUserID", UserFavoriteRepository_UpSertByUserID)
+		t.Run("FindAllArticleByUserID", UserFavoriteRepository_FindAllArticleByUserID)
+	})
+
 	t.Run("ArticleRepository", func(t *testing.T) {
 		t.Run("FindOneByID", ArticleRepository_FindOneByID)
 		t.Run("FindAllPaginate", ArticleRepository_FindAllPaginate)
-		t.Run("UpdateByID", ArticleRepository_UpdateByID)
+		t.Run("UpSertByID", ArticleRepository_UpdateByID)
 		t.Run("DeleteByID", ArticleRepository_DeleteByID)
 	})
 }

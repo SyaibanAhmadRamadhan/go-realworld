@@ -11,6 +11,7 @@ func TestGenerator(t *testing.T) {
 		articleModel(),
 		tagModel(),
 		userModel(),
+		commentModel(),
 	}
 
 	gdb.GeneratorModelFromStruct(gen...)
@@ -46,5 +47,16 @@ func userModel() gdb.GeneratorModelForStructParam {
 		},
 		Tag:      "bson",
 		FileName: "User",
+	}
+}
+
+func commentModel() gdb.GeneratorModelForStructParam {
+	return gdb.GeneratorModelForStructParam{
+		Src: &Comment{},
+		SpecifiationTable: gdb.SpecifiationTable{
+			TableName: "comment",
+		},
+		Tag:      "bson",
+		FileName: "Comment",
 	}
 }

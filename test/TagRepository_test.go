@@ -62,7 +62,7 @@ func TagRepository_FindTagPopuler(t *testing.T) {
 			Orders: gdb.OrderByParams{
 				{Column: "slug", IsAscending: true},
 			},
-			Pagination: repository.PaginationParam{
+			Pagination: gdb.PaginationParam{
 				Limit:  2,
 				Offset: 0,
 			},

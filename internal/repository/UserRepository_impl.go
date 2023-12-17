@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/SyaibanAhmadRamadhan/gocatch/ginfra/gdb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -20,7 +21,7 @@ func NewUserRepositoryImpl(db *mongo.Database) repository.UserRepository {
 	return &userRepositoryImpl{db: db}
 }
 
-func (u *userRepositoryImpl) FindByOneColumn(ctx context.Context, param repository.FindByOneColumnParam, columns ...string) (user model.User, err error) {
+func (u *userRepositoryImpl) FindByOneColumn(ctx context.Context, param gdb.FindByOneColumnParam, columns ...string) (user model.User, err error) {
 	filter := bson.D{{Key: param.Column, Value: param.Value}}
 	projection := bson.D{}
 	if columns != nil {

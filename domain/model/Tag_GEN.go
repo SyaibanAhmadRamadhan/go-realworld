@@ -42,8 +42,8 @@ func (t *Tag) SetName(param string) {
 // AllField is a function to get all field or column in the table Tag.
 func (t *Tag) AllField() (str []string) {
 	str = []string{ 
-		`name`,
 		`_id`,
+		`name`,
 	}
 	return
 }
@@ -62,10 +62,10 @@ func (t *Tag) GetValuesByColums(columns ...string) []any {
 	var values []any
 	for _, column := range columns {
 		switch column {
-		case t.FieldName():
-			values = append(values, t.Name)
 		case t.FieldID():
 			values = append(values, t.ID)
+		case t.FieldName():
+			values = append(values, t.Name)
 		}
 	}
 	return values

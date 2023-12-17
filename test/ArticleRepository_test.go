@@ -49,7 +49,7 @@ func ArticleRepository_FindOneByID(t *testing.T) {
 				ArticleID: article.ID,
 				AggregationOpt: repository.ParamFindAllPaginateOpt{
 					Tag:      false,
-					Favorite: false,
+					Favorite: true,
 				},
 			}, "slug")
 			assert.NoError(t, err)
@@ -84,13 +84,13 @@ func ArticleRepository_FindAllPaginate(t *testing.T) {
 			{Column: "slug", IsAscending: true},
 			{Column: "asal", IsAscending: true},
 		},
-		Pagination: repository.PaginationParam{
+		Pagination: gdb.PaginationParam{
 			Limit:  5,
 			Offset: 0,
 		},
 		AggregationOpt: repository.ParamFindAllPaginateOpt{
-			Tag:      false,
-			Favorite: false,
+			Tag:      true,
+			Favorite: true,
 		},
 	}, "slug")
 	assert.NoError(t, err)
@@ -162,7 +162,7 @@ func ArticleRepository_DeleteByID(t *testing.T) {
 		Orders: gdb.OrderByParams{
 			{Column: "slug", IsAscending: true},
 		},
-		Pagination: repository.PaginationParam{
+		Pagination: gdb.PaginationParam{
 			Limit:  5,
 			Offset: 0,
 		},
@@ -194,7 +194,7 @@ func ArticleRepository_DeleteByID(t *testing.T) {
 		Orders: gdb.OrderByParams{
 			{Column: "slug", IsAscending: true},
 		},
-		Pagination: repository.PaginationParam{
+		Pagination: gdb.PaginationParam{
 			Limit:  5,
 			Offset: 0,
 		},

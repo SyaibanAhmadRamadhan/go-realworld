@@ -19,7 +19,7 @@ type ArticleRepository interface {
 type ParamFindAllPaginate struct {
 	TagIDs         []string
 	Orders         gdb.OrderByParams
-	Pagination     PaginationParam
+	Pagination     gdb.PaginationParam
 	AggregationOpt ParamFindAllPaginateOpt
 }
 
@@ -34,8 +34,9 @@ type ParamFindAllPaginateOpt struct {
 }
 
 type ResultFindOneArticle struct {
-	Article model.Article `bson:"article"`
-	Tags    []model.Tag   `bson:"tags"`
+	Article  model.Article `bson:"article"`
+	Favorite int64         `bson:"favorite"`
+	Tags     []model.Tag   `bson:"tags"`
 }
 
 type ResultFindAllArticle struct {

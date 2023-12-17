@@ -21,46 +21,6 @@ func NewArticleWithOutPtr() Article {
 	return Article{}
 }
 
-// FieldDescription is a field or column in the table Article.
-func (a *Article) FieldDescription() string {
-	return "description"
-}
-
-// SetDescription is a setter for the field or column Description in the table Article.
-func (a *Article) SetDescription(param string) {
-	a.Description = param
-}
-
-// FieldBody is a field or column in the table Article.
-func (a *Article) FieldBody() string {
-	return "body"
-}
-
-// SetBody is a setter for the field or column Body in the table Article.
-func (a *Article) SetBody(param string) {
-	a.Body = param
-}
-
-// FieldCreatedAt is a field or column in the table Article.
-func (a *Article) FieldCreatedAt() string {
-	return "createdAt"
-}
-
-// SetCreatedAt is a setter for the field or column CreatedAt in the table Article.
-func (a *Article) SetCreatedAt(param time.Time) {
-	a.CreatedAt = param
-}
-
-// FieldUpdatedAt is a field or column in the table Article.
-func (a *Article) FieldUpdatedAt() string {
-	return "updatedAt"
-}
-
-// SetUpdatedAt is a setter for the field or column UpdatedAt in the table Article.
-func (a *Article) SetUpdatedAt(param time.Time) {
-	a.UpdatedAt = param
-}
-
 // FieldID is a field or column in the table Article.
 func (a *Article) FieldID() string {
 	return "_id"
@@ -101,17 +61,57 @@ func (a *Article) SetTitle(param string) {
 	a.Title = param
 }
 
+// FieldDescription is a field or column in the table Article.
+func (a *Article) FieldDescription() string {
+	return "description"
+}
+
+// SetDescription is a setter for the field or column Description in the table Article.
+func (a *Article) SetDescription(param string) {
+	a.Description = param
+}
+
+// FieldBody is a field or column in the table Article.
+func (a *Article) FieldBody() string {
+	return "body"
+}
+
+// SetBody is a setter for the field or column Body in the table Article.
+func (a *Article) SetBody(param string) {
+	a.Body = param
+}
+
+// FieldCreatedAt is a field or column in the table Article.
+func (a *Article) FieldCreatedAt() string {
+	return "createdAt"
+}
+
+// SetCreatedAt is a setter for the field or column CreatedAt in the table Article.
+func (a *Article) SetCreatedAt(param time.Time) {
+	a.CreatedAt = param
+}
+
+// FieldUpdatedAt is a field or column in the table Article.
+func (a *Article) FieldUpdatedAt() string {
+	return "updatedAt"
+}
+
+// SetUpdatedAt is a setter for the field or column UpdatedAt in the table Article.
+func (a *Article) SetUpdatedAt(param time.Time) {
+	a.UpdatedAt = param
+}
+
 // AllField is a function to get all field or column in the table Article.
 func (a *Article) AllField() (str []string) {
 	str = []string{ 
-		`createdAt`,
-		`updatedAt`,
-		`_id`,
-		`authorID`,
 		`slug`,
 		`title`,
 		`description`,
 		`body`,
+		`createdAt`,
+		`updatedAt`,
+		`_id`,
+		`authorID`,
 	}
 	return
 }
@@ -119,11 +119,11 @@ func (a *Article) AllField() (str []string) {
 // OrderFields is a function to get all field or column in the table Article.
 func (a *Article) OrderFields() (str []string) {
 	str = []string{ 
+		`createdAt`,
 		`updatedAt`,
 		`_id`,
 		`slug`,
 		`title`,
-		`createdAt`,
 	}
 	return
 }
@@ -133,12 +133,6 @@ func (a *Article) GetValuesByColums(columns ...string) []any {
 	var values []any
 	for _, column := range columns {
 		switch column {
-		case a.FieldCreatedAt():
-			values = append(values, a.CreatedAt)
-		case a.FieldUpdatedAt():
-			values = append(values, a.UpdatedAt)
-		case a.FieldID():
-			values = append(values, a.ID)
 		case a.FieldAuthorID():
 			values = append(values, a.AuthorID)
 		case a.FieldSlug():
@@ -149,6 +143,12 @@ func (a *Article) GetValuesByColums(columns ...string) []any {
 			values = append(values, a.Description)
 		case a.FieldBody():
 			values = append(values, a.Body)
+		case a.FieldCreatedAt():
+			values = append(values, a.CreatedAt)
+		case a.FieldUpdatedAt():
+			values = append(values, a.UpdatedAt)
+		case a.FieldID():
+			values = append(values, a.ID)
 		}
 	}
 	return values
@@ -158,12 +158,6 @@ func (a *Article) GetValuesByColums(columns ...string) []any {
 func (a *Article) ScanMap(data map[string]any) (err error) {
 	for key, value := range data {
 		switch key {
-		case a.FieldTitle():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field Title")
-			}
-			a.SetTitle(val)
 		case a.FieldDescription():
 			val, ok := value.(string)
 			if !ok {
@@ -206,6 +200,12 @@ func (a *Article) ScanMap(data map[string]any) (err error) {
 				return errors.New("invalid type string. field Slug")
 			}
 			a.SetSlug(val)
+		case a.FieldTitle():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field Title")
+			}
+			a.SetTitle(val)
 		default:
 			return errors.New("invalid column")
 		}
