@@ -5,23 +5,27 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"time"
 
-	"github.com/brianvoe/gofakeit/v6"
+	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
+	"github.com/SyaibanAhmadRamadhan/gocatch/genv"
+	"github.com/SyaibanAhmadRamadhan/gocatch/ginfra/gdb/gmongodb"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	"realworld-go/conf"
 )
 
 func main() {
-	// err := genv.Initialize(genv.DefaultEnvLib, false)
-	// gcommon.PanicIfError(err)
-	//
-	// mongoConf := conf.EnvMongodb()
-	// mClient, err := gmongodb.OpenConnMongoClient(mongoConf.URI())
-	// gcommon.PanicIfError(err)
-	//
-	// go graceFullShutdown(mClient)
-	//
-	// time.Sleep(10 * time.Second)
-	fmt.Println(gofakeit.Paragraph(3, 2, 10, "\n"))
+	err := genv.Initialize(genv.DefaultEnvLib, false)
+	gcommon.PanicIfError(err)
+
+	mongoConf := conf.EnvMongodb()
+	mClient, err := gmongodb.OpenConnMongoClient(mongoConf.URI())
+	gcommon.PanicIfError(err)
+
+	go graceFullShutdown(mClient)
+
+	time.Sleep(10 * time.Second)
 }
 
 func graceFullShutdown(mClient *mongo.Client) {

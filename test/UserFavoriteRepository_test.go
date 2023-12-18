@@ -7,8 +7,8 @@ import (
 	"github.com/SyaibanAhmadRamadhan/gocatch/ginfra/gdb"
 	"github.com/stretchr/testify/assert"
 
+	"realworld-go/domain"
 	"realworld-go/domain/model"
-	"realworld-go/domain/repository"
 )
 
 var userFavorites []model.UserFavorite
@@ -28,7 +28,7 @@ func UserFavoriteRepository_UpSertByUserID(t *testing.T) {
 
 func UserFavoriteRepository_FindAllArticleByUserID(t *testing.T) {
 	for _, user := range users {
-		res, err := userFavoriteRepository.FindAllArticleByUserID(context.Background(), repository.ParamFindAllArticleByUserID{
+		res, err := userFavoriteRepository.FindAllByUserID(context.Background(), domain.FindAllUserFavoriteParam{
 			WithTag: true,
 			Orders: gdb.OrderByParams{
 				{Column: "_id", IsAscending: true},

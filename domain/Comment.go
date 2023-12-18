@@ -1,4 +1,4 @@
-package repository
+package domain
 
 import (
 	"context"
@@ -9,12 +9,12 @@ import (
 )
 
 type CommentRepository interface {
-	FindAllByArticleID(ctx context.Context, param ParamFindAllByArticleID, fields ...string) (comments []model.Comment, err error)
+	FindAllByArticleID(ctx context.Context, param FindAllCommentParam, fields ...string) (comments []model.Comment, err error)
 	UpSertByID(ctx context.Context, comment model.Comment, fields ...string) (err error)
 	DeleteByID(ctx context.Context, id string) (err error)
 }
 
-type ParamFindAllByArticleID struct {
+type FindAllCommentParam struct {
 	ArticleID string
 	OrderBy   gdb.OrderByParams
 	LastID    string

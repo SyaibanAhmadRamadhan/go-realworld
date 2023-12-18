@@ -7,20 +7,20 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
+	"realworld-go/domain"
 	"realworld-go/domain/model"
-	"realworld-go/domain/repository"
 )
 
 type userFavoriteRepositoryImpl struct {
 	db *mongo.Database
 }
 
-func NewUserFavoriteRepositoryImpl(db *mongo.Database) repository.UserFavoriteRepository {
+func NewUserFavoriteRepositoryImpl(db *mongo.Database) domain.UserFavoriteRepository {
 	return &userFavoriteRepositoryImpl{db: db}
 }
 
-func (u *userFavoriteRepositoryImpl) FindAllArticleByUserID(ctx context.Context, param repository.ParamFindAllArticleByUserID) (
-	res repository.ResultFindAllArticleByUserID, err error) {
+func (u *userFavoriteRepositoryImpl) FindAllByUserID(ctx context.Context, param domain.FindAllUserFavoriteParam) (
+	res domain.FindAllArticleResult, err error) {
 	articleProjection := bson.D{}
 	if param.ArticleFields != nil {
 		for _, field := range param.ArticleFields {
@@ -94,7 +94,7 @@ func (u *userFavoriteRepositoryImpl) FindAllArticleByUserID(ctx context.Context,
 
 		total, ok := totalMap["total"].(int32)
 		if !ok {
-			return res, repository.ErrInvalidTotalType
+			return res, domain.ErrInvalidTotalType
 		}
 		res.Total = int64(total)
 	}
@@ -113,7 +113,7 @@ func (u *userFavoriteRepositoryImpl) FindAllArticleByUserID(ctx context.Context,
 
 func (u *userFavoriteRepositoryImpl) UpSertByUserID(ctx context.Context, userFavorite model.UserFavorite) (err error) {
 	if userFavorite.UserID == "" {
-		return repository.ErrIDParamIsEmpty
+		return domain.ErrIDParamIsEmpty
 	}
 
 	filter := bson.D{
@@ -144,7 +144,7 @@ func (u *userFavoriteRepositoryImpl) DeleteOneByUserID(ctx context.Context, user
 	}
 
 	if res.DeletedCount == 0 {
-		err = repository.ErrDelDataNotFound
+		err = domain.ErrDelDataNotFound
 	}
 
 	return

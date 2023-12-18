@@ -8,22 +8,22 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"realworld-go/domain"
 	"realworld-go/domain/model"
-	"realworld-go/domain/repository"
 )
 
 type articleRepositoryImpl struct {
 	db *mongo.Database
 }
 
-func NewArticleRepositoryImpl(db *mongo.Database) repository.ArticleRepository {
+func NewArticleRepositoryImpl(db *mongo.Database) domain.ArticleRepository {
 	return &articleRepositoryImpl{
 		db: db,
 	}
 }
 
-func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param repository.ParamFindAllPaginate, articleColumns ...string) (
-	res repository.ResultFindAllArticle, err error) {
+func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param domain.FindAllPaginateArticleParam, articleColumns ...string) (
+	res domain.FindAllArticleResult, err error) {
 	pipeline := mongo.Pipeline{}
 
 	pipeline = append(pipeline,
@@ -96,7 +96,7 @@ func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param repos
 
 		total, ok := totalMap["total"].(int32)
 		if !ok {
-			return res, repository.ErrInvalidTotalType
+			return res, domain.ErrInvalidTotalType
 		}
 		res.Total = int64(total)
 	}
@@ -127,8 +127,8 @@ func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param repos
 	return
 }
 
-func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param repository.ParamFindOneByID, articleColumns ...string) (
-	res repository.ResultFindOneArticle, err error) {
+func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param domain.FindOneByIDArticleParam, articleColumns ...string) (
+	res domain.FindOneArticleResult, err error) {
 	pipeline := mongo.Pipeline{}
 
 	pipeline = append(pipeline,
@@ -200,7 +200,7 @@ func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param repositor
 		return
 	}
 
-	return res, repository.ErrDataNotFound
+	return res, domain.ErrDataNotFound
 }
 
 func (a *articleRepositoryImpl) Create(ctx context.Context, article model.Article) (err error) {
@@ -228,7 +228,7 @@ func (a *articleRepositoryImpl) UpdateByID(ctx context.Context, article model.Ar
 	}
 
 	if res.MatchedCount == 0 {
-		err = repository.ErrUpdateDataNotFound
+		err = domain.ErrUpdateDataNotFound
 	}
 
 	return
@@ -248,7 +248,7 @@ func (a *articleRepositoryImpl) DeleteByID(ctx context.Context, article model.Ar
 	}
 
 	if res.DeletedCount == 0 {
-		return repository.ErrDelDataNotFound
+		return domain.ErrDelDataNotFound
 	}
 
 	return

@@ -12,8 +12,8 @@ import (
 	"github.com/ory/dockertest/v3"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"realworld-go/domain"
 	"realworld-go/domain/model"
-	"realworld-go/domain/repository"
 	repositoryimpl "realworld-go/internal/repository"
 )
 
@@ -64,11 +64,11 @@ func createCollection() {
 	fmt.Println("finished created collection")
 }
 
-var tagRepository repository.TagRepository
-var userRepository repository.UserRepository
-var articleRepository repository.ArticleRepository
-var articleTagRepository repository.ArticleTagRepository
-var userFavoriteRepository repository.UserFavoriteRepository
+var tagRepository domain.TagRepository
+var userRepository domain.UserRepository
+var articleRepository domain.ArticleRepository
+var articleTagRepository domain.ArticleTagRepository
+var userFavoriteRepository domain.UserFavoriteRepository
 
 func initRepository() {
 	tagRepository = repositoryimpl.NewTagRepositoryImpl(mongodb)
@@ -107,7 +107,7 @@ func TestRun(t *testing.T) {
 
 	t.Run("UserFavoriteRepository", func(t *testing.T) {
 		t.Run("UpSertByUserID", UserFavoriteRepository_UpSertByUserID)
-		t.Run("FindAllArticleByUserID", UserFavoriteRepository_FindAllArticleByUserID)
+		t.Run("FindAllByUserID", UserFavoriteRepository_FindAllArticleByUserID)
 	})
 
 	t.Run("ArticleRepository", func(t *testing.T) {

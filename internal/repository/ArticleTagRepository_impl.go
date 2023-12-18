@@ -6,15 +6,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"realworld-go/domain"
 	"realworld-go/domain/model"
-	"realworld-go/domain/repository"
 )
 
 type articleTagRepositoryImpl struct {
 	db *mongo.Database
 }
 
-func NewArticleTagRepositoryImpl(db *mongo.Database) repository.ArticleTagRepository {
+func NewArticleTagRepositoryImpl(db *mongo.Database) domain.ArticleTagRepository {
 	return &articleTagRepositoryImpl{
 		db: db,
 	}

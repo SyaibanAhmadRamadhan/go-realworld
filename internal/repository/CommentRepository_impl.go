@@ -7,21 +7,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
+	"realworld-go/domain"
 	"realworld-go/domain/model"
-	"realworld-go/domain/repository"
 )
 
 type commentRepositoryImpl struct {
 	db *mongo.Database
 }
 
-func NewCommentRepositoryImpl(db *mongo.Database) repository.CommentRepository {
+func NewCommentRepositoryImpl(db *mongo.Database) domain.CommentRepository {
 	return &commentRepositoryImpl{
 		db: db,
 	}
 }
 
-func (c *commentRepositoryImpl) FindAllByArticleID(ctx context.Context, param repository.ParamFindAllByArticleID, fields ...string) (comments []model.Comment, err error) {
+func (c *commentRepositoryImpl) FindAllByArticleID(ctx context.Context, param domain.FindAllCommentParam, fields ...string) (comments []model.Comment, err error) {
 	opts := options.Find().SetLimit(param.Limit).SetSort(bson.D{{Key: "_id", Value: -1}})
 	if fields != nil {
 		projectStage := bson.D{}
@@ -78,7 +78,7 @@ func (c *commentRepositoryImpl) UpSertByID(ctx context.Context, comment model.Co
 func (c *commentRepositoryImpl) DeleteByID(ctx context.Context, id string) (err error) {
 	res, err := c.db.Collection(model.CommentTableName).DeleteOne(ctx, bson.D{{Key: "_id", Value: id}})
 	if res.DeletedCount == 0 {
-		err = repository.ErrDelDataNotFound
+		err = domain.ErrDelDataNotFound
 	}
 
 	return

@@ -9,8 +9,8 @@ import (
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 
+	"realworld-go/domain"
 	"realworld-go/domain/model"
-	"realworld-go/domain/repository"
 )
 
 var tags []model.Tag
@@ -39,7 +39,7 @@ func TagRepository_FindByID(t *testing.T) {
 
 	t.Run("Failed", func(t *testing.T) {
 		_, err := tagRepository.FindByID(context.Background(), "tag.ID")
-		assert.Equal(t, repository.ErrDataNotFound, err)
+		assert.Equal(t, domain.ErrDataNotFound, err)
 	})
 }
 
@@ -57,7 +57,7 @@ func TagRepository_FindTagPopuler(t *testing.T) {
 	res, err := tagRepository.FindTagPopuler(context.Background(), 5)
 	assert.NoError(t, err)
 	for _, re := range res {
-		resArticle, errArticle := articleRepository.FindAllPaginate(context.Background(), repository.ParamFindAllPaginate{
+		resArticle, errArticle := articleRepository.FindAllPaginate(context.Background(), domain.FindAllPaginateArticleParam{
 			TagIDs: []string{re.TagID},
 			Orders: gdb.OrderByParams{
 				{Column: "slug", IsAscending: true},
@@ -66,7 +66,7 @@ func TagRepository_FindTagPopuler(t *testing.T) {
 				Limit:  2,
 				Offset: 0,
 			},
-			AggregationOpt: repository.ParamFindAllPaginateOpt{
+			AggregationOpt: domain.FindArticleOpt{
 				Tag:      true,
 				Favorite: false,
 			},
@@ -114,7 +114,7 @@ func TagRepository_UpdateByID(t *testing.T) {
 		err := tagRepository.UpdateByID(context.Background(), model.Tag{
 			ID: "random",
 		}, columns)
-		assert.Equal(t, repository.ErrUpdateDataNotFound, err)
+		assert.Equal(t, domain.ErrUpdateDataNotFound, err)
 	})
 }
 
@@ -143,7 +143,7 @@ func TagRepository_DeleteByID(t *testing.T) {
 			assert.NoError(t, err)
 
 			_, err = tagRepository.FindByID(context.Background(), tagDeleted.ID)
-			assert.Equal(t, repository.ErrDataNotFound, err)
+			assert.Equal(t, domain.ErrDataNotFound, err)
 		}
 	})
 
@@ -151,7 +151,7 @@ func TagRepository_DeleteByID(t *testing.T) {
 		err = tagRepository.DeleteByID(context.Background(), model.Tag{
 			ID: "random",
 		})
-		assert.Equal(t, repository.ErrDelDataNotFound, err)
+		assert.Equal(t, domain.ErrDelDataNotFound, err)
 	})
 
 	res, err = tagRepository.FindAllByIDS(context.Background(), ids)

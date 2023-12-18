@@ -1,4 +1,4 @@
-package repository
+package domain
 
 import (
 	"context"
@@ -9,37 +9,37 @@ import (
 )
 
 type ArticleRepository interface {
-	FindAllPaginate(ctx context.Context, param ParamFindAllPaginate, articleColumns ...string) (res ResultFindAllArticle, err error)
-	FindOneByID(ctx context.Context, param ParamFindOneByID, columns ...string) (res ResultFindOneArticle, err error)
+	FindAllPaginate(ctx context.Context, param FindAllPaginateArticleParam, articleColumns ...string) (res FindAllArticleResult, err error)
+	FindOneByID(ctx context.Context, param FindOneByIDArticleParam, columns ...string) (res FindOneArticleResult, err error)
 	Create(ctx context.Context, article model.Article) (err error)
 	UpdateByID(ctx context.Context, article model.Article, columns []string) (err error)
 	DeleteByID(ctx context.Context, article model.Article) (err error)
 }
 
-type ParamFindAllPaginate struct {
+type FindAllPaginateArticleParam struct {
 	TagIDs         []string
 	Orders         gdb.OrderByParams
 	Pagination     gdb.PaginationParam
-	AggregationOpt ParamFindAllPaginateOpt
+	AggregationOpt FindArticleOpt
 }
 
-type ParamFindOneByID struct {
+type FindOneByIDArticleParam struct {
 	ArticleID      string
-	AggregationOpt ParamFindAllPaginateOpt
+	AggregationOpt FindArticleOpt
 }
 
-type ParamFindAllPaginateOpt struct {
+type FindArticleOpt struct {
 	Tag      bool
 	Favorite bool
 }
 
-type ResultFindOneArticle struct {
+type FindOneArticleResult struct {
 	Article  model.Article `bson:"article"`
 	Favorite int64         `bson:"favorite"`
 	Tags     []model.Tag   `bson:"tags"`
 }
 
-type ResultFindAllArticle struct {
-	Articles []ResultFindOneArticle
+type FindAllArticleResult struct {
+	Articles []FindOneArticleResult
 	Total    int64 `bson:"total"`
 }

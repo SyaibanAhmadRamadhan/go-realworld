@@ -7,15 +7,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"realworld-go/domain"
 	"realworld-go/domain/model"
-	"realworld-go/domain/repository"
 )
 
 type tagRepositoryImpl struct {
 	db *mongo.Database
 }
 
-func NewTagRepositoryImpl(db *mongo.Database) repository.TagRepository {
+func NewTagRepositoryImpl(db *mongo.Database) domain.TagRepository {
 	return &tagRepositoryImpl{
 		db: db,
 	}
@@ -47,14 +47,14 @@ func (t *tagRepositoryImpl) FindByID(ctx context.Context, id string) (tag model.
 	err = t.db.Collection(model.TagTableName).FindOne(ctx, filter).Decode(&tag)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			err = repository.ErrDataNotFound
+			err = domain.ErrDataNotFound
 		}
 	}
 
 	return
 }
 
-func (t *tagRepositoryImpl) FindTagPopuler(ctx context.Context, limit int64) (res []repository.ResultPopularTagRes, err error) {
+func (t *tagRepositoryImpl) FindTagPopuler(ctx context.Context, limit int64) (res []domain.FindTagPopulerResult, err error) {
 	groupStage := bson.D{
 		bson.E{Key: "$group", Value: bson.D{
 			bson.E{Key: "_id", Value: "$tagID"},
@@ -115,7 +115,7 @@ func (t *tagRepositoryImpl) UpdateByID(ctx context.Context, tag model.Tag, colum
 	}
 
 	if res.MatchedCount == 0 {
-		err = repository.ErrUpdateDataNotFound
+		err = domain.ErrUpdateDataNotFound
 	}
 
 	return
@@ -130,7 +130,7 @@ func (t *tagRepositoryImpl) DeleteByID(ctx context.Context, tag model.Tag) (err 
 	}
 
 	if res.DeletedCount == 0 {
-		return repository.ErrDelDataNotFound
+		return domain.ErrDelDataNotFound
 	}
 
 	return

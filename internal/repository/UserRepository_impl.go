@@ -9,15 +9,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
+	"realworld-go/domain"
 	"realworld-go/domain/model"
-	"realworld-go/domain/repository"
 )
 
 type userRepositoryImpl struct {
 	db *mongo.Database
 }
 
-func NewUserRepositoryImpl(db *mongo.Database) repository.UserRepository {
+func NewUserRepositoryImpl(db *mongo.Database) domain.UserRepository {
 	return &userRepositoryImpl{db: db}
 }
 
@@ -35,7 +35,7 @@ func (u *userRepositoryImpl) FindByOneColumn(ctx context.Context, param gdb.Find
 	err = u.db.Collection(model.UserTableName).FindOne(ctx, filter, opts).Decode(&user)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			err = repository.ErrDataNotFound
+			err = domain.ErrDataNotFound
 		}
 	}
 
@@ -65,7 +65,7 @@ func (u *userRepositoryImpl) UpdateByID(ctx context.Context, user model.User, co
 	}
 
 	if res.MatchedCount == 0 {
-		err = repository.ErrUpdateDataNotFound
+		err = domain.ErrUpdateDataNotFound
 	}
 
 	return
