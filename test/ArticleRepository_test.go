@@ -4,10 +4,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/SyaibanAhmadRamadhan/gocatch/garray"
 	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
 	"github.com/SyaibanAhmadRamadhan/gocatch/ginfra/gdb"
-	"github.com/SyaibanAhmadRamadhan/gocatch/gtime"
+	"github.com/SyaibanAhmadRamadhan/gocatch/gtypedata/garray"
+	"github.com/SyaibanAhmadRamadhan/gocatch/gtypedata/gtime"
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 

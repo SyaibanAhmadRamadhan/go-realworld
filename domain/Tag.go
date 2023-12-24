@@ -6,6 +6,7 @@ import (
 	"realworld-go/domain/model"
 )
 
+//counterfeiter:generate . TagRepository
 type TagRepository interface {
 	FindAllByIDS(ctx context.Context, ids []string) (tags []model.Tag, err error)
 	FindByID(ctx context.Context, id string) (tag model.Tag, err error)

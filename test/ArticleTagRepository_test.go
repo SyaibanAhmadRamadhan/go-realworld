@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/SyaibanAhmadRamadhan/gocatch/garray"
 	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
+	"github.com/SyaibanAhmadRamadhan/gocatch/gtypedata/garray"
 	"github.com/stretchr/testify/assert"
 
 	"realworld-go/domain/model"

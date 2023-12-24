@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	"github.com/SyaibanAhmadRamadhan/gocatch/garray"
 	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
+	"github.com/SyaibanAhmadRamadhan/gocatch/gtypedata/garray"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -241,14 +241,18 @@ func (a *articleRepositoryImpl) DeleteByID(ctx context.Context, article model.Ar
 	if err != nil {
 		return
 	}
+	if res.DeletedCount == 0 {
+		return domain.ErrDelDataNotFound
+	}
 
 	_, err = a.db.Collection(model.ArticleTagTableName).DeleteMany(ctx, bson.D{{Key: "articleID", Value: article.ID}})
 	if err != nil {
 		return
 	}
 
-	if res.DeletedCount == 0 {
-		return domain.ErrDelDataNotFound
+	_, err = a.db.Collection(model.CommentTableName).DeleteMany(ctx, bson.D{{Key: "articleID", Value: article.ID}})
+	if err != nil {
+		return
 	}
 
 	return

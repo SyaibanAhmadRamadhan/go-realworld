@@ -8,6 +8,7 @@ import (
 	"realworld-go/domain/model"
 )
 
+//counterfeiter:generate . UserFavoriteRepository
 type UserFavoriteRepository interface {
 	FindAllByUserID(ctx context.Context, param FindAllUserFavoriteParam) (res FindAllArticleResult, err error)
 	UpSertByUserID(ctx context.Context, userFavorite model.UserFavorite) (err error)

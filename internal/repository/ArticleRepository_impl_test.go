@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
-	"github.com/SyaibanAhmadRamadhan/gocatch/gtime"
+	"github.com/SyaibanAhmadRamadhan/gocatch/gtypedata/gtime"
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"

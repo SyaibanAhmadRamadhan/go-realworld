@@ -8,6 +8,7 @@ import (
 	"realworld-go/domain/model"
 )
 
+//counterfeiter:generate . CommentRepository
 type CommentRepository interface {
 	FindAllByArticleID(ctx context.Context, param FindAllCommentParam, fields ...string) (comments []model.Comment, err error)
 	UpSertByID(ctx context.Context, comment model.Comment, fields ...string) (err error)
