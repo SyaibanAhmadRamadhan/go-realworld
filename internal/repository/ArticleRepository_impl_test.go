@@ -79,8 +79,12 @@ func TestArticleRepositoryImpl_FindOneByID(t *testing.T) {
 				}},
 			}))
 			res, err := articleRepo.FindOneByID(ctx, domain.FindOneByIDArticleParam{
-				ArticleID:      article.ID,
-				AggregationOpt: domain.FindArticleOpt{},
+				ArticleID: article.ID,
+				AggregationOpt: domain.FindArticleOpt{
+					Tag:      true,
+					Favorite: true,
+					Author:   false,
+				},
 			})
 			assert.NoError(mt, err)
 			assert.Equal(t, article, res.Article)

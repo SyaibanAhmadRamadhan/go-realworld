@@ -26,21 +26,29 @@ type RequestFindOneArticle struct {
 
 type RequestFindAllArticle struct {
 	Pagination RequestPaginate
+	TagName    string
 }
 
 type DataCommentsArticle struct {
 	Comments []ResponseComment `json:"comments"`
 	LastID   string            `json:"last_id"`
 }
+
 type ResponseArticle struct {
-	ID           string              `json:"id"`
-	Tags         []ResponseTag       `json:"tags"`
-	Author       ResponseUser        `json:"author"`
-	DataComments DataCommentsArticle `json:"data_comments,omitempty"`
-	Slug         string              `json:"slug"`
-	Title        string              `json:"title"`
-	Description  string              `json:"description"`
-	Body         string              `json:"body"`
-	CreatedAt    string              `json:"created_at"`
-	UpdatedAt    string              `json:"updated_at"`
+	ID            string              `json:"id"`
+	Tags          []ResponseTag       `json:"tags"`
+	Author        ResponseUser        `json:"author"`
+	DataComments  DataCommentsArticle `json:"data_comments,omitempty"`
+	TotalFavorite int64               `bson:"total_favorite,omitempty"`
+	Slug          string              `json:"slug"`
+	Title         string              `json:"title"`
+	Description   string              `json:"description"`
+	Body          string              `json:"body"`
+	CreatedAt     string              `json:"created_at"`
+	UpdatedAt     string              `json:"updated_at"`
+}
+
+type ResponseArticles struct {
+	Articles []ResponseArticle `json:"articles"`
+	Total    int64             `json:"total"`
 }

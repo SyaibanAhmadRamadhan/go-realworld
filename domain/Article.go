@@ -35,12 +35,14 @@ type FindOneByIDArticleParam struct {
 type FindArticleOpt struct {
 	Tag      bool
 	Favorite bool
+	Author   bool
 }
 
 type FindOneArticleResult struct {
 	Article  model.Article `bson:"article"`
 	Favorite int64         `bson:"favorite"`
 	Tags     []model.Tag   `bson:"tags"`
+	Author   model.User    `bson:"author"`
 }
 
 type FindAllArticleResult struct {
@@ -48,12 +50,12 @@ type FindAllArticleResult struct {
 	Total    int64 `bson:"total"`
 }
 
-// usecase
+// USECASE
 
 type ArticleUsecase interface {
 	Create(ctx context.Context, req dto.RequestCreateArticle) (res dto.ResponseArticle, err error)
 	Update(ctx context.Context, req dto.RequestUpdateArticle) (res dto.ResponseArticle, err error)
 	Delete(ctx context.Context, articleID string) (err error)
 	FindOne(ctx context.Context, req dto.RequestFindOneArticle) (res dto.ResponseArticle, err error)
-	FindAll(ctx context.Context, req dto.RequestFindAllArticle) (res dto.ResponseArticle, err error)
+	FindAll(ctx context.Context, req dto.RequestFindAllArticle) (res dto.ResponseArticles, err error)
 }

@@ -6,6 +6,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"realworld-go/domain"
 	"realworld-go/domain/model"
@@ -21,9 +22,9 @@ func NewTagRepositoryImpl(db *mongo.Database) domain.TagRepository {
 	}
 }
 
-func (t *tagRepositoryImpl) FindAllByIDS(ctx context.Context, ids []string) (tags []model.Tag, err error) {
+func (t *tagRepositoryImpl) FindAllByNames(ctx context.Context, tagNames []string) (tags []model.Tag, err error) {
 	filter := bson.D{
-		bson.E{Key: "_id", Value: bson.D{bson.E{Key: "$in", Value: ids}}},
+		bson.E{Key: "name", Value: bson.D{bson.E{Key: "$in", Value: tagNames}}},
 	}
 
 	cur, err := t.db.Collection(model.TagTableName).Find(ctx, filter)
@@ -39,9 +40,9 @@ func (t *tagRepositoryImpl) FindAllByIDS(ctx context.Context, ids []string) (tag
 	return
 }
 
-func (t *tagRepositoryImpl) FindByID(ctx context.Context, id string) (tag model.Tag, err error) {
+func (t *tagRepositoryImpl) FindByName(ctx context.Context, name string) (tag model.Tag, err error) {
 	filter := bson.D{
-		bson.E{Key: "_id", Value: id},
+		bson.E{Key: "name", Value: name},
 	}
 
 	err = t.db.Collection(model.TagTableName).FindOne(ctx, filter).Decode(&tag)
@@ -88,34 +89,16 @@ func (t *tagRepositoryImpl) FindTagPopuler(ctx context.Context, limit int64) (re
 	return
 }
 
-func (t *tagRepositoryImpl) Create(ctx context.Context, tag model.Tag) (err error) {
-	_, err = t.db.Collection(model.TagTableName).InsertOne(ctx, tag)
-	return
-}
-
-func (t *tagRepositoryImpl) UpdateByID(ctx context.Context, tag model.Tag, columns []string) (err error) {
-	filter := bson.D{
-		bson.E{Key: "_id", Value: tag.ID},
-	}
-	set := bson.D{}
-	values := tag.GetValuesByColums(columns...)
-
-	for i, column := range columns {
-		if column == "_id" {
-			continue
-		}
-		set = append(set, bson.E{Key: column, Value: values[i]})
+func (t *tagRepositoryImpl) UpSertMany(ctx context.Context, tagNames []string) (err error) {
+	setMany := bson.D{}
+	for _, tagName := range tagNames {
+		setMany = append(setMany, bson.E{Key: "name", Value: tagName})
 	}
 
-	update := bson.D{{"$set", set}}
-
-	res, err := t.db.Collection(model.TagTableName).UpdateOne(ctx, filter, update)
+	update := bson.D{{Key: "$set", Value: setMany}}
+	_, err = t.db.Collection(model.TagTableName).UpdateMany(ctx, nil, update, options.Update().SetUpsert(true))
 	if err != nil {
-		return
-	}
-
-	if res.MatchedCount == 0 {
-		err = domain.ErrUpdateDataNotFound
+		return err
 	}
 
 	return

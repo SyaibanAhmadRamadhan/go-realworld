@@ -21,16 +21,6 @@ func NewArticleWithOutPtr() Article {
 	return Article{}
 }
 
-// FieldID is a field or column in the table Article.
-func (a *Article) FieldID() string {
-	return "_id"
-}
-
-// SetID is a setter for the field or column ID in the table Article.
-func (a *Article) SetID(param string) {
-	a.ID = param
-}
-
 // FieldAuthorID is a field or column in the table Article.
 func (a *Article) FieldAuthorID() string {
 	return "authorID"
@@ -101,17 +91,27 @@ func (a *Article) SetUpdatedAt(param time.Time) {
 	a.UpdatedAt = param
 }
 
+// FieldID is a field or column in the table Article.
+func (a *Article) FieldID() string {
+	return "_id"
+}
+
+// SetID is a setter for the field or column ID in the table Article.
+func (a *Article) SetID(param string) {
+	a.ID = param
+}
+
 // AllField is a function to get all field or column in the table Article.
 func (a *Article) AllField() (str []string) {
 	str = []string{ 
-		`slug`,
-		`title`,
 		`description`,
 		`body`,
 		`createdAt`,
 		`updatedAt`,
 		`_id`,
 		`authorID`,
+		`slug`,
+		`title`,
 	}
 	return
 }
@@ -119,11 +119,11 @@ func (a *Article) AllField() (str []string) {
 // OrderFields is a function to get all field or column in the table Article.
 func (a *Article) OrderFields() (str []string) {
 	str = []string{ 
-		`createdAt`,
 		`updatedAt`,
 		`_id`,
 		`slug`,
 		`title`,
+		`createdAt`,
 	}
 	return
 }
@@ -133,12 +133,6 @@ func (a *Article) GetValuesByColums(columns ...string) []any {
 	var values []any
 	for _, column := range columns {
 		switch column {
-		case a.FieldAuthorID():
-			values = append(values, a.AuthorID)
-		case a.FieldSlug():
-			values = append(values, a.Slug)
-		case a.FieldTitle():
-			values = append(values, a.Title)
 		case a.FieldDescription():
 			values = append(values, a.Description)
 		case a.FieldBody():
@@ -149,6 +143,12 @@ func (a *Article) GetValuesByColums(columns ...string) []any {
 			values = append(values, a.UpdatedAt)
 		case a.FieldID():
 			values = append(values, a.ID)
+		case a.FieldAuthorID():
+			values = append(values, a.AuthorID)
+		case a.FieldSlug():
+			values = append(values, a.Slug)
+		case a.FieldTitle():
+			values = append(values, a.Title)
 		}
 	}
 	return values

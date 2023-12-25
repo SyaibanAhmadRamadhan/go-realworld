@@ -1,15 +1,42 @@
-version: '3.8'
-
-services:
-  mongodb1:
-    image: mongo:latest
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
-    ports:
-      - "27018:27017"
-    volumes:
-      - mongodb_realworld:/data/db
+version: '3'
 
 volumes:
-  mongodb_realworld:
+  mongodb_realworld1:
+  mongodb_realworld2:
+  mongodb_realworld3:
+
+services:
+  mongodb_realworld1:
+    container_name: mongodb_realworld1
+    image: mongo:latest
+    ports:
+      - "20000:27017"
+    volumes:
+      - mongodb_realworld1:/data/db
+      # - ./rs-init.sh:/scripts/rs-init.sh
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+
+  mongodb_realworld2:
+    container_name: mongodb_realworld2
+    image: mongo:latest
+    ports:
+      - "20001:27017"
+    depends_on:
+      - mongodb_realworld1
+    volumes:
+      - mongodb_realworld1:/data/db
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+
+  mongodb_realworld3:
+    container_name: mongodb_realworld3
+    image: mongo:latest
+    ports:
+      - "20002:27017"
+    depends_on:
+      - mongodb_realworld1
+    volumes:
+      - mongodb_realworld3:/data/db
+    restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]

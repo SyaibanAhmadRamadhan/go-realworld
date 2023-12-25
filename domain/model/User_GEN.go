@@ -19,16 +19,6 @@ func NewUserWithOutPtr() User {
 	return User{}
 }
 
-// FieldPassword is a field or column in the table User.
-func (u *User) FieldPassword() string {
-	return "password"
-}
-
-// SetPassword is a setter for the field or column Password in the table User.
-func (u *User) SetPassword(param string) {
-	u.Password = param
-}
-
 // FieldImage is a field or column in the table User.
 func (u *User) FieldImage() string {
 	return "image"
@@ -89,16 +79,26 @@ func (u *User) SetUsername(param string) {
 	u.Username = param
 }
 
+// FieldPassword is a field or column in the table User.
+func (u *User) FieldPassword() string {
+	return "password"
+}
+
+// SetPassword is a setter for the field or column Password in the table User.
+func (u *User) SetPassword(param string) {
+	u.Password = param
+}
+
 // AllField is a function to get all field or column in the table User.
 func (u *User) AllField() (str []string) {
 	str = []string{ 
+		`_id`,
+		`email`,
 		`username`,
 		`password`,
 		`image`,
 		`bio`,
 		`demo`,
-		`_id`,
-		`email`,
 	}
 	return
 }
@@ -115,6 +115,12 @@ func (u *User) GetValuesByColums(columns ...string) []any {
 	var values []any
 	for _, column := range columns {
 		switch column {
+		case u.FieldPassword():
+			values = append(values, u.Password)
+		case u.FieldImage():
+			values = append(values, u.Image)
+		case u.FieldBio():
+			values = append(values, u.Bio)
 		case u.FieldDemo():
 			values = append(values, u.Demo)
 		case u.FieldID():
@@ -123,12 +129,6 @@ func (u *User) GetValuesByColums(columns ...string) []any {
 			values = append(values, u.Email)
 		case u.FieldUsername():
 			values = append(values, u.Username)
-		case u.FieldPassword():
-			values = append(values, u.Password)
-		case u.FieldImage():
-			values = append(values, u.Image)
-		case u.FieldBio():
-			values = append(values, u.Bio)
 		}
 	}
 	return values
@@ -138,18 +138,6 @@ func (u *User) GetValuesByColums(columns ...string) []any {
 func (u *User) ScanMap(data map[string]any) (err error) {
 	for key, value := range data {
 		switch key {
-		case u.FieldBio():
-			val, ok := value.(*string)
-			if !ok {
-				return errors.New("invalid type *string. field Bio")
-			}
-			u.SetBio(val)
-		case u.FieldDemo():
-			val, ok := value.(bool)
-			if !ok {
-				return errors.New("invalid type bool. field Demo")
-			}
-			u.SetDemo(val)
 		case u.FieldID():
 			val, ok := value.(string)
 			if !ok {
@@ -180,6 +168,18 @@ func (u *User) ScanMap(data map[string]any) (err error) {
 				return errors.New("invalid type string. field Image")
 			}
 			u.SetImage(val)
+		case u.FieldBio():
+			val, ok := value.(*string)
+			if !ok {
+				return errors.New("invalid type *string. field Bio")
+			}
+			u.SetBio(val)
+		case u.FieldDemo():
+			val, ok := value.(bool)
+			if !ok {
+				return errors.New("invalid type bool. field Demo")
+			}
+			u.SetDemo(val)
 		default:
 			return errors.New("invalid column")
 		}

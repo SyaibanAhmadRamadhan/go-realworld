@@ -49,6 +49,17 @@ func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param domai
 		})
 	}
 
+	if param.AggregationOpt.Author {
+		pipeline = append(pipeline,
+			bson.D{{Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: model.UserTableName},
+				{Key: "localField", Value: "authorID"},
+				{Key: "foreignField", Value: "_id"},
+				{Key: "as", Value: "author"},
+			}}},
+		)
+	}
+
 	if param.AggregationOpt.Tag {
 		pipeline = append(pipeline,
 			bson.D{{Key: "$lookup", Value: bson.D{
@@ -78,6 +89,7 @@ func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param domai
 		bson.D{
 			{Key: "$project", Value: bson.D{
 				{Key: "tags", Value: "$tags"},
+				{Key: "author", Value: "$author"},
 				{Key: "favorite", Value: "$userFavoritesCount"},
 				{Key: "article", Value: a.projectionArticle(true, articleColumns...)},
 			}},
@@ -149,6 +161,16 @@ func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param domain.Fi
 		)
 	}
 
+	if param.AggregationOpt.Author {
+		pipeline = append(pipeline,
+			bson.D{{Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: model.UserTableName},
+				{Key: "localField", Value: "authorID"},
+				{Key: "foreignField", Value: "_id"},
+				{Key: "as", Value: "author"},
+			}}},
+		)
+	}
 	if param.AggregationOpt.Tag {
 		pipeline = append(pipeline,
 			bson.D{{Key: "$lookup", Value: bson.D{
@@ -179,6 +201,7 @@ func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param domain.Fi
 		bson.D{
 			{Key: "$project", Value: bson.D{
 				{Key: "tags", Value: "$tags"},
+				{Key: "author", Value: "$author"},
 				{Key: "favorite", Value: "$userFavoritesCount"},
 				{Key: "_id", Value: 0},
 				{Key: "article", Value: project},

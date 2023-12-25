@@ -4,6 +4,8 @@ package model
 
 import (
 	"errors"
+
+	"time"
 )
 
 // CommentTableName this table or collection name
@@ -19,33 +21,13 @@ func NewCommentWithOutPtr() Comment {
 	return Comment{}
 }
 
-// FieldCreatedAt is a field or column in the table Comment.
-func (c *Comment) FieldCreatedAt() string {
-	return "createdAt"
-}
-
-// SetCreatedAt is a setter for the field or column CreatedAt in the table Comment.
-func (c *Comment) SetCreatedAt(param string) {
-	c.CreatedAt = param
-}
-
-// FieldUpdatedAt is a field or column in the table Comment.
-func (c *Comment) FieldUpdatedAt() string {
-	return "updatedAt"
-}
-
-// SetUpdatedAt is a setter for the field or column UpdatedAt in the table Comment.
-func (c *Comment) SetUpdatedAt(param string) {
-	c.UpdatedAt = param
-}
-
 // FieldID is a field or column in the table Comment.
 func (c *Comment) FieldID() string {
 	return "id"
 }
 
 // SetID is a setter for the field or column ID in the table Comment.
-func (c *Comment) SetID(param int) {
+func (c *Comment) SetID(param string) {
 	c.ID = param
 }
 
@@ -55,7 +37,7 @@ func (c *Comment) FieldArticleID() string {
 }
 
 // SetArticleID is a setter for the field or column ArticleID in the table Comment.
-func (c *Comment) SetArticleID(param int) {
+func (c *Comment) SetArticleID(param string) {
 	c.ArticleID = param
 }
 
@@ -65,7 +47,7 @@ func (c *Comment) FieldAuthorID() string {
 }
 
 // SetAuthorID is a setter for the field or column AuthorID in the table Comment.
-func (c *Comment) SetAuthorID(param int) {
+func (c *Comment) SetAuthorID(param string) {
 	c.AuthorID = param
 }
 
@@ -79,15 +61,35 @@ func (c *Comment) SetBody(param string) {
 	c.Body = param
 }
 
+// FieldCreatedAt is a field or column in the table Comment.
+func (c *Comment) FieldCreatedAt() string {
+	return "createdAt"
+}
+
+// SetCreatedAt is a setter for the field or column CreatedAt in the table Comment.
+func (c *Comment) SetCreatedAt(param time.Time) {
+	c.CreatedAt = param
+}
+
+// FieldUpdatedAt is a field or column in the table Comment.
+func (c *Comment) FieldUpdatedAt() string {
+	return "updatedAt"
+}
+
+// SetUpdatedAt is a setter for the field or column UpdatedAt in the table Comment.
+func (c *Comment) SetUpdatedAt(param time.Time) {
+	c.UpdatedAt = param
+}
+
 // AllField is a function to get all field or column in the table Comment.
 func (c *Comment) AllField() (str []string) {
 	str = []string{ 
-		`createdAt`,
-		`updatedAt`,
 		`id`,
 		`articleID`,
 		`authorID`,
 		`body`,
+		`createdAt`,
+		`updatedAt`,
 	}
 	return
 }
@@ -104,6 +106,10 @@ func (c *Comment) GetValuesByColums(columns ...string) []any {
 	var values []any
 	for _, column := range columns {
 		switch column {
+		case c.FieldID():
+			values = append(values, c.ID)
+		case c.FieldArticleID():
+			values = append(values, c.ArticleID)
 		case c.FieldAuthorID():
 			values = append(values, c.AuthorID)
 		case c.FieldBody():
@@ -112,10 +118,6 @@ func (c *Comment) GetValuesByColums(columns ...string) []any {
 			values = append(values, c.CreatedAt)
 		case c.FieldUpdatedAt():
 			values = append(values, c.UpdatedAt)
-		case c.FieldID():
-			values = append(values, c.ID)
-		case c.FieldArticleID():
-			values = append(values, c.ArticleID)
 		}
 	}
 	return values
@@ -125,28 +127,22 @@ func (c *Comment) GetValuesByColums(columns ...string) []any {
 func (c *Comment) ScanMap(data map[string]any) (err error) {
 	for key, value := range data {
 		switch key {
-		case c.FieldUpdatedAt():
+		case c.FieldID():
 			val, ok := value.(string)
 			if !ok {
-				return errors.New("invalid type string. field UpdatedAt")
-			}
-			c.SetUpdatedAt(val)
-		case c.FieldID():
-			val, ok := value.(int)
-			if !ok {
-				return errors.New("invalid type int. field ID")
+				return errors.New("invalid type string. field ID")
 			}
 			c.SetID(val)
 		case c.FieldArticleID():
-			val, ok := value.(int)
+			val, ok := value.(string)
 			if !ok {
-				return errors.New("invalid type int. field ArticleID")
+				return errors.New("invalid type string. field ArticleID")
 			}
 			c.SetArticleID(val)
 		case c.FieldAuthorID():
-			val, ok := value.(int)
+			val, ok := value.(string)
 			if !ok {
-				return errors.New("invalid type int. field AuthorID")
+				return errors.New("invalid type string. field AuthorID")
 			}
 			c.SetAuthorID(val)
 		case c.FieldBody():
@@ -156,11 +152,17 @@ func (c *Comment) ScanMap(data map[string]any) (err error) {
 			}
 			c.SetBody(val)
 		case c.FieldCreatedAt():
-			val, ok := value.(string)
+			val, ok := value.(time.Time)
 			if !ok {
-				return errors.New("invalid type string. field CreatedAt")
+				return errors.New("invalid type time.Time. field CreatedAt")
 			}
 			c.SetCreatedAt(val)
+		case c.FieldUpdatedAt():
+			val, ok := value.(time.Time)
+			if !ok {
+				return errors.New("invalid type time.Time. field UpdatedAt")
+			}
+			c.SetUpdatedAt(val)
 		default:
 			return errors.New("invalid column")
 		}

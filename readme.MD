@@ -9,9 +9,10 @@ https://github.com/gothinkster/realworld. and use https://github.com/SyaibanAhma
 
 - **MongoDB**: MongoDB, a popular NoSQL database, is our choice for data persistence. It provides high performance, high availability, and easy scalability.
 
-- **Elasticsearch**: Elasticsearch, a powerful open source search and analytics engine, is used for implementing the search functionality in this project.
+[//]: # (- **Elasticsearch**: Elasticsearch, a powerful open source search and analytics engine, is used for implementing the search functionality in this project.)
 
-- **Debezium**: Change Data Capture (CDC) is implemented using Debezium, which is an open source distributed platform for change data capture.
+[//]: # ()
+[//]: # (- **Debezium**: Change Data Capture &#40;CDC&#41; is implemented using Debezium, which is an open source distributed platform for change data capture.)
 
 - **OpenTelemetry (Otel)**: OpenTelemetry is used for observability to collect and manage telemetry data (metrics, logging, and traces) to provide insight into the application's behavior.
 

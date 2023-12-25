@@ -1,10 +1,14 @@
 package model
 
+import (
+	"time"
+)
+
 type Comment struct {
-	ID        int    `bson:"id"`
-	ArticleID int    `bson:"articleID"`
-	AuthorID  int    `bson:"authorID"`
-	Body      string `bson:"body"`
-	CreatedAt string `bson:"createdAt"`
-	UpdatedAt string `bson:"updatedAt"`
+	ID        string    `bson:"id"`
+	ArticleID string    `bson:"articleID"`
+	AuthorID  string    `bson:"authorID"`
+	Body      string    `bson:"body"`
+	CreatedAt time.Time `bson:"createdAt"`
+	UpdatedAt time.Time `bson:"updatedAt"`
 }
