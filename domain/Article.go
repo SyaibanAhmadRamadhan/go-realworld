@@ -55,5 +55,5 @@ type ArticleUsecase interface {
 	Update(ctx context.Context, req dto.RequestUpdateArticle) (res dto.ResponseArticle, err error)
 	Delete(ctx context.Context, articleID string) (err error)
 	FindOne(ctx context.Context, req dto.RequestFindOneArticle) (res dto.ResponseArticle, err error)
-	FindAll(ctx context.Context, pagination dto.RequestPaginate) (res dto.ResponseArticle, err error)
+	FindAll(ctx context.Context, req dto.RequestFindAllArticle) (res dto.ResponseArticle, err error)
 }

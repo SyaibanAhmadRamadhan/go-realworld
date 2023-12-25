@@ -1,7 +1,7 @@
 package dto
 
 type RequestCreateArticle struct {
-	TagIDs      []string `json:"tag_ids"      validate:"required,dive,ulid"`
+	TagNames    []string `json:"tag_names"    validate:"required,dive,ulid,max=50,min=5"`
 	AuthorID    string   `json:"author_id"    validate:"required,ulid"`
 	Slug        string   `json:"slug"         validate:"required,max=80,min=10"`
 	Title       string   `json:"title"        validate:"required,max=100,min=15"`
@@ -11,7 +11,7 @@ type RequestCreateArticle struct {
 
 type RequestUpdateArticle struct {
 	ID          string   `json:"-"            validate:"required,ulid"`
-	TagIDs      []string `json:"tag_ids"      validate:"required,dive,ulid"`
+	TagNames    []string `json:"tag_names"    validate:"required,dive,ulid,max=50,min=5"`
 	AuthorID    string   `json:"author_id"    validate:"required,ulid"`
 	Slug        string   `json:"slug"         validate:"required,max=80,min=10"`
 	Title       string   `json:"title"        validate:"required,max=100,min=15"`
@@ -22,6 +22,10 @@ type RequestUpdateArticle struct {
 type RequestFindOneArticle struct {
 	ArticleID     string
 	LastCommentID string
+}
+
+type RequestFindAllArticle struct {
+	Pagination RequestPaginate
 }
 
 type DataCommentsArticle struct {

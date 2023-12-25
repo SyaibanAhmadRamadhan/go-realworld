@@ -9,18 +9,6 @@ import (
 )
 
 type FakeTagRepository struct {
-	CreateStub        func(context.Context, model.Tag) error
-	createMutex       sync.RWMutex
-	createArgsForCall []struct {
-		arg1 context.Context
-		arg2 model.Tag
-	}
-	createReturns struct {
-		result1 error
-	}
-	createReturnsOnCall map[int]struct {
-		result1 error
-	}
 	DeleteByIDStub        func(context.Context, model.Tag) error
 	deleteByIDMutex       sync.RWMutex
 	deleteByIDArgsForCall []struct {
@@ -33,17 +21,17 @@ type FakeTagRepository struct {
 	deleteByIDReturnsOnCall map[int]struct {
 		result1 error
 	}
-	FindAllByIDSStub        func(context.Context, []string) ([]model.Tag, error)
-	findAllByIDSMutex       sync.RWMutex
-	findAllByIDSArgsForCall []struct {
+	FindAllByNamesStub        func(context.Context, []string) ([]model.Tag, error)
+	findAllByNamesMutex       sync.RWMutex
+	findAllByNamesArgsForCall []struct {
 		arg1 context.Context
 		arg2 []string
 	}
-	findAllByIDSReturns struct {
+	findAllByNamesReturns struct {
 		result1 []model.Tag
 		result2 error
 	}
-	findAllByIDSReturnsOnCall map[int]struct {
+	findAllByNamesReturnsOnCall map[int]struct {
 		result1 []model.Tag
 		result2 error
 	}
@@ -75,83 +63,20 @@ type FakeTagRepository struct {
 		result1 []domain.FindTagPopulerResult
 		result2 error
 	}
-	UpdateByIDStub        func(context.Context, model.Tag, []string) error
-	updateByIDMutex       sync.RWMutex
-	updateByIDArgsForCall []struct {
+	UpSertManyStub        func(context.Context, []string) error
+	upSertManyMutex       sync.RWMutex
+	upSertManyArgsForCall []struct {
 		arg1 context.Context
-		arg2 model.Tag
-		arg3 []string
+		arg2 []string
 	}
-	updateByIDReturns struct {
+	upSertManyReturns struct {
 		result1 error
 	}
-	updateByIDReturnsOnCall map[int]struct {
+	upSertManyReturnsOnCall map[int]struct {
 		result1 error
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
-}
-
-func (fake *FakeTagRepository) Create(arg1 context.Context, arg2 model.Tag) error {
-	fake.createMutex.Lock()
-	ret, specificReturn := fake.createReturnsOnCall[len(fake.createArgsForCall)]
-	fake.createArgsForCall = append(fake.createArgsForCall, struct {
-		arg1 context.Context
-		arg2 model.Tag
-	}{arg1, arg2})
-	stub := fake.CreateStub
-	fakeReturns := fake.createReturns
-	fake.recordInvocation("Create", []interface{}{arg1, arg2})
-	fake.createMutex.Unlock()
-	if stub != nil {
-		return stub(arg1, arg2)
-	}
-	if specificReturn {
-		return ret.result1
-	}
-	return fakeReturns.result1
-}
-
-func (fake *FakeTagRepository) CreateCallCount() int {
-	fake.createMutex.RLock()
-	defer fake.createMutex.RUnlock()
-	return len(fake.createArgsForCall)
-}
-
-func (fake *FakeTagRepository) CreateCalls(stub func(context.Context, model.Tag) error) {
-	fake.createMutex.Lock()
-	defer fake.createMutex.Unlock()
-	fake.CreateStub = stub
-}
-
-func (fake *FakeTagRepository) CreateArgsForCall(i int) (context.Context, model.Tag) {
-	fake.createMutex.RLock()
-	defer fake.createMutex.RUnlock()
-	argsForCall := fake.createArgsForCall[i]
-	return argsForCall.arg1, argsForCall.arg2
-}
-
-func (fake *FakeTagRepository) CreateReturns(result1 error) {
-	fake.createMutex.Lock()
-	defer fake.createMutex.Unlock()
-	fake.CreateStub = nil
-	fake.createReturns = struct {
-		result1 error
-	}{result1}
-}
-
-func (fake *FakeTagRepository) CreateReturnsOnCall(i int, result1 error) {
-	fake.createMutex.Lock()
-	defer fake.createMutex.Unlock()
-	fake.CreateStub = nil
-	if fake.createReturnsOnCall == nil {
-		fake.createReturnsOnCall = make(map[int]struct {
-			result1 error
-		})
-	}
-	fake.createReturnsOnCall[i] = struct {
-		result1 error
-	}{result1}
 }
 
 func (fake *FakeTagRepository) DeleteByID(arg1 context.Context, arg2 model.Tag) error {
@@ -216,22 +141,22 @@ func (fake *FakeTagRepository) DeleteByIDReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeTagRepository) FindAllByIDS(arg1 context.Context, arg2 []string) ([]model.Tag, error) {
+func (fake *FakeTagRepository) FindAllByNames(arg1 context.Context, arg2 []string) ([]model.Tag, error) {
 	var arg2Copy []string
 	if arg2 != nil {
 		arg2Copy = make([]string, len(arg2))
 		copy(arg2Copy, arg2)
 	}
-	fake.findAllByIDSMutex.Lock()
-	ret, specificReturn := fake.findAllByIDSReturnsOnCall[len(fake.findAllByIDSArgsForCall)]
-	fake.findAllByIDSArgsForCall = append(fake.findAllByIDSArgsForCall, struct {
+	fake.findAllByNamesMutex.Lock()
+	ret, specificReturn := fake.findAllByNamesReturnsOnCall[len(fake.findAllByNamesArgsForCall)]
+	fake.findAllByNamesArgsForCall = append(fake.findAllByNamesArgsForCall, struct {
 		arg1 context.Context
 		arg2 []string
 	}{arg1, arg2Copy})
-	stub := fake.FindAllByIDSStub
-	fakeReturns := fake.findAllByIDSReturns
-	fake.recordInvocation("FindAllByIDS", []interface{}{arg1, arg2Copy})
-	fake.findAllByIDSMutex.Unlock()
+	stub := fake.FindAllByNamesStub
+	fakeReturns := fake.findAllByNamesReturns
+	fake.recordInvocation("FindAllByNames", []interface{}{arg1, arg2Copy})
+	fake.findAllByNamesMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2)
 	}
@@ -241,46 +166,46 @@ func (fake *FakeTagRepository) FindAllByIDS(arg1 context.Context, arg2 []string)
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeTagRepository) FindAllByIDSCallCount() int {
-	fake.findAllByIDSMutex.RLock()
-	defer fake.findAllByIDSMutex.RUnlock()
-	return len(fake.findAllByIDSArgsForCall)
+func (fake *FakeTagRepository) FindAllByNamesCallCount() int {
+	fake.findAllByNamesMutex.RLock()
+	defer fake.findAllByNamesMutex.RUnlock()
+	return len(fake.findAllByNamesArgsForCall)
 }
 
-func (fake *FakeTagRepository) FindAllByIDSCalls(stub func(context.Context, []string) ([]model.Tag, error)) {
-	fake.findAllByIDSMutex.Lock()
-	defer fake.findAllByIDSMutex.Unlock()
-	fake.FindAllByIDSStub = stub
+func (fake *FakeTagRepository) FindAllByNamesCalls(stub func(context.Context, []string) ([]model.Tag, error)) {
+	fake.findAllByNamesMutex.Lock()
+	defer fake.findAllByNamesMutex.Unlock()
+	fake.FindAllByNamesStub = stub
 }
 
-func (fake *FakeTagRepository) FindAllByIDSArgsForCall(i int) (context.Context, []string) {
-	fake.findAllByIDSMutex.RLock()
-	defer fake.findAllByIDSMutex.RUnlock()
-	argsForCall := fake.findAllByIDSArgsForCall[i]
+func (fake *FakeTagRepository) FindAllByNamesArgsForCall(i int) (context.Context, []string) {
+	fake.findAllByNamesMutex.RLock()
+	defer fake.findAllByNamesMutex.RUnlock()
+	argsForCall := fake.findAllByNamesArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeTagRepository) FindAllByIDSReturns(result1 []model.Tag, result2 error) {
-	fake.findAllByIDSMutex.Lock()
-	defer fake.findAllByIDSMutex.Unlock()
-	fake.FindAllByIDSStub = nil
-	fake.findAllByIDSReturns = struct {
+func (fake *FakeTagRepository) FindAllByNamesReturns(result1 []model.Tag, result2 error) {
+	fake.findAllByNamesMutex.Lock()
+	defer fake.findAllByNamesMutex.Unlock()
+	fake.FindAllByNamesStub = nil
+	fake.findAllByNamesReturns = struct {
 		result1 []model.Tag
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *FakeTagRepository) FindAllByIDSReturnsOnCall(i int, result1 []model.Tag, result2 error) {
-	fake.findAllByIDSMutex.Lock()
-	defer fake.findAllByIDSMutex.Unlock()
-	fake.FindAllByIDSStub = nil
-	if fake.findAllByIDSReturnsOnCall == nil {
-		fake.findAllByIDSReturnsOnCall = make(map[int]struct {
+func (fake *FakeTagRepository) FindAllByNamesReturnsOnCall(i int, result1 []model.Tag, result2 error) {
+	fake.findAllByNamesMutex.Lock()
+	defer fake.findAllByNamesMutex.Unlock()
+	fake.FindAllByNamesStub = nil
+	if fake.findAllByNamesReturnsOnCall == nil {
+		fake.findAllByNamesReturnsOnCall = make(map[int]struct {
 			result1 []model.Tag
 			result2 error
 		})
 	}
-	fake.findAllByIDSReturnsOnCall[i] = struct {
+	fake.findAllByNamesReturnsOnCall[i] = struct {
 		result1 []model.Tag
 		result2 error
 	}{result1, result2}
@@ -416,25 +341,24 @@ func (fake *FakeTagRepository) FindTagPopulerReturnsOnCall(i int, result1 []doma
 	}{result1, result2}
 }
 
-func (fake *FakeTagRepository) UpdateByID(arg1 context.Context, arg2 model.Tag, arg3 []string) error {
-	var arg3Copy []string
-	if arg3 != nil {
-		arg3Copy = make([]string, len(arg3))
-		copy(arg3Copy, arg3)
+func (fake *FakeTagRepository) UpSertMany(arg1 context.Context, arg2 []string) error {
+	var arg2Copy []string
+	if arg2 != nil {
+		arg2Copy = make([]string, len(arg2))
+		copy(arg2Copy, arg2)
 	}
-	fake.updateByIDMutex.Lock()
-	ret, specificReturn := fake.updateByIDReturnsOnCall[len(fake.updateByIDArgsForCall)]
-	fake.updateByIDArgsForCall = append(fake.updateByIDArgsForCall, struct {
+	fake.upSertManyMutex.Lock()
+	ret, specificReturn := fake.upSertManyReturnsOnCall[len(fake.upSertManyArgsForCall)]
+	fake.upSertManyArgsForCall = append(fake.upSertManyArgsForCall, struct {
 		arg1 context.Context
-		arg2 model.Tag
-		arg3 []string
-	}{arg1, arg2, arg3Copy})
-	stub := fake.UpdateByIDStub
-	fakeReturns := fake.updateByIDReturns
-	fake.recordInvocation("UpdateByID", []interface{}{arg1, arg2, arg3Copy})
-	fake.updateByIDMutex.Unlock()
+		arg2 []string
+	}{arg1, arg2Copy})
+	stub := fake.UpSertManyStub
+	fakeReturns := fake.upSertManyReturns
+	fake.recordInvocation("UpSertMany", []interface{}{arg1, arg2Copy})
+	fake.upSertManyMutex.Unlock()
 	if stub != nil {
-		return stub(arg1, arg2, arg3)
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1
@@ -442,44 +366,44 @@ func (fake *FakeTagRepository) UpdateByID(arg1 context.Context, arg2 model.Tag, 
 	return fakeReturns.result1
 }
 
-func (fake *FakeTagRepository) UpdateByIDCallCount() int {
-	fake.updateByIDMutex.RLock()
-	defer fake.updateByIDMutex.RUnlock()
-	return len(fake.updateByIDArgsForCall)
+func (fake *FakeTagRepository) UpSertManyCallCount() int {
+	fake.upSertManyMutex.RLock()
+	defer fake.upSertManyMutex.RUnlock()
+	return len(fake.upSertManyArgsForCall)
 }
 
-func (fake *FakeTagRepository) UpdateByIDCalls(stub func(context.Context, model.Tag, []string) error) {
-	fake.updateByIDMutex.Lock()
-	defer fake.updateByIDMutex.Unlock()
-	fake.UpdateByIDStub = stub
+func (fake *FakeTagRepository) UpSertManyCalls(stub func(context.Context, []string) error) {
+	fake.upSertManyMutex.Lock()
+	defer fake.upSertManyMutex.Unlock()
+	fake.UpSertManyStub = stub
 }
 
-func (fake *FakeTagRepository) UpdateByIDArgsForCall(i int) (context.Context, model.Tag, []string) {
-	fake.updateByIDMutex.RLock()
-	defer fake.updateByIDMutex.RUnlock()
-	argsForCall := fake.updateByIDArgsForCall[i]
-	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
+func (fake *FakeTagRepository) UpSertManyArgsForCall(i int) (context.Context, []string) {
+	fake.upSertManyMutex.RLock()
+	defer fake.upSertManyMutex.RUnlock()
+	argsForCall := fake.upSertManyArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeTagRepository) UpdateByIDReturns(result1 error) {
-	fake.updateByIDMutex.Lock()
-	defer fake.updateByIDMutex.Unlock()
-	fake.UpdateByIDStub = nil
-	fake.updateByIDReturns = struct {
+func (fake *FakeTagRepository) UpSertManyReturns(result1 error) {
+	fake.upSertManyMutex.Lock()
+	defer fake.upSertManyMutex.Unlock()
+	fake.UpSertManyStub = nil
+	fake.upSertManyReturns = struct {
 		result1 error
 	}{result1}
 }
 
-func (fake *FakeTagRepository) UpdateByIDReturnsOnCall(i int, result1 error) {
-	fake.updateByIDMutex.Lock()
-	defer fake.updateByIDMutex.Unlock()
-	fake.UpdateByIDStub = nil
-	if fake.updateByIDReturnsOnCall == nil {
-		fake.updateByIDReturnsOnCall = make(map[int]struct {
+func (fake *FakeTagRepository) UpSertManyReturnsOnCall(i int, result1 error) {
+	fake.upSertManyMutex.Lock()
+	defer fake.upSertManyMutex.Unlock()
+	fake.UpSertManyStub = nil
+	if fake.upSertManyReturnsOnCall == nil {
+		fake.upSertManyReturnsOnCall = make(map[int]struct {
 			result1 error
 		})
 	}
-	fake.updateByIDReturnsOnCall[i] = struct {
+	fake.upSertManyReturnsOnCall[i] = struct {
 		result1 error
 	}{result1}
 }
@@ -487,18 +411,16 @@ func (fake *FakeTagRepository) UpdateByIDReturnsOnCall(i int, result1 error) {
 func (fake *FakeTagRepository) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.createMutex.RLock()
-	defer fake.createMutex.RUnlock()
 	fake.deleteByIDMutex.RLock()
 	defer fake.deleteByIDMutex.RUnlock()
-	fake.findAllByIDSMutex.RLock()
-	defer fake.findAllByIDSMutex.RUnlock()
+	fake.findAllByNamesMutex.RLock()
+	defer fake.findAllByNamesMutex.RUnlock()
 	fake.findByIDMutex.RLock()
 	defer fake.findByIDMutex.RUnlock()
 	fake.findTagPopulerMutex.RLock()
 	defer fake.findTagPopulerMutex.RUnlock()
-	fake.updateByIDMutex.RLock()
-	defer fake.updateByIDMutex.RUnlock()
+	fake.upSertManyMutex.RLock()
+	defer fake.upSertManyMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value
