@@ -17,10 +17,10 @@ func UserFavoriteRepository_UpSertByUserID(t *testing.T) {
 	for _, user := range users {
 		for _, article := range articles {
 			userFavorite := model.UserFavorite{
-				UserID:    user.ID,
-				ArticleID: article.ID,
+				UserId:    user.Id,
+				ArticleId: article.Id,
 			}
-			err := userFavoriteRepository.UpSertByUserID(context.Background(), userFavorite)
+			err := userFavoriteRepository.UpSertByUserId(context.Background(), userFavorite)
 			assert.NoError(t, err)
 		}
 	}
@@ -28,7 +28,7 @@ func UserFavoriteRepository_UpSertByUserID(t *testing.T) {
 
 func UserFavoriteRepository_FindAllArticleByUserID(t *testing.T) {
 	for _, user := range users {
-		res, err := userFavoriteRepository.FindAllByUserID(context.Background(), domain.FindAllUserFavoriteParam{
+		res, err := userFavoriteRepository.FindAllByUserId(context.Background(), domain.FindAllUserFavoriteParam{
 			WithTag: true,
 			Orders: gdb.OrderByParams{
 				{Column: "_id", IsAscending: true},
@@ -37,7 +37,7 @@ func UserFavoriteRepository_FindAllArticleByUserID(t *testing.T) {
 				Limit:  2,
 				Offset: 0,
 			},
-			UserID:        user.ID,
+			UserId:        user.Id,
 			ArticleFields: []string{"slug"},
 		})
 		assert.NoError(t, err)

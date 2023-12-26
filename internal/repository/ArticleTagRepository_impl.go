@@ -24,7 +24,7 @@ func (a *articleTagRepositoryImpl) ReplaceAll(ctx context.Context, articleTags [
 	if articleTags == nil {
 		return
 	}
-	_, err = a.db.Collection(model.ArticleTagTableName).DeleteMany(ctx, bson.D{{Key: "articleID", Value: articleTags[0].ArticleID}})
+	_, err = a.db.Collection(model.ArticleTagTableName).DeleteMany(ctx, bson.D{{Key: "articleId", Value: articleTags[0].ArticleId}})
 	if err != nil {
 		return
 	}
@@ -35,6 +35,12 @@ func (a *articleTagRepositoryImpl) ReplaceAll(ctx context.Context, articleTags [
 			break
 		}
 	}
+
+	return
+}
+
+func (a *articleTagRepositoryImpl) DeleteByArticleId(ctx context.Context, articleId string) (err error) {
+	_, err = a.db.Collection(model.ArticleTagTableName).DeleteMany(ctx, bson.D{{Key: "articleId", Value: articleId}})
 
 	return
 }

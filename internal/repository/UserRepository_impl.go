@@ -47,7 +47,7 @@ func (u *userRepositoryImpl) Create(ctx context.Context, user model.User) (err e
 	return
 }
 
-func (u *userRepositoryImpl) UpdateByID(ctx context.Context, user model.User, columns []string) (err error) {
+func (u *userRepositoryImpl) UpdateById(ctx context.Context, user model.User, columns []string) (err error) {
 	set := bson.D{}
 	values := user.GetValuesByColums(columns...)
 
@@ -59,7 +59,7 @@ func (u *userRepositoryImpl) UpdateByID(ctx context.Context, user model.User, co
 	}
 
 	update := bson.D{{Key: "$set", Value: set}}
-	res, err := u.db.Collection(model.UserTableName).UpdateByID(ctx, user.ID, update)
+	res, err := u.db.Collection(model.UserTableName).UpdateByID(ctx, user.Id, update)
 	if err != nil {
 		return
 	}

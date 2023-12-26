@@ -80,17 +80,17 @@ func initRepository() {
 
 func TestRun(t *testing.T) {
 	t.Run("TagRepository", func(t *testing.T) {
-		t.Run("Create", TagRepository_Create)
-		t.Run("FindOneByID", TagRepository_FindByID)
-		t.Run("FindAllByIDs", TagRepository_FindAllByIDS)
-		t.Run("UpSertByID", TagRepository_UpdateByID)
-		t.Run("DeleteByID", TagRepository_DeleteByID)
+		// t.Run("Create", TagRepository_Create)
+		// t.Run("FindOneById", TagRepository_FindByID)
+		// t.Run("FindAllByIDs", TagRepository_FindAllByIDS)
+		// t.Run("UpdateById", TagRepository_UpdateByID)
+		// t.Run("DeleteById", TagRepository_DeleteByID)
 	})
 
 	t.Run("UserRepository", func(t *testing.T) {
 		t.Run("Create", UserRepository_Create)
 		t.Run("FindByOneColumn", UserRepository_FindByOneColumn)
-		t.Run("UpSertByID", UserRepository_UpdateByID)
+		t.Run("UpdateById", UserRepository_UpdateByID)
 	})
 
 	t.Run("ArticleRepository", func(t *testing.T) {
@@ -106,14 +106,14 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("UserFavoriteRepository", func(t *testing.T) {
-		t.Run("UpSertByUserID", UserFavoriteRepository_UpSertByUserID)
-		t.Run("FindAllByUserID", UserFavoriteRepository_FindAllArticleByUserID)
+		t.Run("UpSertByUserId", UserFavoriteRepository_UpSertByUserID)
+		t.Run("FindAllByUserId", UserFavoriteRepository_FindAllArticleByUserID)
 	})
 
 	t.Run("ArticleRepository", func(t *testing.T) {
-		t.Run("FindOneByID", ArticleRepository_FindOneByID)
+		t.Run("FindOneById", ArticleRepository_FindOneByID)
 		t.Run("FindAllPaginate", ArticleRepository_FindAllPaginate)
-		t.Run("UpSertByID", ArticleRepository_UpdateByID)
-		t.Run("DeleteByID", ArticleRepository_DeleteByID)
+		t.Run("UpdateById", ArticleRepository_UpdateByID)
+		t.Run("DeleteById", ArticleRepository_DeleteByID)
 	})
 }

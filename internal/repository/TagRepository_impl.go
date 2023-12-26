@@ -58,7 +58,7 @@ func (t *tagRepositoryImpl) FindByName(ctx context.Context, name string) (tag mo
 func (t *tagRepositoryImpl) FindTagPopuler(ctx context.Context, limit int64) (res []domain.FindTagPopulerResult, err error) {
 	groupStage := bson.D{
 		bson.E{Key: "$group", Value: bson.D{
-			bson.E{Key: "_id", Value: "$tagID"},
+			bson.E{Key: "_id", Value: "$tagId"},
 			bson.E{Key: "count", Value: bson.D{
 				bson.E{Key: "$sum", Value: 1},
 			}},
@@ -66,7 +66,7 @@ func (t *tagRepositoryImpl) FindTagPopuler(ctx context.Context, limit int64) (re
 	}
 	projectStage := bson.D{
 		{Key: "$project", Value: bson.D{
-			{Key: "tagID", Value: "$_id"},
+			{Key: "tagId", Value: "$_id"},
 			{Key: "count", Value: "$count"},
 			{Key: "_id", Value: 0},
 		}},
@@ -104,8 +104,8 @@ func (t *tagRepositoryImpl) UpSertMany(ctx context.Context, tagNames []string) (
 	return
 }
 
-func (t *tagRepositoryImpl) DeleteByID(ctx context.Context, tag model.Tag) (err error) {
-	filter := bson.D{bson.E{Key: "_id", Value: tag.ID}}
+func (t *tagRepositoryImpl) DeleteById(ctx context.Context, tag model.Tag) (err error) {
+	filter := bson.D{bson.E{Key: "_id", Value: tag.Id}}
 
 	res, err := t.db.Collection(model.TagTableName).DeleteOne(ctx, filter)
 	if err != nil {

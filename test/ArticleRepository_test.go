@@ -23,11 +23,11 @@ func ArticleRepository_Create(t *testing.T) {
 		createdAt = gtime.NormalizeTimeUnit(createdAt, gtime.Milliseconds)
 		var userIDs []string
 		for _, user := range users {
-			userIDs = append(userIDs, user.ID)
+			userIDs = append(userIDs, user.Id)
 		}
 		article := model.Article{
-			ID:          gcommon.NewUlid() + "_article",
-			AuthorID:    gcommon.RandomFromArray(userIDs),
+			Id:          gcommon.NewUlid() + "_article",
+			AuthorId:    gcommon.RandomFromArray(userIDs),
 			Slug:        gofakeit.Username(),
 			Title:       gofakeit.Sentence(5),
 			Description: gofakeit.Paragraph(2, 2, 10, "\n"),
@@ -45,8 +45,8 @@ func ArticleRepository_Create(t *testing.T) {
 func ArticleRepository_FindOneByID(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		for _, article := range articles {
-			res, err := articleRepository.FindOneByID(context.Background(), domain.FindOneByIDArticleParam{
-				ArticleID: article.ID,
+			res, err := articleRepository.FindOneById(context.Background(), domain.FindOneByIdArticleParam{
+				ArticleId: article.Id,
 				AggregationOpt: domain.FindArticleOpt{
 					Tag:      false,
 					Favorite: true,
@@ -56,8 +56,8 @@ func ArticleRepository_FindOneByID(t *testing.T) {
 			assert.Equal(t, article.Slug, res.Article.Slug)
 			assert.NotEqual(t, article, res.Article)
 
-			res1, err := articleRepository.FindOneByID(context.Background(), domain.FindOneByIDArticleParam{
-				ArticleID:      article.ID,
+			res1, err := articleRepository.FindOneById(context.Background(), domain.FindOneByIdArticleParam{
+				ArticleId:      article.Id,
 				AggregationOpt: domain.FindArticleOpt{},
 			})
 			assert.NoError(t, err)
@@ -66,8 +66,8 @@ func ArticleRepository_FindOneByID(t *testing.T) {
 	})
 
 	t.Run("Failed", func(t *testing.T) {
-		_, err := articleRepository.FindOneByID(context.Background(), domain.FindOneByIDArticleParam{
-			ArticleID: "article.ID",
+		_, err := articleRepository.FindOneById(context.Background(), domain.FindOneByIdArticleParam{
+			ArticleId: "article.Id",
 		})
 		assert.Equal(t, domain.ErrDataNotFound, err)
 	})
@@ -76,10 +76,10 @@ func ArticleRepository_FindOneByID(t *testing.T) {
 func ArticleRepository_FindAllPaginate(t *testing.T) {
 	var tagIDs []string
 	for _, tag := range tags {
-		tagIDs = garray.AppendUniqueVal(tagIDs, tag.ID)
+		tagIDs = garray.AppendUniqueVal(tagIDs, tag.Id)
 	}
 	res, err := articleRepository.FindAllPaginate(context.Background(), domain.FindAllPaginateArticleParam{
-		TagIDs: tagIDs,
+		TagIds: tagIDs,
 		Orders: gdb.OrderByParams{
 			{Column: "slug", IsAscending: true},
 			{Column: "asal", IsAscending: true},
@@ -122,11 +122,11 @@ func ArticleRepository_UpdateByID(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		for _, articleUpdate := range articleUpdates {
-			err := articleRepository.UpdateByID(context.Background(), articleUpdate.Article, columns)
+			err := articleRepository.UpdateById(context.Background(), articleUpdate.Article, columns)
 			assert.NoError(t, err)
 
-			res, err := articleRepository.FindOneByID(context.Background(), domain.FindOneByIDArticleParam{
-				ArticleID: articleUpdate.Article.ID,
+			res, err := articleRepository.FindOneById(context.Background(), domain.FindOneByIdArticleParam{
+				ArticleId: articleUpdate.Article.Id,
 			})
 			assert.NoError(t, err)
 			assert.Equal(t, articleUpdate.Expected, res.Article.Slug)
@@ -134,8 +134,8 @@ func ArticleRepository_UpdateByID(t *testing.T) {
 	})
 
 	t.Run("Failed", func(t *testing.T) {
-		err := articleRepository.UpdateByID(context.Background(), model.Article{
-			ID:   "random",
+		err := articleRepository.UpdateById(context.Background(), model.Article{
+			Id:   "random",
 			Slug: gofakeit.Slogan(),
 		}, columns)
 		assert.Equal(t, domain.ErrUpdateDataNotFound, err)
@@ -147,18 +147,18 @@ func ArticleRepository_DeleteByID(t *testing.T) {
 	var ids []string
 	for i := 0; i < 5; i++ {
 		article := model.Article{
-			ID:   gcommon.NewUlid(),
+			Id:   gcommon.NewUlid(),
 			Slug: gofakeit.Slogan(),
 		}
 		articleDeleteds = append(articleDeleteds, article)
-		ids = append(ids, article.ID)
+		ids = append(ids, article.Id)
 
 		err := articleRepository.Create(context.Background(), article)
 		gcommon.PanicIfError(err)
 	}
 
 	res, err := articleRepository.FindAllPaginate(context.Background(), domain.FindAllPaginateArticleParam{
-		TagIDs: nil,
+		TagIds: nil,
 		Orders: gdb.OrderByParams{
 			{Column: "slug", IsAscending: true},
 		},
@@ -172,25 +172,25 @@ func ArticleRepository_DeleteByID(t *testing.T) {
 
 	t.Run("Success", func(t *testing.T) {
 		for _, articleDeleted := range articleDeleteds {
-			err = articleRepository.DeleteByID(context.Background(), articleDeleted)
+			err = articleRepository.DeleteById(context.Background(), articleDeleted)
 			assert.NoError(t, err)
 
-			_, err = articleRepository.FindOneByID(context.Background(), domain.FindOneByIDArticleParam{
-				ArticleID: articleDeleted.ID,
+			_, err = articleRepository.FindOneById(context.Background(), domain.FindOneByIdArticleParam{
+				ArticleId: articleDeleted.Id,
 			})
 			assert.Equal(t, domain.ErrDataNotFound, err)
 		}
 	})
 
 	t.Run("Failed", func(t *testing.T) {
-		err = tagRepository.DeleteByID(context.Background(), model.Tag{
-			ID: "random",
+		err = tagRepository.DeleteById(context.Background(), model.Tag{
+			Id: "random",
 		})
 		assert.Equal(t, domain.ErrDelDataNotFound, err)
 	})
 
 	res, err = articleRepository.FindAllPaginate(context.Background(), domain.FindAllPaginateArticleParam{
-		TagIDs: nil,
+		TagIds: nil,
 		Orders: gdb.OrderByParams{
 			{Column: "slug", IsAscending: true},
 		},

@@ -21,7 +21,7 @@ func NewCommentRepositoryImpl(db *mongo.Database) domain.CommentRepository {
 	}
 }
 
-func (c *commentRepositoryImpl) FindAllByArticleID(ctx context.Context, param domain.FindAllCommentParam, fields ...string) (comments []model.Comment, err error) {
+func (c *commentRepositoryImpl) FindAllByArticleId(ctx context.Context, param domain.FindAllCommentParam, fields ...string) (comments []model.Comment, err error) {
 	opts := options.Find().SetLimit(param.Limit).SetSort(bson.D{{Key: "_id", Value: -1}})
 	if fields != nil {
 		projectStage := bson.D{}
@@ -31,9 +31,9 @@ func (c *commentRepositoryImpl) FindAllByArticleID(ctx context.Context, param do
 		opts.SetProjection(projectStage)
 	}
 
-	filter := bson.D{{Key: "articleID", Value: param.ArticleID}}
-	if param.LastID != "" {
-		filter = append(filter, bson.E{Key: "$lt", Value: param.LastID})
+	filter := bson.D{{Key: "articleId", Value: param.ArticleId}}
+	if param.LastId != "" {
+		filter = append(filter, bson.E{Key: "$lt", Value: param.LastId})
 	}
 
 	cur, err := c.db.Collection(model.CommentTableName).Find(ctx, filter, opts)
@@ -45,7 +45,12 @@ func (c *commentRepositoryImpl) FindAllByArticleID(ctx context.Context, param do
 	return
 }
 
-func (c *commentRepositoryImpl) UpSertByID(ctx context.Context, comment model.Comment, fields ...string) (err error) {
+func (c *commentRepositoryImpl) Create(ctx context.Context, comment model.Comment) (err error) {
+	_, err = c.db.Collection(model.CommentTableName).InsertOne(ctx, comment)
+
+	return
+}
+func (c *commentRepositoryImpl) UpdateById(ctx context.Context, comment model.Comment, fields ...string) (err error) {
 	set := bson.D{}
 
 	if fields != nil {
@@ -67,19 +72,39 @@ func (c *commentRepositoryImpl) UpSertByID(ctx context.Context, comment model.Co
 		}
 	}
 
+	filter := bson.D{
+		bson.E{Key: "_id", Value: comment.Id},
+		bson.E{Key: "authorId", Value: comment.AuthorId},
+		bson.E{Key: "articleId", Value: comment.ArticleId},
+	}
 	updated := bson.D{{Key: "$set", Value: set}}
 
-	opts := options.Update().SetUpsert(true)
-	_, err = c.db.Collection(model.CommentTableName).UpdateOne(ctx, nil, updated, opts)
+	res, err := c.db.Collection(model.CommentTableName).UpdateOne(ctx, filter, updated)
+
+	if res.ModifiedCount == 0 {
+		err = domain.ErrUpdateDataNotFound
+	}
 
 	return
 }
 
-func (c *commentRepositoryImpl) DeleteByID(ctx context.Context, id string) (err error) {
-	res, err := c.db.Collection(model.CommentTableName).DeleteOne(ctx, bson.D{{Key: "_id", Value: id}})
+func (c *commentRepositoryImpl) DeleteById(ctx context.Context, comment model.Comment) (err error) {
+	filter := bson.D{
+		bson.E{Key: "_id", Value: comment.Id},
+		bson.E{Key: "authorId", Value: comment.AuthorId},
+		bson.E{Key: "articleId", Value: comment.ArticleId},
+	}
+
+	res, err := c.db.Collection(model.CommentTableName).DeleteOne(ctx, filter)
 	if res.DeletedCount == 0 {
 		err = domain.ErrDelDataNotFound
 	}
+
+	return
+}
+
+func (c *commentRepositoryImpl) DeleteByArticleId(ctx context.Context, articleId string) (err error) {
+	_, err = c.db.Collection(model.CommentTableName).DeleteMany(ctx, bson.D{{Key: "articleId", Value: articleId}})
 
 	return
 }

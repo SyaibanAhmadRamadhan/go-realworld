@@ -19,14 +19,14 @@ func NewTagWithOutPtr() Tag {
 	return Tag{}
 }
 
-// FieldID is a field or column in the table Tag.
-func (t *Tag) FieldID() string {
+// FieldId is a field or column in the table Tag.
+func (t *Tag) FieldId() string {
 	return "_id"
 }
 
-// SetID is a setter for the field or column ID in the table Tag.
-func (t *Tag) SetID(param string) {
-	t.ID = param
+// SetId is a setter for the field or column Id in the table Tag.
+func (t *Tag) SetId(param string) {
+	t.Id = param
 }
 
 // FieldName is a field or column in the table Tag.
@@ -62,8 +62,8 @@ func (t *Tag) GetValuesByColums(columns ...string) []any {
 	var values []any
 	for _, column := range columns {
 		switch column {
-		case t.FieldID():
-			values = append(values, t.ID)
+		case t.FieldId():
+			values = append(values, t.Id)
 		case t.FieldName():
 			values = append(values, t.Name)
 		}
@@ -75,12 +75,12 @@ func (t *Tag) GetValuesByColums(columns ...string) []any {
 func (t *Tag) ScanMap(data map[string]any) (err error) {
 	for key, value := range data {
 		switch key {
-		case t.FieldID():
+		case t.FieldId():
 			val, ok := value.(string)
 			if !ok {
-				return errors.New("invalid type string. field ID")
+				return errors.New("invalid type string. field Id")
 			}
-			t.SetID(val)
+			t.SetId(val)
 		case t.FieldName():
 			val, ok := value.(string)
 			if !ok {

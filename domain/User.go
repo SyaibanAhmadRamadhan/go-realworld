@@ -12,5 +12,5 @@ import (
 type UserRepository interface {
 	FindByOneColumn(ctx context.Context, param gdb.FindByOneColumnParam, columns ...string) (user model.User, err error)
 	Create(ctx context.Context, user model.User) (err error)
-	UpdateByID(ctx context.Context, user model.User, columns []string) (err error)
+	UpdateById(ctx context.Context, user model.User, columns []string) (err error)
 }

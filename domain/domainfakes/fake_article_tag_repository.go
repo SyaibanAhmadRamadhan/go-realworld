@@ -9,6 +9,18 @@ import (
 )
 
 type FakeArticleTagRepository struct {
+	DeleteByArticleIdStub        func(context.Context, string) error
+	deleteByArticleIdMutex       sync.RWMutex
+	deleteByArticleIdArgsForCall []struct {
+		arg1 context.Context
+		arg2 string
+	}
+	deleteByArticleIdReturns struct {
+		result1 error
+	}
+	deleteByArticleIdReturnsOnCall map[int]struct {
+		result1 error
+	}
 	ReplaceAllStub        func(context.Context, []model.ArticleTag) error
 	replaceAllMutex       sync.RWMutex
 	replaceAllArgsForCall []struct {
@@ -23,6 +35,68 @@ type FakeArticleTagRepository struct {
 	}
 	invocations      map[string][][]interface{}
 	invocationsMutex sync.RWMutex
+}
+
+func (fake *FakeArticleTagRepository) DeleteByArticleId(arg1 context.Context, arg2 string) error {
+	fake.deleteByArticleIdMutex.Lock()
+	ret, specificReturn := fake.deleteByArticleIdReturnsOnCall[len(fake.deleteByArticleIdArgsForCall)]
+	fake.deleteByArticleIdArgsForCall = append(fake.deleteByArticleIdArgsForCall, struct {
+		arg1 context.Context
+		arg2 string
+	}{arg1, arg2})
+	stub := fake.DeleteByArticleIdStub
+	fakeReturns := fake.deleteByArticleIdReturns
+	fake.recordInvocation("DeleteByArticleId", []interface{}{arg1, arg2})
+	fake.deleteByArticleIdMutex.Unlock()
+	if stub != nil {
+		return stub(arg1, arg2)
+	}
+	if specificReturn {
+		return ret.result1
+	}
+	return fakeReturns.result1
+}
+
+func (fake *FakeArticleTagRepository) DeleteByArticleIdCallCount() int {
+	fake.deleteByArticleIdMutex.RLock()
+	defer fake.deleteByArticleIdMutex.RUnlock()
+	return len(fake.deleteByArticleIdArgsForCall)
+}
+
+func (fake *FakeArticleTagRepository) DeleteByArticleIdCalls(stub func(context.Context, string) error) {
+	fake.deleteByArticleIdMutex.Lock()
+	defer fake.deleteByArticleIdMutex.Unlock()
+	fake.DeleteByArticleIdStub = stub
+}
+
+func (fake *FakeArticleTagRepository) DeleteByArticleIdArgsForCall(i int) (context.Context, string) {
+	fake.deleteByArticleIdMutex.RLock()
+	defer fake.deleteByArticleIdMutex.RUnlock()
+	argsForCall := fake.deleteByArticleIdArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
+}
+
+func (fake *FakeArticleTagRepository) DeleteByArticleIdReturns(result1 error) {
+	fake.deleteByArticleIdMutex.Lock()
+	defer fake.deleteByArticleIdMutex.Unlock()
+	fake.DeleteByArticleIdStub = nil
+	fake.deleteByArticleIdReturns = struct {
+		result1 error
+	}{result1}
+}
+
+func (fake *FakeArticleTagRepository) DeleteByArticleIdReturnsOnCall(i int, result1 error) {
+	fake.deleteByArticleIdMutex.Lock()
+	defer fake.deleteByArticleIdMutex.Unlock()
+	fake.DeleteByArticleIdStub = nil
+	if fake.deleteByArticleIdReturnsOnCall == nil {
+		fake.deleteByArticleIdReturnsOnCall = make(map[int]struct {
+			result1 error
+		})
+	}
+	fake.deleteByArticleIdReturnsOnCall[i] = struct {
+		result1 error
+	}{result1}
 }
 
 func (fake *FakeArticleTagRepository) ReplaceAll(arg1 context.Context, arg2 []model.ArticleTag) error {
@@ -95,6 +169,8 @@ func (fake *FakeArticleTagRepository) ReplaceAllReturnsOnCall(i int, result1 err
 func (fake *FakeArticleTagRepository) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
+	fake.deleteByArticleIdMutex.RLock()
+	defer fake.deleteByArticleIdMutex.RUnlock()
 	fake.replaceAllMutex.RLock()
 	defer fake.replaceAllMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}

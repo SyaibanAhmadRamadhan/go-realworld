@@ -79,7 +79,7 @@ type FakeTagRepository struct {
 	invocationsMutex sync.RWMutex
 }
 
-func (fake *FakeTagRepository) DeleteByID(arg1 context.Context, arg2 model.Tag) error {
+func (fake *FakeTagRepository) DeleteById(arg1 context.Context, arg2 model.Tag) error {
 	fake.deleteByIDMutex.Lock()
 	ret, specificReturn := fake.deleteByIDReturnsOnCall[len(fake.deleteByIDArgsForCall)]
 	fake.deleteByIDArgsForCall = append(fake.deleteByIDArgsForCall, struct {
@@ -88,7 +88,7 @@ func (fake *FakeTagRepository) DeleteByID(arg1 context.Context, arg2 model.Tag) 
 	}{arg1, arg2})
 	stub := fake.DeleteByIDStub
 	fakeReturns := fake.deleteByIDReturns
-	fake.recordInvocation("DeleteByID", []interface{}{arg1, arg2})
+	fake.recordInvocation("DeleteById", []interface{}{arg1, arg2})
 	fake.deleteByIDMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2)

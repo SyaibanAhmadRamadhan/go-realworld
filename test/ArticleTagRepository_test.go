@@ -16,7 +16,7 @@ var articleTags [][]model.ArticleTag
 func ArticleTagRepository_ReplaceAll(t *testing.T) {
 	var tagIDs []string
 	for _, tag := range tags {
-		tagIDs = append(tagIDs, tag.ID)
+		tagIDs = append(tagIDs, tag.Id)
 	}
 
 	t.Run("Insert", func(t *testing.T) {
@@ -24,8 +24,8 @@ func ArticleTagRepository_ReplaceAll(t *testing.T) {
 			var articleTag []model.ArticleTag
 			for i := 0; i < gcommon.RandomFromArray([]int{4, 5, 6}); i++ {
 				articleTag = garray.AppendUniqueVal(articleTag, model.ArticleTag{
-					ArticleID: article.ID,
-					TagID:     gcommon.RandomFromArray(tagIDs),
+					ArticleId: article.Id,
+					TagId:     gcommon.RandomFromArray(tagIDs),
 				})
 			}
 
@@ -42,8 +42,8 @@ func ArticleTagRepository_ReplaceAll(t *testing.T) {
 			var articleTag []model.ArticleTag
 			for i := 0; i < gcommon.RandomFromArray([]int{1, 2, 3}); i++ {
 				articleTag = garray.AppendUniqueVal(articleTag, model.ArticleTag{
-					ArticleID: article.ID,
-					TagID:     gcommon.RandomFromArray(tagIDs),
+					ArticleId: article.Id,
+					TagId:     gcommon.RandomFromArray(tagIDs),
 				})
 			}
 
@@ -63,7 +63,7 @@ func ArticleTagRepository_ReplaceAll(t *testing.T) {
 //			var offset int64 = 0
 //
 //			for {
-//				res, total, err := articleTagRepository.FindByTagID(context.Background(), tag.ID, repository.PaginationParam{
+//				res, total, err := articleTagRepository.FindByTagID(context.Background(), tag.Id, repository.PaginationParam{
 //					Limit:  limit,
 //					Offset: offset,
 //				})

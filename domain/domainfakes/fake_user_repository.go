@@ -183,7 +183,7 @@ func (fake *FakeUserRepository) FindByOneColumnReturnsOnCall(i int, result1 mode
 	}{result1, result2}
 }
 
-func (fake *FakeUserRepository) UpdateByID(arg1 context.Context, arg2 model.User, arg3 []string) error {
+func (fake *FakeUserRepository) UpdateById(arg1 context.Context, arg2 model.User, arg3 []string) error {
 	var arg3Copy []string
 	if arg3 != nil {
 		arg3Copy = make([]string, len(arg3))
@@ -198,7 +198,7 @@ func (fake *FakeUserRepository) UpdateByID(arg1 context.Context, arg2 model.User
 	}{arg1, arg2, arg3Copy})
 	stub := fake.UpdateByIDStub
 	fakeReturns := fake.updateByIDReturns
-	fake.recordInvocation("UpdateByID", []interface{}{arg1, arg2, arg3Copy})
+	fake.recordInvocation("UpdateById", []interface{}{arg1, arg2, arg3Copy})
 	fake.updateByIDMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2, arg3)

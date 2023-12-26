@@ -18,8 +18,8 @@ import (
 type articleUsecaseImpl struct {
 	artileRepo     domain.ArticleRepository
 	articleTagRepo domain.ArticleTagRepository
-	userRepo       domain.UserRepository
 	commentRepo    domain.CommentRepository
+	userRepo       domain.UserRepository
 	tagRepo        domain.TagRepository
 	txRepo         gdb.Tx
 	validate       *gvalidation.Validation
@@ -28,8 +28,8 @@ type articleUsecaseImpl struct {
 func NewArticleUsecaseImpl(
 	artileRepo domain.ArticleRepository,
 	articleTagRepo domain.ArticleTagRepository,
-	userRepo domain.UserRepository,
 	commentRepo domain.CommentRepository,
+	userRepo domain.UserRepository,
 	tagRepo domain.TagRepository,
 	txRepo gdb.Tx,
 	validate *gvalidation.Validation,
@@ -37,8 +37,8 @@ func NewArticleUsecaseImpl(
 	return &articleUsecaseImpl{
 		artileRepo:     artileRepo,
 		articleTagRepo: articleTagRepo,
-		userRepo:       userRepo,
 		commentRepo:    commentRepo,
+		userRepo:       userRepo,
 		tagRepo:        tagRepo,
 		txRepo:         txRepo,
 		validate:       validate,
@@ -52,14 +52,14 @@ func (a *articleUsecaseImpl) Create(ctx context.Context, req dto.RequestCreateAr
 	}
 
 	timeNowMS := gtime.NormalizeTimeUnit(time.Now(), gtime.Milliseconds)
-	articleID := gcommon.NewUlid()
+	articleId := gcommon.NewUlid()
 	var articleTags []model.ArticleTag
 	var tags []model.Tag
 
 	err = a.txRepo.DoTransaction(ctx, nil, func(c context.Context) (commit bool, err error) {
 		err = a.artileRepo.Create(c, model.Article{
-			ID:          articleID,
-			AuthorID:    req.AuthorID,
+			Id:          articleId,
+			AuthorId:    req.AuthorId,
 			Slug:        req.Slug,
 			Title:       req.Title,
 			Description: req.Description,
@@ -83,8 +83,8 @@ func (a *articleUsecaseImpl) Create(ctx context.Context, req dto.RequestCreateAr
 
 		for _, v := range tags {
 			articleTags = garray.AppendUniqueVal(articleTags, model.ArticleTag{
-				ArticleID: articleID,
-				TagID:     v.ID,
+				ArticleId: articleId,
+				TagId:     v.Id,
 			})
 		}
 
@@ -99,13 +99,13 @@ func (a *articleUsecaseImpl) Create(ctx context.Context, req dto.RequestCreateAr
 	resTags := make([]dto.ResponseTag, 0)
 	for _, tag := range tags {
 		resTags = append(resTags, dto.ResponseTag{
-			ID:   tag.ID,
+			Id:   tag.Id,
 			Name: tag.Name,
 		})
 	}
 
 	res = dto.ResponseArticle{
-		ID:          articleID,
+		Id:          articleId,
 		Tags:        resTags,
 		Slug:        req.Slug,
 		Title:       req.Title,
@@ -125,14 +125,14 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 	}
 
 	article := model.NewArticleWithOutPtr()
-	article.SetID(req.ID)
+	article.SetId(req.Id)
 
-	if articleRes, err := a.artileRepo.FindOneByID(ctx, domain.FindOneByIDArticleParam{
-		ArticleID: article.ID,
-	}, article.FieldID(), article.FieldAuthorID(), article.FieldCreatedAt()); err != nil {
+	if articleRes, err := a.artileRepo.FindOneById(ctx, domain.FindOneByIdArticleParam{
+		ArticleId: article.Id,
+	}, article.FieldId(), article.FieldAuthorId(), article.FieldCreatedAt()); err != nil {
 		return res, err
-	} else if articleRes.Article.ID != req.AuthorID {
-		return res, domain.ErrAuthorIDMismatchInArticleID
+	} else if articleRes.Article.Id != req.AuthorId {
+		return res, domain.ErrAuthorIdMismatchInArticleId
 	} else {
 		article.SetCreatedAt(articleRes.Article.CreatedAt)
 	}
@@ -146,7 +146,7 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 		article.SetDescription(req.Description)
 		article.SetBody(req.Body)
 		article.SetUpdatedAt(gtime.NormalizeTimeUnit(time.Now(), gtime.Milliseconds))
-		if err = a.artileRepo.UpdateByID(c, article, []string{
+		if err = a.artileRepo.UpdateById(c, article, []string{
 			article.FieldSlug(),
 			article.FieldTitle(),
 			article.FieldDescription(),
@@ -168,8 +168,8 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 
 		for _, v := range tags {
 			articleTags = garray.AppendUniqueVal(articleTags, model.ArticleTag{
-				ArticleID: article.ID,
-				TagID:     v.ID,
+				ArticleId: article.Id,
+				TagId:     v.Id,
 			})
 		}
 
@@ -188,13 +188,13 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 	resTags := make([]dto.ResponseTag, 0)
 	for _, tag := range tags {
 		resTags = append(resTags, dto.ResponseTag{
-			ID:   tag.ID,
+			Id:   tag.Id,
 			Name: tag.Name,
 		})
 	}
 
 	res = dto.ResponseArticle{
-		ID:          article.ID,
+		Id:          article.Id,
 		Tags:        resTags,
 		Slug:        req.Slug,
 		Title:       req.Title,
@@ -207,18 +207,32 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 	return
 }
 
-func (a *articleUsecaseImpl) Delete(ctx context.Context, articleID string) (err error) {
+func (a *articleUsecaseImpl) Delete(ctx context.Context, articleId string) (err error) {
 	article := model.NewArticleWithOutPtr()
-	article.SetID(articleID)
+	article.SetId(articleId)
 
-	err = a.artileRepo.DeleteByID(ctx, article)
+	err = a.txRepo.DoTransaction(ctx, nil, func(c context.Context) (commit bool, err error) {
+		err = a.artileRepo.DeleteById(ctx, article)
+		if err != nil {
+			return commit, err
+		}
+
+		err = a.articleTagRepo.DeleteByArticleId(ctx, article.Id)
+		if err != nil {
+			return commit, err
+		}
+
+		err = a.commentRepo.DeleteByArticleId(ctx, article.Id)
+
+		return commit, err
+	})
 
 	return err
 }
 
-func (a *articleUsecaseImpl) FindOne(ctx context.Context, req dto.RequestFindOneArticle) (res dto.ResponseArticle, err error) {
-	article, err := a.artileRepo.FindOneByID(ctx, domain.FindOneByIDArticleParam{
-		ArticleID: req.ArticleID,
+func (a *articleUsecaseImpl) FindOne(ctx context.Context, articleId string) (res dto.ResponseArticle, err error) {
+	article, err := a.artileRepo.FindOneById(ctx, domain.FindOneByIdArticleParam{
+		ArticleId: articleId,
 		AggregationOpt: domain.FindArticleOpt{
 			Tag:      true,
 			Favorite: true,
@@ -229,60 +243,19 @@ func (a *articleUsecaseImpl) FindOne(ctx context.Context, req dto.RequestFindOne
 		return res, err
 	}
 
-	comments, err := a.commentRepo.FindAllByArticleID(ctx, domain.FindAllCommentParam{
-		ArticleID: req.ArticleID,
-		OrderBy: gdb.OrderByParams{
-			{Column: "created_at", IsAscending: false},
-		},
-		LastID: req.LastCommentID,
-		Limit:  10,
-	})
-	if err != nil {
-		return res, err
-	}
-
-	var resComments []dto.ResponseComment
-	for _, comment := range comments {
-		authorComment, err := a.userRepo.FindByOneColumn(ctx, gdb.FindByOneColumnParam{
-			Column: "_id",
-			Value:  comment.AuthorID,
-		})
-		if err != nil {
-			return res, err
-		}
-
-		resComments = append(resComments, dto.ResponseComment{
-			ID:        comment.ID,
-			ArticleID: comment.ArticleID,
-			Author: dto.ResponseUser{
-				ID:       authorComment.ID,
-				Email:    authorComment.Email,
-				Username: authorComment.Username,
-				Image:    authorComment.Image,
-			},
-			Body:      comment.Body,
-			CreatedAt: comment.CreatedAt.Format(gtime.FormatDMYHM),
-			UpdateAt:  comment.UpdatedAt.Format(gtime.FormatDMYHM),
-		})
-	}
-
 	var resTags []dto.ResponseTag
 	for _, tag := range article.Tags {
 		resTags = append(resTags, dto.ResponseTag{
-			ID:   tag.ID,
+			Id:   tag.Id,
 			Name: tag.Name,
 		})
 	}
 
 	res = dto.ResponseArticle{
-		ID:   article.Article.ID,
+		Id:   article.Article.Id,
 		Tags: resTags,
-		DataComments: dto.DataCommentsArticle{
-			Comments: resComments,
-			LastID:   resComments[len(resComments)-1].ID,
-		},
 		Author: dto.ResponseUser{
-			ID:       article.Author.ID,
+			Id:       article.Author.Id,
 			Email:    article.Author.Email,
 			Username: article.Author.Username,
 			Image:    article.Author.Image,
@@ -316,13 +289,13 @@ func (a *articleUsecaseImpl) FindAll(ctx context.Context, req dto.RequestFindAll
 		if err != nil {
 			return res, err
 		}
-		tagIds = append(tagIds, tag.ID)
+		tagIds = append(tagIds, tag.Id)
 	}
 
 	articleModel := model.NewArticleWithOutPtr()
 
 	articles, err := a.artileRepo.FindAllPaginate(ctx, domain.FindAllPaginateArticleParam{
-		TagIDs:     tagIds,
+		TagIds:     tagIds,
 		Orders:     gdb.OrderByParams{{Column: "_id", IsAscending: false}},
 		Pagination: gdb.PaginationParam{Limit: limit, Offset: offset},
 		AggregationOpt: domain.FindArticleOpt{
@@ -340,9 +313,9 @@ func (a *articleUsecaseImpl) FindAll(ctx context.Context, req dto.RequestFindAll
 
 	for _, article := range articles.Articles {
 		res.Articles = append(res.Articles, dto.ResponseArticle{
-			ID: article.Article.ID,
+			Id: article.Article.Id,
 			Author: dto.ResponseUser{
-				ID:       article.Author.ID,
+				Id:       article.Author.Id,
 				Email:    article.Author.Email,
 				Username: article.Author.Username,
 				Image:    article.Author.Image,

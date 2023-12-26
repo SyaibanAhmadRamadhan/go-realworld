@@ -3,6 +3,6 @@ package model
 const ArticleTagTableName string = "articleTag"
 
 type ArticleTag struct {
-	ArticleID string `bson:"articleID"`
-	TagID     string `bson:"tagID"`
+	ArticleId string `bson:"articleId"`
+	TagId     string `bson:"tagId"`
 }

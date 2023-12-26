@@ -30,21 +30,21 @@ func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param domai
 		bson.D{{Key: "$lookup", Value: bson.D{
 			{Key: "from", Value: model.ArticleTagTableName},
 			{Key: "localField", Value: "_id"},
-			{Key: "foreignField", Value: "articleID"},
+			{Key: "foreignField", Value: "articleId"},
 			{Key: "pipeline", Value: bson.A{
 				bson.D{{Key: "$project", Value: bson.D{
-					{Key: "tagID", Value: 1},
-					{Key: "articleID", Value: 1},
+					{Key: "tagId", Value: 1},
+					{Key: "articleId", Value: 1},
 				}}},
 			}},
 			{Key: "as", Value: "article_tag"},
 		}}},
 	)
 
-	if len(param.TagIDs) > 0 {
+	if len(param.TagIds) > 0 {
 		pipeline = append(pipeline, bson.D{
 			{"$match", bson.D{
-				{"article_tag.tagID", bson.D{{"$in", param.TagIDs}}},
+				{"article_tag.tagId", bson.D{{"$in", param.TagIds}}},
 			}},
 		})
 	}
@@ -53,7 +53,7 @@ func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param domai
 		pipeline = append(pipeline,
 			bson.D{{Key: "$lookup", Value: bson.D{
 				{Key: "from", Value: model.UserTableName},
-				{Key: "localField", Value: "authorID"},
+				{Key: "localField", Value: "authorId"},
 				{Key: "foreignField", Value: "_id"},
 				{Key: "as", Value: "author"},
 			}}},
@@ -64,7 +64,7 @@ func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param domai
 		pipeline = append(pipeline,
 			bson.D{{Key: "$lookup", Value: bson.D{
 				{Key: "from", Value: model.TagTableName},
-				{Key: "localField", Value: "article_tag.tagID"},
+				{Key: "localField", Value: "article_tag.tagId"},
 				{Key: "foreignField", Value: "_id"},
 				{Key: "as", Value: "tags"},
 			}}},
@@ -76,7 +76,7 @@ func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param domai
 			bson.D{{Key: "$lookup", Value: bson.D{
 				{Key: "from", Value: model.UserFavoriteTableName},
 				{Key: "localField", Value: "_id"},
-				{Key: "foreignField", Value: "articleID"},
+				{Key: "foreignField", Value: "articleId"},
 				{Key: "as", Value: "userFavorites"},
 			}}},
 			bson.D{{Key: "$addFields", Value: bson.D{
@@ -139,14 +139,14 @@ func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param domai
 	return
 }
 
-func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param domain.FindOneByIDArticleParam, articleColumns ...string) (
+func (a *articleRepositoryImpl) FindOneById(ctx context.Context, param domain.FindOneByIdArticleParam, articleColumns ...string) (
 	res domain.FindOneArticleResult, err error) {
 	pipeline := mongo.Pipeline{}
 
 	pipeline = append(pipeline,
 		bson.D{{Key: "$match", Value: bson.D{
 			{Key: "_id", Value: bson.D{
-				{Key: "$eq", Value: param.ArticleID},
+				{Key: "$eq", Value: param.ArticleId},
 			}},
 		}}},
 	)
@@ -155,7 +155,7 @@ func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param domain.Fi
 			bson.D{{Key: "$lookup", Value: bson.D{
 				{Key: "from", Value: model.ArticleTagTableName},
 				{Key: "localField", Value: "_id"},
-				{Key: "foreignField", Value: "articleID"},
+				{Key: "foreignField", Value: "articleId"},
 				{Key: "as", Value: "article_tag"},
 			}}},
 		)
@@ -165,7 +165,7 @@ func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param domain.Fi
 		pipeline = append(pipeline,
 			bson.D{{Key: "$lookup", Value: bson.D{
 				{Key: "from", Value: model.UserTableName},
-				{Key: "localField", Value: "authorID"},
+				{Key: "localField", Value: "authorId"},
 				{Key: "foreignField", Value: "_id"},
 				{Key: "as", Value: "author"},
 			}}},
@@ -175,7 +175,7 @@ func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param domain.Fi
 		pipeline = append(pipeline,
 			bson.D{{Key: "$lookup", Value: bson.D{
 				{Key: "from", Value: model.TagTableName},
-				{Key: "localField", Value: "article_tag.tagID"},
+				{Key: "localField", Value: "article_tag.tagId"},
 				{Key: "foreignField", Value: "_id"},
 				{Key: "as", Value: "tags"},
 			}}},
@@ -186,7 +186,7 @@ func (a *articleRepositoryImpl) FindOneByID(ctx context.Context, param domain.Fi
 			bson.D{{Key: "$lookup", Value: bson.D{
 				{Key: "from", Value: model.UserFavoriteTableName},
 				{Key: "localField", Value: "_id"},
-				{Key: "foreignField", Value: "articleID"},
+				{Key: "foreignField", Value: "articleId"},
 				{Key: "as", Value: "userFavorites"},
 			}}},
 			bson.D{{Key: "$addFields", Value: bson.D{
@@ -231,8 +231,8 @@ func (a *articleRepositoryImpl) Create(ctx context.Context, article model.Articl
 	return
 }
 
-func (a *articleRepositoryImpl) UpdateByID(ctx context.Context, article model.Article, columns []string) (err error) {
-	filter := bson.D{bson.E{Key: "_id", Value: article.ID}}
+func (a *articleRepositoryImpl) UpdateById(ctx context.Context, article model.Article, columns []string) (err error) {
+	filter := bson.D{bson.E{Key: "_id", Value: article.Id}}
 	set := bson.D{}
 	value := article.GetValuesByColums(columns...)
 
@@ -257,8 +257,8 @@ func (a *articleRepositoryImpl) UpdateByID(ctx context.Context, article model.Ar
 	return
 }
 
-func (a *articleRepositoryImpl) DeleteByID(ctx context.Context, article model.Article) (err error) {
-	filter := bson.D{bson.E{Key: "_id", Value: article.ID}}
+func (a *articleRepositoryImpl) DeleteById(ctx context.Context, article model.Article) (err error) {
+	filter := bson.D{bson.E{Key: "_id", Value: article.Id}}
 
 	res, err := a.db.Collection(model.ArticleTableName).DeleteOne(ctx, filter)
 	if err != nil {
@@ -266,16 +266,6 @@ func (a *articleRepositoryImpl) DeleteByID(ctx context.Context, article model.Ar
 	}
 	if res.DeletedCount == 0 {
 		return domain.ErrDelDataNotFound
-	}
-
-	_, err = a.db.Collection(model.ArticleTagTableName).DeleteMany(ctx, bson.D{{Key: "articleID", Value: article.ID}})
-	if err != nil {
-		return
-	}
-
-	_, err = a.db.Collection(model.CommentTableName).DeleteMany(ctx, bson.D{{Key: "articleID", Value: article.ID}})
-	if err != nil {
-		return
 	}
 
 	return

@@ -48,11 +48,11 @@ type FakeArticleRepository struct {
 		result1 domain.FindAllArticleResult
 		result2 error
 	}
-	FindOneByIDStub        func(context.Context, domain.FindOneByIDArticleParam, ...string) (domain.FindOneArticleResult, error)
+	FindOneByIDStub        func(context.Context, domain.FindOneByIdArticleParam, ...string) (domain.FindOneArticleResult, error)
 	findOneByIDMutex       sync.RWMutex
 	findOneByIDArgsForCall []struct {
 		arg1 context.Context
-		arg2 domain.FindOneByIDArticleParam
+		arg2 domain.FindOneByIdArticleParam
 		arg3 []string
 	}
 	findOneByIDReturns struct {
@@ -142,7 +142,7 @@ func (fake *FakeArticleRepository) CreateReturnsOnCall(i int, result1 error) {
 	}{result1}
 }
 
-func (fake *FakeArticleRepository) DeleteByID(arg1 context.Context, arg2 model.Article) error {
+func (fake *FakeArticleRepository) DeleteById(arg1 context.Context, arg2 model.Article) error {
 	fake.deleteByIDMutex.Lock()
 	ret, specificReturn := fake.deleteByIDReturnsOnCall[len(fake.deleteByIDArgsForCall)]
 	fake.deleteByIDArgsForCall = append(fake.deleteByIDArgsForCall, struct {
@@ -151,7 +151,7 @@ func (fake *FakeArticleRepository) DeleteByID(arg1 context.Context, arg2 model.A
 	}{arg1, arg2})
 	stub := fake.DeleteByIDStub
 	fakeReturns := fake.deleteByIDReturns
-	fake.recordInvocation("DeleteByID", []interface{}{arg1, arg2})
+	fake.recordInvocation("DeleteById", []interface{}{arg1, arg2})
 	fake.deleteByIDMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2)
@@ -270,17 +270,17 @@ func (fake *FakeArticleRepository) FindAllPaginateReturnsOnCall(i int, result1 d
 	}{result1, result2}
 }
 
-func (fake *FakeArticleRepository) FindOneByID(arg1 context.Context, arg2 domain.FindOneByIDArticleParam, arg3 ...string) (domain.FindOneArticleResult, error) {
+func (fake *FakeArticleRepository) FindOneById(arg1 context.Context, arg2 domain.FindOneByIdArticleParam, arg3 ...string) (domain.FindOneArticleResult, error) {
 	fake.findOneByIDMutex.Lock()
 	ret, specificReturn := fake.findOneByIDReturnsOnCall[len(fake.findOneByIDArgsForCall)]
 	fake.findOneByIDArgsForCall = append(fake.findOneByIDArgsForCall, struct {
 		arg1 context.Context
-		arg2 domain.FindOneByIDArticleParam
+		arg2 domain.FindOneByIdArticleParam
 		arg3 []string
 	}{arg1, arg2, arg3})
 	stub := fake.FindOneByIDStub
 	fakeReturns := fake.findOneByIDReturns
-	fake.recordInvocation("FindOneByID", []interface{}{arg1, arg2, arg3})
+	fake.recordInvocation("FindOneById", []interface{}{arg1, arg2, arg3})
 	fake.findOneByIDMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2, arg3...)
@@ -297,13 +297,13 @@ func (fake *FakeArticleRepository) FindOneByIDCallCount() int {
 	return len(fake.findOneByIDArgsForCall)
 }
 
-func (fake *FakeArticleRepository) FindOneByIDCalls(stub func(context.Context, domain.FindOneByIDArticleParam, ...string) (domain.FindOneArticleResult, error)) {
+func (fake *FakeArticleRepository) FindOneByIDCalls(stub func(context.Context, domain.FindOneByIdArticleParam, ...string) (domain.FindOneArticleResult, error)) {
 	fake.findOneByIDMutex.Lock()
 	defer fake.findOneByIDMutex.Unlock()
 	fake.FindOneByIDStub = stub
 }
 
-func (fake *FakeArticleRepository) FindOneByIDArgsForCall(i int) (context.Context, domain.FindOneByIDArticleParam, []string) {
+func (fake *FakeArticleRepository) FindOneByIDArgsForCall(i int) (context.Context, domain.FindOneByIdArticleParam, []string) {
 	fake.findOneByIDMutex.RLock()
 	defer fake.findOneByIDMutex.RUnlock()
 	argsForCall := fake.findOneByIDArgsForCall[i]
@@ -336,7 +336,7 @@ func (fake *FakeArticleRepository) FindOneByIDReturnsOnCall(i int, result1 domai
 	}{result1, result2}
 }
 
-func (fake *FakeArticleRepository) UpdateByID(arg1 context.Context, arg2 model.Article, arg3 []string) error {
+func (fake *FakeArticleRepository) UpdateById(arg1 context.Context, arg2 model.Article, arg3 []string) error {
 	var arg3Copy []string
 	if arg3 != nil {
 		arg3Copy = make([]string, len(arg3))
@@ -351,7 +351,7 @@ func (fake *FakeArticleRepository) UpdateByID(arg1 context.Context, arg2 model.A
 	}{arg1, arg2, arg3Copy})
 	stub := fake.UpdateByIDStub
 	fakeReturns := fake.updateByIDReturns
-	fake.recordInvocation("UpdateByID", []interface{}{arg1, arg2, arg3Copy})
+	fake.recordInvocation("UpdateById", []interface{}{arg1, arg2, arg3Copy})
 	fake.updateByIDMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2, arg3)

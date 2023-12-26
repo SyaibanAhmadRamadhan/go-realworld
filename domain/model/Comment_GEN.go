@@ -21,34 +21,34 @@ func NewCommentWithOutPtr() Comment {
 	return Comment{}
 }
 
-// FieldID is a field or column in the table Comment.
-func (c *Comment) FieldID() string {
-	return "id"
+// FieldId is a field or column in the table Comment.
+func (c *Comment) FieldId() string {
+	return "_id"
 }
 
-// SetID is a setter for the field or column ID in the table Comment.
-func (c *Comment) SetID(param string) {
-	c.ID = param
+// SetId is a setter for the field or column Id in the table Comment.
+func (c *Comment) SetId(param string) {
+	c.Id = param
 }
 
-// FieldArticleID is a field or column in the table Comment.
-func (c *Comment) FieldArticleID() string {
-	return "articleID"
+// FieldArticleId is a field or column in the table Comment.
+func (c *Comment) FieldArticleId() string {
+	return "articleId"
 }
 
-// SetArticleID is a setter for the field or column ArticleID in the table Comment.
-func (c *Comment) SetArticleID(param string) {
-	c.ArticleID = param
+// SetArticleId is a setter for the field or column ArticleId in the table Comment.
+func (c *Comment) SetArticleId(param string) {
+	c.ArticleId = param
 }
 
-// FieldAuthorID is a field or column in the table Comment.
-func (c *Comment) FieldAuthorID() string {
-	return "authorID"
+// FieldAuthorId is a field or column in the table Comment.
+func (c *Comment) FieldAuthorId() string {
+	return "authorId"
 }
 
-// SetAuthorID is a setter for the field or column AuthorID in the table Comment.
-func (c *Comment) SetAuthorID(param string) {
-	c.AuthorID = param
+// SetAuthorId is a setter for the field or column AuthorId in the table Comment.
+func (c *Comment) SetAuthorId(param string) {
+	c.AuthorId = param
 }
 
 // FieldBody is a field or column in the table Comment.
@@ -84,9 +84,9 @@ func (c *Comment) SetUpdatedAt(param time.Time) {
 // AllField is a function to get all field or column in the table Comment.
 func (c *Comment) AllField() (str []string) {
 	str = []string{ 
-		`id`,
-		`articleID`,
-		`authorID`,
+		`_id`,
+		`articleId`,
+		`authorId`,
 		`body`,
 		`createdAt`,
 		`updatedAt`,
@@ -106,12 +106,12 @@ func (c *Comment) GetValuesByColums(columns ...string) []any {
 	var values []any
 	for _, column := range columns {
 		switch column {
-		case c.FieldID():
-			values = append(values, c.ID)
-		case c.FieldArticleID():
-			values = append(values, c.ArticleID)
-		case c.FieldAuthorID():
-			values = append(values, c.AuthorID)
+		case c.FieldId():
+			values = append(values, c.Id)
+		case c.FieldArticleId():
+			values = append(values, c.ArticleId)
+		case c.FieldAuthorId():
+			values = append(values, c.AuthorId)
 		case c.FieldBody():
 			values = append(values, c.Body)
 		case c.FieldCreatedAt():
@@ -127,24 +127,24 @@ func (c *Comment) GetValuesByColums(columns ...string) []any {
 func (c *Comment) ScanMap(data map[string]any) (err error) {
 	for key, value := range data {
 		switch key {
-		case c.FieldID():
+		case c.FieldId():
 			val, ok := value.(string)
 			if !ok {
-				return errors.New("invalid type string. field ID")
+				return errors.New("invalid type string. field Id")
 			}
-			c.SetID(val)
-		case c.FieldArticleID():
+			c.SetId(val)
+		case c.FieldArticleId():
 			val, ok := value.(string)
 			if !ok {
-				return errors.New("invalid type string. field ArticleID")
+				return errors.New("invalid type string. field ArticleId")
 			}
-			c.SetArticleID(val)
-		case c.FieldAuthorID():
+			c.SetArticleId(val)
+		case c.FieldAuthorId():
 			val, ok := value.(string)
 			if !ok {
-				return errors.New("invalid type string. field AuthorID")
+				return errors.New("invalid type string. field AuthorId")
 			}
-			c.SetAuthorID(val)
+			c.SetAuthorId(val)
 		case c.FieldBody():
 			val, ok := value.(string)
 			if !ok {

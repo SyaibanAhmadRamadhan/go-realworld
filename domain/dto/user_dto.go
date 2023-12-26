@@ -20,7 +20,7 @@ type RequestUpdateUser struct {
 }
 
 type ResponseUser struct {
-	ID       string `json:"id"`
+	Id       string `json:"id"`
 	Email    string `json:"email,omitempty"`
 	Username string `json:"username"`
 	Image    string `json:"image"`

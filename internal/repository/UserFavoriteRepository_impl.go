@@ -19,7 +19,7 @@ func NewUserFavoriteRepositoryImpl(db *mongo.Database) domain.UserFavoriteReposi
 	return &userFavoriteRepositoryImpl{db: db}
 }
 
-func (u *userFavoriteRepositoryImpl) FindAllByUserID(ctx context.Context, param domain.FindAllUserFavoriteParam) (
+func (u *userFavoriteRepositoryImpl) FindAllByUserId(ctx context.Context, param domain.FindAllUserFavoriteParam) (
 	res domain.FindAllArticleResult, err error) {
 	articleProjection := bson.D{}
 	if param.ArticleFields != nil {
@@ -38,12 +38,12 @@ func (u *userFavoriteRepositoryImpl) FindAllByUserID(ctx context.Context, param 
 			bson.D{{Key: "$lookup", Value: bson.D{
 				{Key: "from", Value: model.ArticleTagTableName},
 				{Key: "localField", Value: "_id"},
-				{Key: "foreignField", Value: "articleID"},
+				{Key: "foreignField", Value: "articleId"},
 				{Key: "as", Value: "article_tag"},
 			}}},
 			bson.D{{Key: "$lookup", Value: bson.D{
 				{Key: "from", Value: model.TagTableName},
-				{Key: "localField", Value: "article_tag.tagID"},
+				{Key: "localField", Value: "article_tag.tagId"},
 				{Key: "foreignField", Value: "_id"},
 				{Key: "as", Value: "tags"},
 			}}},
@@ -64,11 +64,11 @@ func (u *userFavoriteRepositoryImpl) FindAllByUserID(ctx context.Context, param 
 	pipeline := mongo.Pipeline{}
 	pipeline = append(pipeline,
 		bson.D{{Key: "$match", Value: bson.D{
-			{Key: "userID", Value: param.UserID},
+			{Key: "userId", Value: param.UserId},
 		}}},
 		bson.D{{Key: "$lookup", Value: bson.D{
 			{Key: "from", Value: model.ArticleTableName},
-			{Key: "localField", Value: "articleID"},
+			{Key: "localField", Value: "articleId"},
 			{Key: "foreignField", Value: "_id"},
 			{Key: "pipeline", Value: pipelineArticleTableName},
 			{Key: "as", Value: "result"},
@@ -111,17 +111,17 @@ func (u *userFavoriteRepositoryImpl) FindAllByUserID(ctx context.Context, param 
 	return
 }
 
-func (u *userFavoriteRepositoryImpl) UpSertByUserID(ctx context.Context, userFavorite model.UserFavorite) (err error) {
-	if userFavorite.UserID == "" {
-		return domain.ErrIDParamIsEmpty
+func (u *userFavoriteRepositoryImpl) UpSertByUserId(ctx context.Context, userFavorite model.UserFavorite) (err error) {
+	if userFavorite.UserId == "" {
+		return domain.ErrIdParamIsEmpty
 	}
 
 	filter := bson.D{
-		{Key: "userID", Value: userFavorite.UserID},
-		{Key: "articleID", Value: userFavorite.ArticleID},
+		{Key: "userId", Value: userFavorite.UserId},
+		{Key: "articleId", Value: userFavorite.ArticleId},
 	}
 	update := bson.D{{Key: "$set", Value: bson.D{
-		{Key: "articleID", Value: userFavorite.ArticleID},
+		{Key: "articleId", Value: userFavorite.ArticleId},
 	}}}
 
 	opts := options.Update().SetUpsert(true)
@@ -132,10 +132,10 @@ func (u *userFavoriteRepositoryImpl) UpSertByUserID(ctx context.Context, userFav
 	return
 }
 
-func (u *userFavoriteRepositoryImpl) DeleteOneByUserID(ctx context.Context, userID string, articleID string) (err error) {
+func (u *userFavoriteRepositoryImpl) DeleteOneByUserId(ctx context.Context, userId string, articleId string) (err error) {
 	filter := bson.D{
-		{Key: "userID", Value: userID},
-		{Key: "articleID", Value: articleID},
+		{Key: "userId", Value: userId},
+		{Key: "articleId", Value: articleId},
 	}
 
 	res, err := u.db.Collection(model.UserFavoriteTableName).DeleteOne(ctx, filter)

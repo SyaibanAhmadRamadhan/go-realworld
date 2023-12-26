@@ -19,26 +19,6 @@ func NewUserWithOutPtr() User {
 	return User{}
 }
 
-// FieldImage is a field or column in the table User.
-func (u *User) FieldImage() string {
-	return "image"
-}
-
-// SetImage is a setter for the field or column Image in the table User.
-func (u *User) SetImage(param string) {
-	u.Image = param
-}
-
-// FieldBio is a field or column in the table User.
-func (u *User) FieldBio() string {
-	return "bio"
-}
-
-// SetBio is a setter for the field or column Bio in the table User.
-func (u *User) SetBio(param *string) {
-	u.Bio = param
-}
-
 // FieldDemo is a field or column in the table User.
 func (u *User) FieldDemo() string {
 	return "demo"
@@ -49,14 +29,14 @@ func (u *User) SetDemo(param bool) {
 	u.Demo = param
 }
 
-// FieldID is a field or column in the table User.
-func (u *User) FieldID() string {
+// FieldId is a field or column in the table User.
+func (u *User) FieldId() string {
 	return "_id"
 }
 
-// SetID is a setter for the field or column ID in the table User.
-func (u *User) SetID(param string) {
-	u.ID = param
+// SetId is a setter for the field or column Id in the table User.
+func (u *User) SetId(param string) {
+	u.Id = param
 }
 
 // FieldEmail is a field or column in the table User.
@@ -89,16 +69,36 @@ func (u *User) SetPassword(param string) {
 	u.Password = param
 }
 
+// FieldImage is a field or column in the table User.
+func (u *User) FieldImage() string {
+	return "image"
+}
+
+// SetImage is a setter for the field or column Image in the table User.
+func (u *User) SetImage(param string) {
+	u.Image = param
+}
+
+// FieldBio is a field or column in the table User.
+func (u *User) FieldBio() string {
+	return "bio"
+}
+
+// SetBio is a setter for the field or column Bio in the table User.
+func (u *User) SetBio(param *string) {
+	u.Bio = param
+}
+
 // AllField is a function to get all field or column in the table User.
 func (u *User) AllField() (str []string) {
 	str = []string{ 
-		`_id`,
 		`email`,
 		`username`,
 		`password`,
 		`image`,
 		`bio`,
 		`demo`,
+		`_id`,
 	}
 	return
 }
@@ -115,20 +115,20 @@ func (u *User) GetValuesByColums(columns ...string) []any {
 	var values []any
 	for _, column := range columns {
 		switch column {
-		case u.FieldPassword():
-			values = append(values, u.Password)
 		case u.FieldImage():
 			values = append(values, u.Image)
 		case u.FieldBio():
 			values = append(values, u.Bio)
 		case u.FieldDemo():
 			values = append(values, u.Demo)
-		case u.FieldID():
-			values = append(values, u.ID)
+		case u.FieldId():
+			values = append(values, u.Id)
 		case u.FieldEmail():
 			values = append(values, u.Email)
 		case u.FieldUsername():
 			values = append(values, u.Username)
+		case u.FieldPassword():
+			values = append(values, u.Password)
 		}
 	}
 	return values
@@ -138,30 +138,6 @@ func (u *User) GetValuesByColums(columns ...string) []any {
 func (u *User) ScanMap(data map[string]any) (err error) {
 	for key, value := range data {
 		switch key {
-		case u.FieldID():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field ID")
-			}
-			u.SetID(val)
-		case u.FieldEmail():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field Email")
-			}
-			u.SetEmail(val)
-		case u.FieldUsername():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field Username")
-			}
-			u.SetUsername(val)
-		case u.FieldPassword():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field Password")
-			}
-			u.SetPassword(val)
 		case u.FieldImage():
 			val, ok := value.(string)
 			if !ok {
@@ -180,6 +156,30 @@ func (u *User) ScanMap(data map[string]any) (err error) {
 				return errors.New("invalid type bool. field Demo")
 			}
 			u.SetDemo(val)
+		case u.FieldId():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field Id")
+			}
+			u.SetId(val)
+		case u.FieldEmail():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field Email")
+			}
+			u.SetEmail(val)
+		case u.FieldUsername():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field Username")
+			}
+			u.SetUsername(val)
+		case u.FieldPassword():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field Password")
+			}
+			u.SetPassword(val)
 		default:
 			return errors.New("invalid column")
 		}

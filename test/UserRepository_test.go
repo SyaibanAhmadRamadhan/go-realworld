@@ -21,7 +21,7 @@ func UserRepository_Create(t *testing.T) {
 
 	for i := 0; i < 5; i++ {
 		user := model.User{
-			ID:       gcommon.NewUlid(),
+			Id:       gcommon.NewUlid(),
 			Email:    gofakeit.Email(),
 			Username: gofakeit.Username(),
 			Password: gofakeit.Password(true, true, true, false, false, 10),
@@ -68,7 +68,7 @@ func UserRepository_FindByOneColumn(t *testing.T) {
 				},
 				{
 					Column: "_id",
-					Value:  user.ID,
+					Value:  user.Id,
 				},
 				{
 					Column: "username",
@@ -115,7 +115,7 @@ func UserRepository_UpdateByID(t *testing.T) {
 		user.Image = gofakeit.ImageURL(640, 480)
 		user.Bio = &bio
 		user.Demo = gcommon.RandomFromArray([]bool{true, false})
-		err := userRepository.UpdateByID(context.Background(), user, user.AllField())
+		err := userRepository.UpdateById(context.Background(), user, user.AllField())
 		assert.NoError(t, err)
 
 		newUsers = append(newUsers, user)
@@ -125,7 +125,7 @@ func UserRepository_UpdateByID(t *testing.T) {
 	for _, user := range users {
 		res, err := userRepository.FindByOneColumn(context.Background(), gdb.FindByOneColumnParam{
 			Column: "_id",
-			Value:  user.ID,
+			Value:  user.Id,
 		})
 		assert.NoError(t, err)
 		assert.Equal(t, user, res)

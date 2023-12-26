@@ -23,8 +23,8 @@ func TestArticleRepositoryImpl_Create(t *testing.T) {
 	var articles []model.Article
 	for i := 0; i < 10; i++ {
 		articles = append(articles, model.Article{
-			ID:          gcommon.NewUlid(),
-			AuthorID:    gcommon.NewUlid(),
+			Id:          gcommon.NewUlid(),
+			AuthorId:    gcommon.NewUlid(),
 			Slug:        gofakeit.Username(),
 			Title:       gofakeit.Sentence(5),
 			Description: gofakeit.Paragraph(2, 2, 10, "\n"),
@@ -52,8 +52,8 @@ func TestArticleRepositoryImpl_FindOneByID(t *testing.T) {
 	var articles []model.Article
 	for i := 0; i < 10; i++ {
 		articles = append(articles, model.Article{
-			ID:          gcommon.NewUlid(),
-			AuthorID:    gcommon.NewUlid(),
+			Id:          gcommon.NewUlid(),
+			AuthorId:    gcommon.NewUlid(),
 			Slug:        gofakeit.Username(),
 			Title:       gofakeit.Sentence(5),
 			Description: gofakeit.Paragraph(2, 2, 10, "\n"),
@@ -68,8 +68,8 @@ func TestArticleRepositoryImpl_FindOneByID(t *testing.T) {
 		for _, article := range articles {
 			mt.AddMockResponses(mtest.CreateCursorResponse(0, "dbname.collname", mtest.FirstBatch, bson.D{
 				{Key: "article", Value: bson.D{
-					{Key: "_id", Value: article.ID},
-					{Key: article.FieldAuthorID(), Value: article.AuthorID},
+					{Key: "_id", Value: article.Id},
+					{Key: article.FieldAuthorId(), Value: article.AuthorId},
 					{Key: article.FieldSlug(), Value: article.Slug},
 					{Key: article.FieldTitle(), Value: article.Title},
 					{Key: article.FieldDescription(), Value: article.Description},
@@ -78,8 +78,8 @@ func TestArticleRepositoryImpl_FindOneByID(t *testing.T) {
 					{Key: article.FieldUpdatedAt(), Value: article.UpdatedAt},
 				}},
 			}))
-			res, err := articleRepo.FindOneByID(ctx, domain.FindOneByIDArticleParam{
-				ArticleID: article.ID,
+			res, err := articleRepo.FindOneById(ctx, domain.FindOneByIdArticleParam{
+				ArticleId: article.Id,
 				AggregationOpt: domain.FindArticleOpt{
 					Tag:      true,
 					Favorite: true,
