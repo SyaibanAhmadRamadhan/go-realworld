@@ -10,7 +10,7 @@ services:
     container_name: mongodb_realworld1
     image: mongo:latest
     ports:
-      - "20000:27017"
+      - "21000:27017"
     volumes:
       - mongodb_realworld1:/data/db
       # - ./rs-init.sh:/scripts/rs-init.sh
@@ -21,11 +21,11 @@ services:
     container_name: mongodb_realworld2
     image: mongo:latest
     ports:
-      - "20001:27017"
+      - "21001:27017"
     depends_on:
       - mongodb_realworld1
     volumes:
-      - mongodb_realworld1:/data/db
+      - mongodb_realworld2:/data/db
     restart: always
     entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
 
@@ -33,10 +33,54 @@ services:
     container_name: mongodb_realworld3
     image: mongo:latest
     ports:
-      - "20002:27017"
+      - "21002:27017"
     depends_on:
       - mongodb_realworld1
     volumes:
       - mongodb_realworld3:/data/db
     restart: always
     entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "dbrs" ]
+
+  # Jaeger
+  jaeger-all-in-one:
+    image: jaegertracing/all-in-one:latest
+    restart: always
+    ports:
+      - "16686:16686"
+      - "14268"
+      - "14250"
+
+  # Zipkin
+  zipkin-all-in-one:
+    image: openzipkin/zipkin:latest
+    environment:
+      - JAVA_OPTS=-Xms1024m -Xmx1024m -XX:+ExitOnOutOfMemoryError
+    restart: always
+    ports:
+      - "9411:9411"
+
+  # Collector
+  otel-collector:
+    image: otel/opentelemetry-collector:0.88.0
+    restart: always
+    command: ["--config=/providerconf/otel_config.yaml", "${OTELCOL_ARGS}"]
+    volumes:
+      - "${PWD}/infra/providerconf:/providerconf"
+    ports:
+      - "1888:1888"   # pprof extension
+      - "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"   # Prometheus exporter metrics
+      - "13133:13133" # health_check extension
+      - "4317:4317"   # OTLP gRPC receiver
+      - "55679:55679" # zpages extension
+    depends_on:
+      - jaeger-all-in-one
+      - zipkin-all-in-one
+
+  prometheus:
+    image: prom/prometheus:latest
+    restart: always
+    volumes:
+      - "${PWD}/infra/providerconf/prometheus.yaml:/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"

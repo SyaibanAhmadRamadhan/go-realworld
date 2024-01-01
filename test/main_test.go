@@ -14,7 +14,7 @@ import (
 
 	"realworld-go/domain"
 	"realworld-go/domain/model"
-	repositoryimpl "realworld-go/internal/repository"
+	repository2 "realworld-go/internal/repository"
 )
 
 var mongoClient *mongo.Client
@@ -71,11 +71,11 @@ var articleTagRepository domain.ArticleTagRepository
 var userFavoriteRepository domain.UserFavoriteRepository
 
 func initRepository() {
-	tagRepository = repositoryimpl.NewTagRepositoryImpl(mongodb)
-	userRepository = repositoryimpl.NewUserRepositoryImpl(mongodb)
-	articleRepository = repositoryimpl.NewArticleRepositoryImpl(mongodb)
-	articleTagRepository = repositoryimpl.NewArticleTagRepositoryImpl(mongodb)
-	userFavoriteRepository = repositoryimpl.NewUserFavoriteRepositoryImpl(mongodb)
+	tagRepository = repository2.NewTagRepositoryImpl(mongodb)
+	userRepository = repository2.NewUserRepositoryImpl(mongodb)
+	articleRepository = repository2.NewArticleRepositoryImpl(mongodb)
+	articleTagRepository = repository2.NewArticleTagRepositoryImpl(mongodb)
+	userFavoriteRepository = repository2.NewUserFavoriteRepositoryImpl(mongodb)
 }
 
 func TestRun(t *testing.T) {

@@ -108,7 +108,7 @@ func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param domai
 
 		total, ok := totalMap["total"].(int32)
 		if !ok {
-			return res, domain.ErrInvalidTotalType
+			return res, ErrInvalidTotalType
 		}
 		res.Total = int64(total)
 	}
@@ -223,7 +223,7 @@ func (a *articleRepositoryImpl) FindOneById(ctx context.Context, param domain.Fi
 		return
 	}
 
-	return res, domain.ErrDataNotFound
+	return res, ErrDataNotFound
 }
 
 func (a *articleRepositoryImpl) Create(ctx context.Context, article model.Article) (err error) {
@@ -251,7 +251,7 @@ func (a *articleRepositoryImpl) UpdateById(ctx context.Context, article model.Ar
 	}
 
 	if res.MatchedCount == 0 {
-		err = domain.ErrUpdateDataNotFound
+		err = ErrUpdateDataNotFound
 	}
 
 	return
@@ -265,7 +265,7 @@ func (a *articleRepositoryImpl) DeleteById(ctx context.Context, article model.Ar
 		return
 	}
 	if res.DeletedCount == 0 {
-		return domain.ErrDelDataNotFound
+		return ErrDelDataNotFound
 	}
 
 	return

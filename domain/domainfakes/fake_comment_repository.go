@@ -33,30 +33,30 @@ type FakeCommentRepository struct {
 	deleteByArticleIdReturnsOnCall map[int]struct {
 		result1 error
 	}
-	DeleteByIDStub        func(context.Context, model.Comment) error
-	deleteByIDMutex       sync.RWMutex
-	deleteByIDArgsForCall []struct {
+	DeleteByIdStub        func(context.Context, model.Comment) error
+	deleteByIdMutex       sync.RWMutex
+	deleteByIdArgsForCall []struct {
 		arg1 context.Context
 		arg2 model.Comment
 	}
-	deleteByIDReturns struct {
+	deleteByIdReturns struct {
 		result1 error
 	}
-	deleteByIDReturnsOnCall map[int]struct {
+	deleteByIdReturnsOnCall map[int]struct {
 		result1 error
 	}
-	FindAllByArticleIDStub        func(context.Context, domain.FindAllCommentParam, ...string) ([]model.Comment, error)
-	findAllByArticleIDMutex       sync.RWMutex
-	findAllByArticleIDArgsForCall []struct {
+	FindAllByArticleIdStub        func(context.Context, domain.FindAllCommentParam, ...string) ([]model.Comment, error)
+	findAllByArticleIdMutex       sync.RWMutex
+	findAllByArticleIdArgsForCall []struct {
 		arg1 context.Context
 		arg2 domain.FindAllCommentParam
 		arg3 []string
 	}
-	findAllByArticleIDReturns struct {
+	findAllByArticleIdReturns struct {
 		result1 []model.Comment
 		result2 error
 	}
-	findAllByArticleIDReturnsOnCall map[int]struct {
+	findAllByArticleIdReturnsOnCall map[int]struct {
 		result1 []model.Comment
 		result2 error
 	}
@@ -202,16 +202,16 @@ func (fake *FakeCommentRepository) DeleteByArticleIdReturnsOnCall(i int, result1
 }
 
 func (fake *FakeCommentRepository) DeleteById(arg1 context.Context, arg2 model.Comment) error {
-	fake.deleteByIDMutex.Lock()
-	ret, specificReturn := fake.deleteByIDReturnsOnCall[len(fake.deleteByIDArgsForCall)]
-	fake.deleteByIDArgsForCall = append(fake.deleteByIDArgsForCall, struct {
+	fake.deleteByIdMutex.Lock()
+	ret, specificReturn := fake.deleteByIdReturnsOnCall[len(fake.deleteByIdArgsForCall)]
+	fake.deleteByIdArgsForCall = append(fake.deleteByIdArgsForCall, struct {
 		arg1 context.Context
 		arg2 model.Comment
 	}{arg1, arg2})
-	stub := fake.DeleteByIDStub
-	fakeReturns := fake.deleteByIDReturns
+	stub := fake.DeleteByIdStub
+	fakeReturns := fake.deleteByIdReturns
 	fake.recordInvocation("DeleteById", []interface{}{arg1, arg2})
-	fake.deleteByIDMutex.Unlock()
+	fake.deleteByIdMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2)
 	}
@@ -221,60 +221,60 @@ func (fake *FakeCommentRepository) DeleteById(arg1 context.Context, arg2 model.C
 	return fakeReturns.result1
 }
 
-func (fake *FakeCommentRepository) DeleteByIDCallCount() int {
-	fake.deleteByIDMutex.RLock()
-	defer fake.deleteByIDMutex.RUnlock()
-	return len(fake.deleteByIDArgsForCall)
+func (fake *FakeCommentRepository) DeleteByIdCallCount() int {
+	fake.deleteByIdMutex.RLock()
+	defer fake.deleteByIdMutex.RUnlock()
+	return len(fake.deleteByIdArgsForCall)
 }
 
-func (fake *FakeCommentRepository) DeleteByIDCalls(stub func(context.Context, model.Comment) error) {
-	fake.deleteByIDMutex.Lock()
-	defer fake.deleteByIDMutex.Unlock()
-	fake.DeleteByIDStub = stub
+func (fake *FakeCommentRepository) DeleteByIdCalls(stub func(context.Context, model.Comment) error) {
+	fake.deleteByIdMutex.Lock()
+	defer fake.deleteByIdMutex.Unlock()
+	fake.DeleteByIdStub = stub
 }
 
-func (fake *FakeCommentRepository) DeleteByIDArgsForCall(i int) (context.Context, model.Comment) {
-	fake.deleteByIDMutex.RLock()
-	defer fake.deleteByIDMutex.RUnlock()
-	argsForCall := fake.deleteByIDArgsForCall[i]
+func (fake *FakeCommentRepository) DeleteByIdArgsForCall(i int) (context.Context, model.Comment) {
+	fake.deleteByIdMutex.RLock()
+	defer fake.deleteByIdMutex.RUnlock()
+	argsForCall := fake.deleteByIdArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeCommentRepository) DeleteByIDReturns(result1 error) {
-	fake.deleteByIDMutex.Lock()
-	defer fake.deleteByIDMutex.Unlock()
-	fake.DeleteByIDStub = nil
-	fake.deleteByIDReturns = struct {
+func (fake *FakeCommentRepository) DeleteByIdReturns(result1 error) {
+	fake.deleteByIdMutex.Lock()
+	defer fake.deleteByIdMutex.Unlock()
+	fake.DeleteByIdStub = nil
+	fake.deleteByIdReturns = struct {
 		result1 error
 	}{result1}
 }
 
-func (fake *FakeCommentRepository) DeleteByIDReturnsOnCall(i int, result1 error) {
-	fake.deleteByIDMutex.Lock()
-	defer fake.deleteByIDMutex.Unlock()
-	fake.DeleteByIDStub = nil
-	if fake.deleteByIDReturnsOnCall == nil {
-		fake.deleteByIDReturnsOnCall = make(map[int]struct {
+func (fake *FakeCommentRepository) DeleteByIdReturnsOnCall(i int, result1 error) {
+	fake.deleteByIdMutex.Lock()
+	defer fake.deleteByIdMutex.Unlock()
+	fake.DeleteByIdStub = nil
+	if fake.deleteByIdReturnsOnCall == nil {
+		fake.deleteByIdReturnsOnCall = make(map[int]struct {
 			result1 error
 		})
 	}
-	fake.deleteByIDReturnsOnCall[i] = struct {
+	fake.deleteByIdReturnsOnCall[i] = struct {
 		result1 error
 	}{result1}
 }
 
 func (fake *FakeCommentRepository) FindAllByArticleId(arg1 context.Context, arg2 domain.FindAllCommentParam, arg3 ...string) ([]model.Comment, error) {
-	fake.findAllByArticleIDMutex.Lock()
-	ret, specificReturn := fake.findAllByArticleIDReturnsOnCall[len(fake.findAllByArticleIDArgsForCall)]
-	fake.findAllByArticleIDArgsForCall = append(fake.findAllByArticleIDArgsForCall, struct {
+	fake.findAllByArticleIdMutex.Lock()
+	ret, specificReturn := fake.findAllByArticleIdReturnsOnCall[len(fake.findAllByArticleIdArgsForCall)]
+	fake.findAllByArticleIdArgsForCall = append(fake.findAllByArticleIdArgsForCall, struct {
 		arg1 context.Context
 		arg2 domain.FindAllCommentParam
 		arg3 []string
 	}{arg1, arg2, arg3})
-	stub := fake.FindAllByArticleIDStub
-	fakeReturns := fake.findAllByArticleIDReturns
+	stub := fake.FindAllByArticleIdStub
+	fakeReturns := fake.findAllByArticleIdReturns
 	fake.recordInvocation("FindAllByArticleId", []interface{}{arg1, arg2, arg3})
-	fake.findAllByArticleIDMutex.Unlock()
+	fake.findAllByArticleIdMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2, arg3...)
 	}
@@ -284,46 +284,46 @@ func (fake *FakeCommentRepository) FindAllByArticleId(arg1 context.Context, arg2
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeCommentRepository) FindAllByArticleIDCallCount() int {
-	fake.findAllByArticleIDMutex.RLock()
-	defer fake.findAllByArticleIDMutex.RUnlock()
-	return len(fake.findAllByArticleIDArgsForCall)
+func (fake *FakeCommentRepository) FindAllByArticleIdCallCount() int {
+	fake.findAllByArticleIdMutex.RLock()
+	defer fake.findAllByArticleIdMutex.RUnlock()
+	return len(fake.findAllByArticleIdArgsForCall)
 }
 
-func (fake *FakeCommentRepository) FindAllByArticleIDCalls(stub func(context.Context, domain.FindAllCommentParam, ...string) ([]model.Comment, error)) {
-	fake.findAllByArticleIDMutex.Lock()
-	defer fake.findAllByArticleIDMutex.Unlock()
-	fake.FindAllByArticleIDStub = stub
+func (fake *FakeCommentRepository) FindAllByArticleIdCalls(stub func(context.Context, domain.FindAllCommentParam, ...string) ([]model.Comment, error)) {
+	fake.findAllByArticleIdMutex.Lock()
+	defer fake.findAllByArticleIdMutex.Unlock()
+	fake.FindAllByArticleIdStub = stub
 }
 
-func (fake *FakeCommentRepository) FindAllByArticleIDArgsForCall(i int) (context.Context, domain.FindAllCommentParam, []string) {
-	fake.findAllByArticleIDMutex.RLock()
-	defer fake.findAllByArticleIDMutex.RUnlock()
-	argsForCall := fake.findAllByArticleIDArgsForCall[i]
+func (fake *FakeCommentRepository) FindAllByArticleIdArgsForCall(i int) (context.Context, domain.FindAllCommentParam, []string) {
+	fake.findAllByArticleIdMutex.RLock()
+	defer fake.findAllByArticleIdMutex.RUnlock()
+	argsForCall := fake.findAllByArticleIdArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeCommentRepository) FindAllByArticleIDReturns(result1 []model.Comment, result2 error) {
-	fake.findAllByArticleIDMutex.Lock()
-	defer fake.findAllByArticleIDMutex.Unlock()
-	fake.FindAllByArticleIDStub = nil
-	fake.findAllByArticleIDReturns = struct {
+func (fake *FakeCommentRepository) FindAllByArticleIdReturns(result1 []model.Comment, result2 error) {
+	fake.findAllByArticleIdMutex.Lock()
+	defer fake.findAllByArticleIdMutex.Unlock()
+	fake.FindAllByArticleIdStub = nil
+	fake.findAllByArticleIdReturns = struct {
 		result1 []model.Comment
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *FakeCommentRepository) FindAllByArticleIDReturnsOnCall(i int, result1 []model.Comment, result2 error) {
-	fake.findAllByArticleIDMutex.Lock()
-	defer fake.findAllByArticleIDMutex.Unlock()
-	fake.FindAllByArticleIDStub = nil
-	if fake.findAllByArticleIDReturnsOnCall == nil {
-		fake.findAllByArticleIDReturnsOnCall = make(map[int]struct {
+func (fake *FakeCommentRepository) FindAllByArticleIdReturnsOnCall(i int, result1 []model.Comment, result2 error) {
+	fake.findAllByArticleIdMutex.Lock()
+	defer fake.findAllByArticleIdMutex.Unlock()
+	fake.FindAllByArticleIdStub = nil
+	if fake.findAllByArticleIdReturnsOnCall == nil {
+		fake.findAllByArticleIdReturnsOnCall = make(map[int]struct {
 			result1 []model.Comment
 			result2 error
 		})
 	}
-	fake.findAllByArticleIDReturnsOnCall[i] = struct {
+	fake.findAllByArticleIdReturnsOnCall[i] = struct {
 		result1 []model.Comment
 		result2 error
 	}{result1, result2}
@@ -399,10 +399,10 @@ func (fake *FakeCommentRepository) Invocations() map[string][][]interface{} {
 	defer fake.createMutex.RUnlock()
 	fake.deleteByArticleIdMutex.RLock()
 	defer fake.deleteByArticleIdMutex.RUnlock()
-	fake.deleteByIDMutex.RLock()
-	defer fake.deleteByIDMutex.RUnlock()
-	fake.findAllByArticleIDMutex.RLock()
-	defer fake.findAllByArticleIDMutex.RUnlock()
+	fake.deleteByIdMutex.RLock()
+	defer fake.deleteByIdMutex.RUnlock()
+	fake.findAllByArticleIdMutex.RLock()
+	defer fake.findAllByArticleIdMutex.RUnlock()
 	fake.updateByIdMutex.RLock()
 	defer fake.updateByIdMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}

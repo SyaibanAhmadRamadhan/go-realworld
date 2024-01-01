@@ -1,6 +1,6 @@
-package model
+// DO NOT EDIT, will be overwritten by https://github.com/SyaibanAhmadRamadhan/gocatch/blob/main/ginfra/gdb/generator.go. 
 
-// DO NOT EDIT, will be overwritten by https://github.com/SyaibanAhmadRamadhan/jolly/blob/main/Jdb/JOpg/postgres_generator.go. 
+package model
 
 import (
 	"errors"
@@ -25,8 +25,9 @@ func (t *Tag) FieldId() string {
 }
 
 // SetId is a setter for the field or column Id in the table Tag.
-func (t *Tag) SetId(param string) {
+func (t *Tag) SetId(param string) string {
 	t.Id = param
+	return "_id"
 }
 
 // FieldName is a field or column in the table Tag.
@@ -35,8 +36,9 @@ func (t *Tag) FieldName() string {
 }
 
 // SetName is a setter for the field or column Name in the table Tag.
-func (t *Tag) SetName(param string) {
+func (t *Tag) SetName(param string) string {
 	t.Name = param
+	return "name"
 }
 
 // AllField is a function to get all field or column in the table Tag.

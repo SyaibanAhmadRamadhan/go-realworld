@@ -13,13 +13,13 @@ import (
 	"realworld-go/domain"
 	"realworld-go/domain/dto"
 	"realworld-go/domain/model"
+	"realworld-go/infra/telemetry"
 )
 
 type articleUsecaseImpl struct {
 	artileRepo     domain.ArticleRepository
 	articleTagRepo domain.ArticleTagRepository
 	commentRepo    domain.CommentRepository
-	userRepo       domain.UserRepository
 	tagRepo        domain.TagRepository
 	txRepo         gdb.Tx
 	validate       *gvalidation.Validation
@@ -29,7 +29,6 @@ func NewArticleUsecaseImpl(
 	artileRepo domain.ArticleRepository,
 	articleTagRepo domain.ArticleTagRepository,
 	commentRepo domain.CommentRepository,
-	userRepo domain.UserRepository,
 	tagRepo domain.TagRepository,
 	txRepo gdb.Tx,
 	validate *gvalidation.Validation,
@@ -38,7 +37,6 @@ func NewArticleUsecaseImpl(
 		artileRepo:     artileRepo,
 		articleTagRepo: articleTagRepo,
 		commentRepo:    commentRepo,
-		userRepo:       userRepo,
 		tagRepo:        tagRepo,
 		txRepo:         txRepo,
 		validate:       validate,
@@ -46,8 +44,12 @@ func NewArticleUsecaseImpl(
 }
 
 func (a *articleUsecaseImpl) Create(ctx context.Context, req dto.RequestCreateArticle) (res dto.ResponseArticle, err error) {
-	err = a.validate.StructM(res)
+	ctx, span := telemetry.Trace.Start(ctx, "created article usecase")
+	defer span.End()
+
+	err = a.validate.StructM(req)
 	if err != nil {
+		span.RecordError(err)
 		return
 	}
 
@@ -93,6 +95,7 @@ func (a *articleUsecaseImpl) Create(ctx context.Context, req dto.RequestCreateAr
 	})
 
 	if err != nil {
+		span.RecordError(err)
 		return
 	}
 
@@ -132,7 +135,7 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 	}, article.FieldId(), article.FieldAuthorId(), article.FieldCreatedAt()); err != nil {
 		return res, err
 	} else if articleRes.Article.Id != req.AuthorId {
-		return res, domain.ErrAuthorIdMismatchInArticleId
+		return res, ErrAuthorIdMismatchInArticleId
 	} else {
 		article.SetCreatedAt(articleRes.Article.CreatedAt)
 	}
@@ -141,17 +144,12 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 	var articleTags []model.ArticleTag
 
 	err = a.txRepo.DoTransaction(ctx, nil, func(c context.Context) (commit bool, err error) {
-		article.SetSlug(req.Slug)
-		article.SetTitle(req.Title)
-		article.SetDescription(req.Description)
-		article.SetBody(req.Body)
-		article.SetUpdatedAt(gtime.NormalizeTimeUnit(time.Now(), gtime.Milliseconds))
 		if err = a.artileRepo.UpdateById(c, article, []string{
-			article.FieldSlug(),
-			article.FieldTitle(),
-			article.FieldDescription(),
-			article.FieldBody(),
-			article.FieldUpdatedAt(),
+			article.SetSlug(req.Slug),
+			article.SetTitle(req.Title),
+			article.SetDescription(req.Description),
+			article.SetBody(req.Body),
+			article.SetUpdatedAt(gtime.NormalizeTimeUnit(time.Now(), gtime.Milliseconds)),
 		}); err != nil {
 			return commit, err
 		}

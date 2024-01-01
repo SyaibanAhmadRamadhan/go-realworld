@@ -9,43 +9,43 @@ import (
 )
 
 type FakeUserFavoriteRepository struct {
-	DeleteOneByUserIDStub        func(context.Context, string, string) error
-	deleteOneByUserIDMutex       sync.RWMutex
-	deleteOneByUserIDArgsForCall []struct {
+	DeleteOneByUserIdStub        func(context.Context, string, string) error
+	deleteOneByUserIdMutex       sync.RWMutex
+	deleteOneByUserIdArgsForCall []struct {
 		arg1 context.Context
 		arg2 string
 		arg3 string
 	}
-	deleteOneByUserIDReturns struct {
+	deleteOneByUserIdReturns struct {
 		result1 error
 	}
-	deleteOneByUserIDReturnsOnCall map[int]struct {
+	deleteOneByUserIdReturnsOnCall map[int]struct {
 		result1 error
 	}
-	FindAllByUserIDStub        func(context.Context, domain.FindAllUserFavoriteParam) (domain.FindAllArticleResult, error)
-	findAllByUserIDMutex       sync.RWMutex
-	findAllByUserIDArgsForCall []struct {
+	FindAllByUserIdStub        func(context.Context, domain.FindAllUserFavoriteParam) (domain.FindAllArticleResult, error)
+	findAllByUserIdMutex       sync.RWMutex
+	findAllByUserIdArgsForCall []struct {
 		arg1 context.Context
 		arg2 domain.FindAllUserFavoriteParam
 	}
-	findAllByUserIDReturns struct {
+	findAllByUserIdReturns struct {
 		result1 domain.FindAllArticleResult
 		result2 error
 	}
-	findAllByUserIDReturnsOnCall map[int]struct {
+	findAllByUserIdReturnsOnCall map[int]struct {
 		result1 domain.FindAllArticleResult
 		result2 error
 	}
-	UpSertByUserIDStub        func(context.Context, model.UserFavorite) error
-	upSertByUserIDMutex       sync.RWMutex
-	upSertByUserIDArgsForCall []struct {
+	UpSertByUserIdStub        func(context.Context, model.UserFavorite) error
+	upSertByUserIdMutex       sync.RWMutex
+	upSertByUserIdArgsForCall []struct {
 		arg1 context.Context
 		arg2 model.UserFavorite
 	}
-	upSertByUserIDReturns struct {
+	upSertByUserIdReturns struct {
 		result1 error
 	}
-	upSertByUserIDReturnsOnCall map[int]struct {
+	upSertByUserIdReturnsOnCall map[int]struct {
 		result1 error
 	}
 	invocations      map[string][][]interface{}
@@ -53,17 +53,17 @@ type FakeUserFavoriteRepository struct {
 }
 
 func (fake *FakeUserFavoriteRepository) DeleteOneByUserId(arg1 context.Context, arg2 string, arg3 string) error {
-	fake.deleteOneByUserIDMutex.Lock()
-	ret, specificReturn := fake.deleteOneByUserIDReturnsOnCall[len(fake.deleteOneByUserIDArgsForCall)]
-	fake.deleteOneByUserIDArgsForCall = append(fake.deleteOneByUserIDArgsForCall, struct {
+	fake.deleteOneByUserIdMutex.Lock()
+	ret, specificReturn := fake.deleteOneByUserIdReturnsOnCall[len(fake.deleteOneByUserIdArgsForCall)]
+	fake.deleteOneByUserIdArgsForCall = append(fake.deleteOneByUserIdArgsForCall, struct {
 		arg1 context.Context
 		arg2 string
 		arg3 string
 	}{arg1, arg2, arg3})
-	stub := fake.DeleteOneByUserIDStub
-	fakeReturns := fake.deleteOneByUserIDReturns
+	stub := fake.DeleteOneByUserIdStub
+	fakeReturns := fake.deleteOneByUserIdReturns
 	fake.recordInvocation("DeleteOneByUserId", []interface{}{arg1, arg2, arg3})
-	fake.deleteOneByUserIDMutex.Unlock()
+	fake.deleteOneByUserIdMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2, arg3)
 	}
@@ -73,59 +73,59 @@ func (fake *FakeUserFavoriteRepository) DeleteOneByUserId(arg1 context.Context, 
 	return fakeReturns.result1
 }
 
-func (fake *FakeUserFavoriteRepository) DeleteOneByUserIDCallCount() int {
-	fake.deleteOneByUserIDMutex.RLock()
-	defer fake.deleteOneByUserIDMutex.RUnlock()
-	return len(fake.deleteOneByUserIDArgsForCall)
+func (fake *FakeUserFavoriteRepository) DeleteOneByUserIdCallCount() int {
+	fake.deleteOneByUserIdMutex.RLock()
+	defer fake.deleteOneByUserIdMutex.RUnlock()
+	return len(fake.deleteOneByUserIdArgsForCall)
 }
 
-func (fake *FakeUserFavoriteRepository) DeleteOneByUserIDCalls(stub func(context.Context, string, string) error) {
-	fake.deleteOneByUserIDMutex.Lock()
-	defer fake.deleteOneByUserIDMutex.Unlock()
-	fake.DeleteOneByUserIDStub = stub
+func (fake *FakeUserFavoriteRepository) DeleteOneByUserIdCalls(stub func(context.Context, string, string) error) {
+	fake.deleteOneByUserIdMutex.Lock()
+	defer fake.deleteOneByUserIdMutex.Unlock()
+	fake.DeleteOneByUserIdStub = stub
 }
 
-func (fake *FakeUserFavoriteRepository) DeleteOneByUserIDArgsForCall(i int) (context.Context, string, string) {
-	fake.deleteOneByUserIDMutex.RLock()
-	defer fake.deleteOneByUserIDMutex.RUnlock()
-	argsForCall := fake.deleteOneByUserIDArgsForCall[i]
+func (fake *FakeUserFavoriteRepository) DeleteOneByUserIdArgsForCall(i int) (context.Context, string, string) {
+	fake.deleteOneByUserIdMutex.RLock()
+	defer fake.deleteOneByUserIdMutex.RUnlock()
+	argsForCall := fake.deleteOneByUserIdArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeUserFavoriteRepository) DeleteOneByUserIDReturns(result1 error) {
-	fake.deleteOneByUserIDMutex.Lock()
-	defer fake.deleteOneByUserIDMutex.Unlock()
-	fake.DeleteOneByUserIDStub = nil
-	fake.deleteOneByUserIDReturns = struct {
+func (fake *FakeUserFavoriteRepository) DeleteOneByUserIdReturns(result1 error) {
+	fake.deleteOneByUserIdMutex.Lock()
+	defer fake.deleteOneByUserIdMutex.Unlock()
+	fake.DeleteOneByUserIdStub = nil
+	fake.deleteOneByUserIdReturns = struct {
 		result1 error
 	}{result1}
 }
 
-func (fake *FakeUserFavoriteRepository) DeleteOneByUserIDReturnsOnCall(i int, result1 error) {
-	fake.deleteOneByUserIDMutex.Lock()
-	defer fake.deleteOneByUserIDMutex.Unlock()
-	fake.DeleteOneByUserIDStub = nil
-	if fake.deleteOneByUserIDReturnsOnCall == nil {
-		fake.deleteOneByUserIDReturnsOnCall = make(map[int]struct {
+func (fake *FakeUserFavoriteRepository) DeleteOneByUserIdReturnsOnCall(i int, result1 error) {
+	fake.deleteOneByUserIdMutex.Lock()
+	defer fake.deleteOneByUserIdMutex.Unlock()
+	fake.DeleteOneByUserIdStub = nil
+	if fake.deleteOneByUserIdReturnsOnCall == nil {
+		fake.deleteOneByUserIdReturnsOnCall = make(map[int]struct {
 			result1 error
 		})
 	}
-	fake.deleteOneByUserIDReturnsOnCall[i] = struct {
+	fake.deleteOneByUserIdReturnsOnCall[i] = struct {
 		result1 error
 	}{result1}
 }
 
 func (fake *FakeUserFavoriteRepository) FindAllByUserId(arg1 context.Context, arg2 domain.FindAllUserFavoriteParam) (domain.FindAllArticleResult, error) {
-	fake.findAllByUserIDMutex.Lock()
-	ret, specificReturn := fake.findAllByUserIDReturnsOnCall[len(fake.findAllByUserIDArgsForCall)]
-	fake.findAllByUserIDArgsForCall = append(fake.findAllByUserIDArgsForCall, struct {
+	fake.findAllByUserIdMutex.Lock()
+	ret, specificReturn := fake.findAllByUserIdReturnsOnCall[len(fake.findAllByUserIdArgsForCall)]
+	fake.findAllByUserIdArgsForCall = append(fake.findAllByUserIdArgsForCall, struct {
 		arg1 context.Context
 		arg2 domain.FindAllUserFavoriteParam
 	}{arg1, arg2})
-	stub := fake.FindAllByUserIDStub
-	fakeReturns := fake.findAllByUserIDReturns
+	stub := fake.FindAllByUserIdStub
+	fakeReturns := fake.findAllByUserIdReturns
 	fake.recordInvocation("FindAllByUserId", []interface{}{arg1, arg2})
-	fake.findAllByUserIDMutex.Unlock()
+	fake.findAllByUserIdMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2)
 	}
@@ -135,62 +135,62 @@ func (fake *FakeUserFavoriteRepository) FindAllByUserId(arg1 context.Context, ar
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeUserFavoriteRepository) FindAllByUserIDCallCount() int {
-	fake.findAllByUserIDMutex.RLock()
-	defer fake.findAllByUserIDMutex.RUnlock()
-	return len(fake.findAllByUserIDArgsForCall)
+func (fake *FakeUserFavoriteRepository) FindAllByUserIdCallCount() int {
+	fake.findAllByUserIdMutex.RLock()
+	defer fake.findAllByUserIdMutex.RUnlock()
+	return len(fake.findAllByUserIdArgsForCall)
 }
 
-func (fake *FakeUserFavoriteRepository) FindAllByUserIDCalls(stub func(context.Context, domain.FindAllUserFavoriteParam) (domain.FindAllArticleResult, error)) {
-	fake.findAllByUserIDMutex.Lock()
-	defer fake.findAllByUserIDMutex.Unlock()
-	fake.FindAllByUserIDStub = stub
+func (fake *FakeUserFavoriteRepository) FindAllByUserIdCalls(stub func(context.Context, domain.FindAllUserFavoriteParam) (domain.FindAllArticleResult, error)) {
+	fake.findAllByUserIdMutex.Lock()
+	defer fake.findAllByUserIdMutex.Unlock()
+	fake.FindAllByUserIdStub = stub
 }
 
-func (fake *FakeUserFavoriteRepository) FindAllByUserIDArgsForCall(i int) (context.Context, domain.FindAllUserFavoriteParam) {
-	fake.findAllByUserIDMutex.RLock()
-	defer fake.findAllByUserIDMutex.RUnlock()
-	argsForCall := fake.findAllByUserIDArgsForCall[i]
+func (fake *FakeUserFavoriteRepository) FindAllByUserIdArgsForCall(i int) (context.Context, domain.FindAllUserFavoriteParam) {
+	fake.findAllByUserIdMutex.RLock()
+	defer fake.findAllByUserIdMutex.RUnlock()
+	argsForCall := fake.findAllByUserIdArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeUserFavoriteRepository) FindAllByUserIDReturns(result1 domain.FindAllArticleResult, result2 error) {
-	fake.findAllByUserIDMutex.Lock()
-	defer fake.findAllByUserIDMutex.Unlock()
-	fake.FindAllByUserIDStub = nil
-	fake.findAllByUserIDReturns = struct {
+func (fake *FakeUserFavoriteRepository) FindAllByUserIdReturns(result1 domain.FindAllArticleResult, result2 error) {
+	fake.findAllByUserIdMutex.Lock()
+	defer fake.findAllByUserIdMutex.Unlock()
+	fake.FindAllByUserIdStub = nil
+	fake.findAllByUserIdReturns = struct {
 		result1 domain.FindAllArticleResult
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *FakeUserFavoriteRepository) FindAllByUserIDReturnsOnCall(i int, result1 domain.FindAllArticleResult, result2 error) {
-	fake.findAllByUserIDMutex.Lock()
-	defer fake.findAllByUserIDMutex.Unlock()
-	fake.FindAllByUserIDStub = nil
-	if fake.findAllByUserIDReturnsOnCall == nil {
-		fake.findAllByUserIDReturnsOnCall = make(map[int]struct {
+func (fake *FakeUserFavoriteRepository) FindAllByUserIdReturnsOnCall(i int, result1 domain.FindAllArticleResult, result2 error) {
+	fake.findAllByUserIdMutex.Lock()
+	defer fake.findAllByUserIdMutex.Unlock()
+	fake.FindAllByUserIdStub = nil
+	if fake.findAllByUserIdReturnsOnCall == nil {
+		fake.findAllByUserIdReturnsOnCall = make(map[int]struct {
 			result1 domain.FindAllArticleResult
 			result2 error
 		})
 	}
-	fake.findAllByUserIDReturnsOnCall[i] = struct {
+	fake.findAllByUserIdReturnsOnCall[i] = struct {
 		result1 domain.FindAllArticleResult
 		result2 error
 	}{result1, result2}
 }
 
 func (fake *FakeUserFavoriteRepository) UpSertByUserId(arg1 context.Context, arg2 model.UserFavorite) error {
-	fake.upSertByUserIDMutex.Lock()
-	ret, specificReturn := fake.upSertByUserIDReturnsOnCall[len(fake.upSertByUserIDArgsForCall)]
-	fake.upSertByUserIDArgsForCall = append(fake.upSertByUserIDArgsForCall, struct {
+	fake.upSertByUserIdMutex.Lock()
+	ret, specificReturn := fake.upSertByUserIdReturnsOnCall[len(fake.upSertByUserIdArgsForCall)]
+	fake.upSertByUserIdArgsForCall = append(fake.upSertByUserIdArgsForCall, struct {
 		arg1 context.Context
 		arg2 model.UserFavorite
 	}{arg1, arg2})
-	stub := fake.UpSertByUserIDStub
-	fakeReturns := fake.upSertByUserIDReturns
+	stub := fake.UpSertByUserIdStub
+	fakeReturns := fake.upSertByUserIdReturns
 	fake.recordInvocation("UpSertByUserId", []interface{}{arg1, arg2})
-	fake.upSertByUserIDMutex.Unlock()
+	fake.upSertByUserIdMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2)
 	}
@@ -200,44 +200,44 @@ func (fake *FakeUserFavoriteRepository) UpSertByUserId(arg1 context.Context, arg
 	return fakeReturns.result1
 }
 
-func (fake *FakeUserFavoriteRepository) UpSertByUserIDCallCount() int {
-	fake.upSertByUserIDMutex.RLock()
-	defer fake.upSertByUserIDMutex.RUnlock()
-	return len(fake.upSertByUserIDArgsForCall)
+func (fake *FakeUserFavoriteRepository) UpSertByUserIdCallCount() int {
+	fake.upSertByUserIdMutex.RLock()
+	defer fake.upSertByUserIdMutex.RUnlock()
+	return len(fake.upSertByUserIdArgsForCall)
 }
 
-func (fake *FakeUserFavoriteRepository) UpSertByUserIDCalls(stub func(context.Context, model.UserFavorite) error) {
-	fake.upSertByUserIDMutex.Lock()
-	defer fake.upSertByUserIDMutex.Unlock()
-	fake.UpSertByUserIDStub = stub
+func (fake *FakeUserFavoriteRepository) UpSertByUserIdCalls(stub func(context.Context, model.UserFavorite) error) {
+	fake.upSertByUserIdMutex.Lock()
+	defer fake.upSertByUserIdMutex.Unlock()
+	fake.UpSertByUserIdStub = stub
 }
 
-func (fake *FakeUserFavoriteRepository) UpSertByUserIDArgsForCall(i int) (context.Context, model.UserFavorite) {
-	fake.upSertByUserIDMutex.RLock()
-	defer fake.upSertByUserIDMutex.RUnlock()
-	argsForCall := fake.upSertByUserIDArgsForCall[i]
+func (fake *FakeUserFavoriteRepository) UpSertByUserIdArgsForCall(i int) (context.Context, model.UserFavorite) {
+	fake.upSertByUserIdMutex.RLock()
+	defer fake.upSertByUserIdMutex.RUnlock()
+	argsForCall := fake.upSertByUserIdArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeUserFavoriteRepository) UpSertByUserIDReturns(result1 error) {
-	fake.upSertByUserIDMutex.Lock()
-	defer fake.upSertByUserIDMutex.Unlock()
-	fake.UpSertByUserIDStub = nil
-	fake.upSertByUserIDReturns = struct {
+func (fake *FakeUserFavoriteRepository) UpSertByUserIdReturns(result1 error) {
+	fake.upSertByUserIdMutex.Lock()
+	defer fake.upSertByUserIdMutex.Unlock()
+	fake.UpSertByUserIdStub = nil
+	fake.upSertByUserIdReturns = struct {
 		result1 error
 	}{result1}
 }
 
-func (fake *FakeUserFavoriteRepository) UpSertByUserIDReturnsOnCall(i int, result1 error) {
-	fake.upSertByUserIDMutex.Lock()
-	defer fake.upSertByUserIDMutex.Unlock()
-	fake.UpSertByUserIDStub = nil
-	if fake.upSertByUserIDReturnsOnCall == nil {
-		fake.upSertByUserIDReturnsOnCall = make(map[int]struct {
+func (fake *FakeUserFavoriteRepository) UpSertByUserIdReturnsOnCall(i int, result1 error) {
+	fake.upSertByUserIdMutex.Lock()
+	defer fake.upSertByUserIdMutex.Unlock()
+	fake.UpSertByUserIdStub = nil
+	if fake.upSertByUserIdReturnsOnCall == nil {
+		fake.upSertByUserIdReturnsOnCall = make(map[int]struct {
 			result1 error
 		})
 	}
-	fake.upSertByUserIDReturnsOnCall[i] = struct {
+	fake.upSertByUserIdReturnsOnCall[i] = struct {
 		result1 error
 	}{result1}
 }
@@ -245,12 +245,12 @@ func (fake *FakeUserFavoriteRepository) UpSertByUserIDReturnsOnCall(i int, resul
 func (fake *FakeUserFavoriteRepository) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.deleteOneByUserIDMutex.RLock()
-	defer fake.deleteOneByUserIDMutex.RUnlock()
-	fake.findAllByUserIDMutex.RLock()
-	defer fake.findAllByUserIDMutex.RUnlock()
-	fake.upSertByUserIDMutex.RLock()
-	defer fake.upSertByUserIDMutex.RUnlock()
+	fake.deleteOneByUserIdMutex.RLock()
+	defer fake.deleteOneByUserIdMutex.RUnlock()
+	fake.findAllByUserIdMutex.RLock()
+	defer fake.findAllByUserIdMutex.RUnlock()
+	fake.upSertByUserIdMutex.RLock()
+	defer fake.upSertByUserIdMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

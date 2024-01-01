@@ -9,16 +9,16 @@ import (
 )
 
 type FakeTagRepository struct {
-	DeleteByIDStub        func(context.Context, model.Tag) error
-	deleteByIDMutex       sync.RWMutex
-	deleteByIDArgsForCall []struct {
+	DeleteByIdStub        func(context.Context, model.Tag) error
+	deleteByIdMutex       sync.RWMutex
+	deleteByIdArgsForCall []struct {
 		arg1 context.Context
 		arg2 model.Tag
 	}
-	deleteByIDReturns struct {
+	deleteByIdReturns struct {
 		result1 error
 	}
-	deleteByIDReturnsOnCall map[int]struct {
+	deleteByIdReturnsOnCall map[int]struct {
 		result1 error
 	}
 	FindAllByNamesStub        func(context.Context, []string) ([]model.Tag, error)
@@ -80,16 +80,16 @@ type FakeTagRepository struct {
 }
 
 func (fake *FakeTagRepository) DeleteById(arg1 context.Context, arg2 model.Tag) error {
-	fake.deleteByIDMutex.Lock()
-	ret, specificReturn := fake.deleteByIDReturnsOnCall[len(fake.deleteByIDArgsForCall)]
-	fake.deleteByIDArgsForCall = append(fake.deleteByIDArgsForCall, struct {
+	fake.deleteByIdMutex.Lock()
+	ret, specificReturn := fake.deleteByIdReturnsOnCall[len(fake.deleteByIdArgsForCall)]
+	fake.deleteByIdArgsForCall = append(fake.deleteByIdArgsForCall, struct {
 		arg1 context.Context
 		arg2 model.Tag
 	}{arg1, arg2})
-	stub := fake.DeleteByIDStub
-	fakeReturns := fake.deleteByIDReturns
+	stub := fake.DeleteByIdStub
+	fakeReturns := fake.deleteByIdReturns
 	fake.recordInvocation("DeleteById", []interface{}{arg1, arg2})
-	fake.deleteByIDMutex.Unlock()
+	fake.deleteByIdMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2)
 	}
@@ -99,44 +99,44 @@ func (fake *FakeTagRepository) DeleteById(arg1 context.Context, arg2 model.Tag) 
 	return fakeReturns.result1
 }
 
-func (fake *FakeTagRepository) DeleteByIDCallCount() int {
-	fake.deleteByIDMutex.RLock()
-	defer fake.deleteByIDMutex.RUnlock()
-	return len(fake.deleteByIDArgsForCall)
+func (fake *FakeTagRepository) DeleteByIdCallCount() int {
+	fake.deleteByIdMutex.RLock()
+	defer fake.deleteByIdMutex.RUnlock()
+	return len(fake.deleteByIdArgsForCall)
 }
 
-func (fake *FakeTagRepository) DeleteByIDCalls(stub func(context.Context, model.Tag) error) {
-	fake.deleteByIDMutex.Lock()
-	defer fake.deleteByIDMutex.Unlock()
-	fake.DeleteByIDStub = stub
+func (fake *FakeTagRepository) DeleteByIdCalls(stub func(context.Context, model.Tag) error) {
+	fake.deleteByIdMutex.Lock()
+	defer fake.deleteByIdMutex.Unlock()
+	fake.DeleteByIdStub = stub
 }
 
-func (fake *FakeTagRepository) DeleteByIDArgsForCall(i int) (context.Context, model.Tag) {
-	fake.deleteByIDMutex.RLock()
-	defer fake.deleteByIDMutex.RUnlock()
-	argsForCall := fake.deleteByIDArgsForCall[i]
+func (fake *FakeTagRepository) DeleteByIdArgsForCall(i int) (context.Context, model.Tag) {
+	fake.deleteByIdMutex.RLock()
+	defer fake.deleteByIdMutex.RUnlock()
+	argsForCall := fake.deleteByIdArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2
 }
 
-func (fake *FakeTagRepository) DeleteByIDReturns(result1 error) {
-	fake.deleteByIDMutex.Lock()
-	defer fake.deleteByIDMutex.Unlock()
-	fake.DeleteByIDStub = nil
-	fake.deleteByIDReturns = struct {
+func (fake *FakeTagRepository) DeleteByIdReturns(result1 error) {
+	fake.deleteByIdMutex.Lock()
+	defer fake.deleteByIdMutex.Unlock()
+	fake.DeleteByIdStub = nil
+	fake.deleteByIdReturns = struct {
 		result1 error
 	}{result1}
 }
 
-func (fake *FakeTagRepository) DeleteByIDReturnsOnCall(i int, result1 error) {
-	fake.deleteByIDMutex.Lock()
-	defer fake.deleteByIDMutex.Unlock()
-	fake.DeleteByIDStub = nil
-	if fake.deleteByIDReturnsOnCall == nil {
-		fake.deleteByIDReturnsOnCall = make(map[int]struct {
+func (fake *FakeTagRepository) DeleteByIdReturnsOnCall(i int, result1 error) {
+	fake.deleteByIdMutex.Lock()
+	defer fake.deleteByIdMutex.Unlock()
+	fake.DeleteByIdStub = nil
+	if fake.deleteByIdReturnsOnCall == nil {
+		fake.deleteByIdReturnsOnCall = make(map[int]struct {
 			result1 error
 		})
 	}
-	fake.deleteByIDReturnsOnCall[i] = struct {
+	fake.deleteByIdReturnsOnCall[i] = struct {
 		result1 error
 	}{result1}
 }
@@ -411,8 +411,8 @@ func (fake *FakeTagRepository) UpSertManyReturnsOnCall(i int, result1 error) {
 func (fake *FakeTagRepository) Invocations() map[string][][]interface{} {
 	fake.invocationsMutex.RLock()
 	defer fake.invocationsMutex.RUnlock()
-	fake.deleteByIDMutex.RLock()
-	defer fake.deleteByIDMutex.RUnlock()
+	fake.deleteByIdMutex.RLock()
+	defer fake.deleteByIdMutex.RUnlock()
 	fake.findAllByNamesMutex.RLock()
 	defer fake.findAllByNamesMutex.RUnlock()
 	fake.findByNameMutex.RLock()

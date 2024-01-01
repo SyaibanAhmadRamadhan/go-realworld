@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/SyaibanAhmadRamadhan/gocatch/ginfra/gdb"
@@ -59,4 +60,17 @@ func commentModel() gdb.GeneratorModelForStructParam {
 		Tag:      "bson",
 		FileName: "Comment",
 	}
+}
+
+func TestName(t *testing.T) {
+	user := NewUser()
+
+	printUser(user, []string{
+		user.SetId("asd"),
+	})
+}
+
+func printUser(user *User, columns []string) {
+	fmt.Println(user)
+	fmt.Println(user.GetValuesByColums(columns...))
 }

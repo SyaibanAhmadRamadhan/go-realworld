@@ -48,7 +48,7 @@ func (t *tagRepositoryImpl) FindByName(ctx context.Context, name string) (tag mo
 	err = t.db.Collection(model.TagTableName).FindOne(ctx, filter).Decode(&tag)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			err = domain.ErrDataNotFound
+			err = ErrDataNotFound
 		}
 	}
 
@@ -90,18 +90,19 @@ func (t *tagRepositoryImpl) FindTagPopuler(ctx context.Context, limit int64) (re
 }
 
 func (t *tagRepositoryImpl) UpSertMany(ctx context.Context, tagNames []string) (err error) {
-	setMany := bson.D{}
 	for _, tagName := range tagNames {
-		setMany = append(setMany, bson.E{Key: "name", Value: tagName})
+		filter := bson.D{{"name", tagName}}
+		update := bson.D{
+			{"$set", bson.D{{"name", tagName}}},
+		}
+
+		_, err = t.db.Collection(model.TagTableName).UpdateOne(ctx, filter, update, options.Update().SetUpsert(true))
+		if err != nil {
+			return err
+		}
 	}
 
-	update := bson.D{{Key: "$set", Value: setMany}}
-	_, err = t.db.Collection(model.TagTableName).UpdateMany(ctx, nil, update, options.Update().SetUpsert(true))
-	if err != nil {
-		return err
-	}
-
-	return
+	return nil
 }
 
 func (t *tagRepositoryImpl) DeleteById(ctx context.Context, tag model.Tag) (err error) {
@@ -113,7 +114,7 @@ func (t *tagRepositoryImpl) DeleteById(ctx context.Context, tag model.Tag) (err 
 	}
 
 	if res.DeletedCount == 0 {
-		return domain.ErrDelDataNotFound
+		return ErrDelDataNotFound
 	}
 
 	return

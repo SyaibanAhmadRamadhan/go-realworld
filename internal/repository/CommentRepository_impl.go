@@ -82,7 +82,7 @@ func (c *commentRepositoryImpl) UpdateById(ctx context.Context, comment model.Co
 	res, err := c.db.Collection(model.CommentTableName).UpdateOne(ctx, filter, updated)
 
 	if res.ModifiedCount == 0 {
-		err = domain.ErrUpdateDataNotFound
+		err = ErrUpdateDataNotFound
 	}
 
 	return
@@ -97,7 +97,7 @@ func (c *commentRepositoryImpl) DeleteById(ctx context.Context, comment model.Co
 
 	res, err := c.db.Collection(model.CommentTableName).DeleteOne(ctx, filter)
 	if res.DeletedCount == 0 {
-		err = domain.ErrDelDataNotFound
+		err = ErrDelDataNotFound
 	}
 
 	return

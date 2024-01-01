@@ -13,6 +13,7 @@ import (
 
 	"realworld-go/domain"
 	"realworld-go/domain/model"
+	"realworld-go/internal/repository"
 )
 
 var articles []model.Article
@@ -69,7 +70,7 @@ func ArticleRepository_FindOneByID(t *testing.T) {
 		_, err := articleRepository.FindOneById(context.Background(), domain.FindOneByIdArticleParam{
 			ArticleId: "article.Id",
 		})
-		assert.Equal(t, domain.ErrDataNotFound, err)
+		assert.Equal(t, repository.ErrDataNotFound, err)
 	})
 }
 
@@ -138,7 +139,7 @@ func ArticleRepository_UpdateByID(t *testing.T) {
 			Id:   "random",
 			Slug: gofakeit.Slogan(),
 		}, columns)
-		assert.Equal(t, domain.ErrUpdateDataNotFound, err)
+		assert.Equal(t, repository.ErrUpdateDataNotFound, err)
 	})
 }
 
@@ -178,7 +179,7 @@ func ArticleRepository_DeleteByID(t *testing.T) {
 			_, err = articleRepository.FindOneById(context.Background(), domain.FindOneByIdArticleParam{
 				ArticleId: articleDeleted.Id,
 			})
-			assert.Equal(t, domain.ErrDataNotFound, err)
+			assert.Equal(t, repository.ErrDataNotFound, err)
 		}
 	})
 
@@ -186,7 +187,7 @@ func ArticleRepository_DeleteByID(t *testing.T) {
 		err = tagRepository.DeleteById(context.Background(), model.Tag{
 			Id: "random",
 		})
-		assert.Equal(t, domain.ErrDelDataNotFound, err)
+		assert.Equal(t, repository.ErrDelDataNotFound, err)
 	})
 
 	res, err = articleRepository.FindAllPaginate(context.Background(), domain.FindAllPaginateArticleParam{

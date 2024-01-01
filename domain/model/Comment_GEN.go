@@ -1,6 +1,6 @@
-package model
+// DO NOT EDIT, will be overwritten by https://github.com/SyaibanAhmadRamadhan/gocatch/blob/main/ginfra/gdb/generator.go. 
 
-// DO NOT EDIT, will be overwritten by https://github.com/SyaibanAhmadRamadhan/jolly/blob/main/Jdb/JOpg/postgres_generator.go. 
+package model
 
 import (
 	"errors"
@@ -21,24 +21,15 @@ func NewCommentWithOutPtr() Comment {
 	return Comment{}
 }
 
-// FieldId is a field or column in the table Comment.
-func (c *Comment) FieldId() string {
-	return "_id"
-}
-
-// SetId is a setter for the field or column Id in the table Comment.
-func (c *Comment) SetId(param string) {
-	c.Id = param
-}
-
 // FieldArticleId is a field or column in the table Comment.
 func (c *Comment) FieldArticleId() string {
 	return "articleId"
 }
 
 // SetArticleId is a setter for the field or column ArticleId in the table Comment.
-func (c *Comment) SetArticleId(param string) {
+func (c *Comment) SetArticleId(param string) string {
 	c.ArticleId = param
+	return "articleId"
 }
 
 // FieldAuthorId is a field or column in the table Comment.
@@ -47,8 +38,9 @@ func (c *Comment) FieldAuthorId() string {
 }
 
 // SetAuthorId is a setter for the field or column AuthorId in the table Comment.
-func (c *Comment) SetAuthorId(param string) {
+func (c *Comment) SetAuthorId(param string) string {
 	c.AuthorId = param
+	return "authorId"
 }
 
 // FieldBody is a field or column in the table Comment.
@@ -57,8 +49,9 @@ func (c *Comment) FieldBody() string {
 }
 
 // SetBody is a setter for the field or column Body in the table Comment.
-func (c *Comment) SetBody(param string) {
+func (c *Comment) SetBody(param string) string {
 	c.Body = param
+	return "body"
 }
 
 // FieldCreatedAt is a field or column in the table Comment.
@@ -67,8 +60,9 @@ func (c *Comment) FieldCreatedAt() string {
 }
 
 // SetCreatedAt is a setter for the field or column CreatedAt in the table Comment.
-func (c *Comment) SetCreatedAt(param time.Time) {
+func (c *Comment) SetCreatedAt(param time.Time) string {
 	c.CreatedAt = param
+	return "createdAt"
 }
 
 // FieldUpdatedAt is a field or column in the table Comment.
@@ -77,8 +71,20 @@ func (c *Comment) FieldUpdatedAt() string {
 }
 
 // SetUpdatedAt is a setter for the field or column UpdatedAt in the table Comment.
-func (c *Comment) SetUpdatedAt(param time.Time) {
+func (c *Comment) SetUpdatedAt(param time.Time) string {
 	c.UpdatedAt = param
+	return "updatedAt"
+}
+
+// FieldId is a field or column in the table Comment.
+func (c *Comment) FieldId() string {
+	return "_id"
+}
+
+// SetId is a setter for the field or column Id in the table Comment.
+func (c *Comment) SetId(param string) string {
+	c.Id = param
+	return "_id"
 }
 
 // AllField is a function to get all field or column in the table Comment.
@@ -127,18 +133,6 @@ func (c *Comment) GetValuesByColums(columns ...string) []any {
 func (c *Comment) ScanMap(data map[string]any) (err error) {
 	for key, value := range data {
 		switch key {
-		case c.FieldId():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field Id")
-			}
-			c.SetId(val)
-		case c.FieldArticleId():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field ArticleId")
-			}
-			c.SetArticleId(val)
 		case c.FieldAuthorId():
 			val, ok := value.(string)
 			if !ok {
@@ -163,6 +157,18 @@ func (c *Comment) ScanMap(data map[string]any) (err error) {
 				return errors.New("invalid type time.Time. field UpdatedAt")
 			}
 			c.SetUpdatedAt(val)
+		case c.FieldId():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field Id")
+			}
+			c.SetId(val)
+		case c.FieldArticleId():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field ArticleId")
+			}
+			c.SetArticleId(val)
 		default:
 			return errors.New("invalid column")
 		}

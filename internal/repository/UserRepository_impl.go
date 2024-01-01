@@ -35,7 +35,7 @@ func (u *userRepositoryImpl) FindByOneColumn(ctx context.Context, param gdb.Find
 	err = u.db.Collection(model.UserTableName).FindOne(ctx, filter, opts).Decode(&user)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			err = domain.ErrDataNotFound
+			err = ErrDataNotFound
 		}
 	}
 
@@ -65,7 +65,7 @@ func (u *userRepositoryImpl) UpdateById(ctx context.Context, user model.User, co
 	}
 
 	if res.MatchedCount == 0 {
-		err = domain.ErrUpdateDataNotFound
+		err = ErrUpdateDataNotFound
 	}
 
 	return

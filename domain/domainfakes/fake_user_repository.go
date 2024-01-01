@@ -38,17 +38,17 @@ type FakeUserRepository struct {
 		result1 model.User
 		result2 error
 	}
-	UpdateByIDStub        func(context.Context, model.User, []string) error
-	updateByIDMutex       sync.RWMutex
-	updateByIDArgsForCall []struct {
+	UpdateByIdStub        func(context.Context, model.User, []string) error
+	updateByIdMutex       sync.RWMutex
+	updateByIdArgsForCall []struct {
 		arg1 context.Context
 		arg2 model.User
 		arg3 []string
 	}
-	updateByIDReturns struct {
+	updateByIdReturns struct {
 		result1 error
 	}
-	updateByIDReturnsOnCall map[int]struct {
+	updateByIdReturnsOnCall map[int]struct {
 		result1 error
 	}
 	invocations      map[string][][]interface{}
@@ -189,17 +189,17 @@ func (fake *FakeUserRepository) UpdateById(arg1 context.Context, arg2 model.User
 		arg3Copy = make([]string, len(arg3))
 		copy(arg3Copy, arg3)
 	}
-	fake.updateByIDMutex.Lock()
-	ret, specificReturn := fake.updateByIDReturnsOnCall[len(fake.updateByIDArgsForCall)]
-	fake.updateByIDArgsForCall = append(fake.updateByIDArgsForCall, struct {
+	fake.updateByIdMutex.Lock()
+	ret, specificReturn := fake.updateByIdReturnsOnCall[len(fake.updateByIdArgsForCall)]
+	fake.updateByIdArgsForCall = append(fake.updateByIdArgsForCall, struct {
 		arg1 context.Context
 		arg2 model.User
 		arg3 []string
 	}{arg1, arg2, arg3Copy})
-	stub := fake.UpdateByIDStub
-	fakeReturns := fake.updateByIDReturns
+	stub := fake.UpdateByIdStub
+	fakeReturns := fake.updateByIdReturns
 	fake.recordInvocation("UpdateById", []interface{}{arg1, arg2, arg3Copy})
-	fake.updateByIDMutex.Unlock()
+	fake.updateByIdMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2, arg3)
 	}
@@ -209,44 +209,44 @@ func (fake *FakeUserRepository) UpdateById(arg1 context.Context, arg2 model.User
 	return fakeReturns.result1
 }
 
-func (fake *FakeUserRepository) UpdateByIDCallCount() int {
-	fake.updateByIDMutex.RLock()
-	defer fake.updateByIDMutex.RUnlock()
-	return len(fake.updateByIDArgsForCall)
+func (fake *FakeUserRepository) UpdateByIdCallCount() int {
+	fake.updateByIdMutex.RLock()
+	defer fake.updateByIdMutex.RUnlock()
+	return len(fake.updateByIdArgsForCall)
 }
 
-func (fake *FakeUserRepository) UpdateByIDCalls(stub func(context.Context, model.User, []string) error) {
-	fake.updateByIDMutex.Lock()
-	defer fake.updateByIDMutex.Unlock()
-	fake.UpdateByIDStub = stub
+func (fake *FakeUserRepository) UpdateByIdCalls(stub func(context.Context, model.User, []string) error) {
+	fake.updateByIdMutex.Lock()
+	defer fake.updateByIdMutex.Unlock()
+	fake.UpdateByIdStub = stub
 }
 
-func (fake *FakeUserRepository) UpdateByIDArgsForCall(i int) (context.Context, model.User, []string) {
-	fake.updateByIDMutex.RLock()
-	defer fake.updateByIDMutex.RUnlock()
-	argsForCall := fake.updateByIDArgsForCall[i]
+func (fake *FakeUserRepository) UpdateByIdArgsForCall(i int) (context.Context, model.User, []string) {
+	fake.updateByIdMutex.RLock()
+	defer fake.updateByIdMutex.RUnlock()
+	argsForCall := fake.updateByIdArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeUserRepository) UpdateByIDReturns(result1 error) {
-	fake.updateByIDMutex.Lock()
-	defer fake.updateByIDMutex.Unlock()
-	fake.UpdateByIDStub = nil
-	fake.updateByIDReturns = struct {
+func (fake *FakeUserRepository) UpdateByIdReturns(result1 error) {
+	fake.updateByIdMutex.Lock()
+	defer fake.updateByIdMutex.Unlock()
+	fake.UpdateByIdStub = nil
+	fake.updateByIdReturns = struct {
 		result1 error
 	}{result1}
 }
 
-func (fake *FakeUserRepository) UpdateByIDReturnsOnCall(i int, result1 error) {
-	fake.updateByIDMutex.Lock()
-	defer fake.updateByIDMutex.Unlock()
-	fake.UpdateByIDStub = nil
-	if fake.updateByIDReturnsOnCall == nil {
-		fake.updateByIDReturnsOnCall = make(map[int]struct {
+func (fake *FakeUserRepository) UpdateByIdReturnsOnCall(i int, result1 error) {
+	fake.updateByIdMutex.Lock()
+	defer fake.updateByIdMutex.Unlock()
+	fake.UpdateByIdStub = nil
+	if fake.updateByIdReturnsOnCall == nil {
+		fake.updateByIdReturnsOnCall = make(map[int]struct {
 			result1 error
 		})
 	}
-	fake.updateByIDReturnsOnCall[i] = struct {
+	fake.updateByIdReturnsOnCall[i] = struct {
 		result1 error
 	}{result1}
 }
@@ -258,8 +258,8 @@ func (fake *FakeUserRepository) Invocations() map[string][][]interface{} {
 	defer fake.createMutex.RUnlock()
 	fake.findByOneColumnMutex.RLock()
 	defer fake.findByOneColumnMutex.RUnlock()
-	fake.updateByIDMutex.RLock()
-	defer fake.updateByIDMutex.RUnlock()
+	fake.updateByIdMutex.RLock()
+	defer fake.updateByIdMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}
 	for key, value := range fake.invocations {
 		copiedInvocations[key] = value

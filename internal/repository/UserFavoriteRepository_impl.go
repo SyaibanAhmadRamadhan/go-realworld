@@ -94,7 +94,7 @@ func (u *userFavoriteRepositoryImpl) FindAllByUserId(ctx context.Context, param 
 
 		total, ok := totalMap["total"].(int32)
 		if !ok {
-			return res, domain.ErrInvalidTotalType
+			return res, ErrInvalidTotalType
 		}
 		res.Total = int64(total)
 	}
@@ -113,7 +113,7 @@ func (u *userFavoriteRepositoryImpl) FindAllByUserId(ctx context.Context, param 
 
 func (u *userFavoriteRepositoryImpl) UpSertByUserId(ctx context.Context, userFavorite model.UserFavorite) (err error) {
 	if userFavorite.UserId == "" {
-		return domain.ErrIdParamIsEmpty
+		return ErrIdParamIsEmpty
 	}
 
 	filter := bson.D{
@@ -144,7 +144,7 @@ func (u *userFavoriteRepositoryImpl) DeleteOneByUserId(ctx context.Context, user
 	}
 
 	if res.DeletedCount == 0 {
-		err = domain.ErrDelDataNotFound
+		err = ErrDelDataNotFound
 	}
 
 	return

@@ -1,6 +1,6 @@
-package model
+// DO NOT EDIT, will be overwritten by https://github.com/SyaibanAhmadRamadhan/gocatch/blob/main/ginfra/gdb/generator.go. 
 
-// DO NOT EDIT, will be overwritten by https://github.com/SyaibanAhmadRamadhan/jolly/blob/main/Jdb/JOpg/postgres_generator.go. 
+package model
 
 import (
 	"errors"
@@ -19,44 +19,15 @@ func NewUserWithOutPtr() User {
 	return User{}
 }
 
-// FieldDemo is a field or column in the table User.
-func (u *User) FieldDemo() string {
-	return "demo"
-}
-
-// SetDemo is a setter for the field or column Demo in the table User.
-func (u *User) SetDemo(param bool) {
-	u.Demo = param
-}
-
-// FieldId is a field or column in the table User.
-func (u *User) FieldId() string {
-	return "_id"
-}
-
-// SetId is a setter for the field or column Id in the table User.
-func (u *User) SetId(param string) {
-	u.Id = param
-}
-
-// FieldEmail is a field or column in the table User.
-func (u *User) FieldEmail() string {
-	return "email"
-}
-
-// SetEmail is a setter for the field or column Email in the table User.
-func (u *User) SetEmail(param string) {
-	u.Email = param
-}
-
 // FieldUsername is a field or column in the table User.
 func (u *User) FieldUsername() string {
 	return "username"
 }
 
 // SetUsername is a setter for the field or column Username in the table User.
-func (u *User) SetUsername(param string) {
+func (u *User) SetUsername(param string) string {
 	u.Username = param
+	return "username"
 }
 
 // FieldPassword is a field or column in the table User.
@@ -65,8 +36,9 @@ func (u *User) FieldPassword() string {
 }
 
 // SetPassword is a setter for the field or column Password in the table User.
-func (u *User) SetPassword(param string) {
+func (u *User) SetPassword(param string) string {
 	u.Password = param
+	return "password"
 }
 
 // FieldImage is a field or column in the table User.
@@ -75,8 +47,9 @@ func (u *User) FieldImage() string {
 }
 
 // SetImage is a setter for the field or column Image in the table User.
-func (u *User) SetImage(param string) {
+func (u *User) SetImage(param string) string {
 	u.Image = param
+	return "image"
 }
 
 // FieldBio is a field or column in the table User.
@@ -85,8 +58,42 @@ func (u *User) FieldBio() string {
 }
 
 // SetBio is a setter for the field or column Bio in the table User.
-func (u *User) SetBio(param *string) {
+func (u *User) SetBio(param *string) string {
 	u.Bio = param
+	return "bio"
+}
+
+// FieldDemo is a field or column in the table User.
+func (u *User) FieldDemo() string {
+	return "demo"
+}
+
+// SetDemo is a setter for the field or column Demo in the table User.
+func (u *User) SetDemo(param bool) string {
+	u.Demo = param
+	return "demo"
+}
+
+// FieldId is a field or column in the table User.
+func (u *User) FieldId() string {
+	return "_id"
+}
+
+// SetId is a setter for the field or column Id in the table User.
+func (u *User) SetId(param string) string {
+	u.Id = param
+	return "_id"
+}
+
+// FieldEmail is a field or column in the table User.
+func (u *User) FieldEmail() string {
+	return "email"
+}
+
+// SetEmail is a setter for the field or column Email in the table User.
+func (u *User) SetEmail(param string) string {
+	u.Email = param
+	return "email"
 }
 
 // AllField is a function to get all field or column in the table User.
@@ -115,6 +122,10 @@ func (u *User) GetValuesByColums(columns ...string) []any {
 	var values []any
 	for _, column := range columns {
 		switch column {
+		case u.FieldUsername():
+			values = append(values, u.Username)
+		case u.FieldPassword():
+			values = append(values, u.Password)
 		case u.FieldImage():
 			values = append(values, u.Image)
 		case u.FieldBio():
@@ -125,10 +136,6 @@ func (u *User) GetValuesByColums(columns ...string) []any {
 			values = append(values, u.Id)
 		case u.FieldEmail():
 			values = append(values, u.Email)
-		case u.FieldUsername():
-			values = append(values, u.Username)
-		case u.FieldPassword():
-			values = append(values, u.Password)
 		}
 	}
 	return values
@@ -138,6 +145,12 @@ func (u *User) GetValuesByColums(columns ...string) []any {
 func (u *User) ScanMap(data map[string]any) (err error) {
 	for key, value := range data {
 		switch key {
+		case u.FieldPassword():
+			val, ok := value.(string)
+			if !ok {
+				return errors.New("invalid type string. field Password")
+			}
+			u.SetPassword(val)
 		case u.FieldImage():
 			val, ok := value.(string)
 			if !ok {
@@ -174,12 +187,6 @@ func (u *User) ScanMap(data map[string]any) (err error) {
 				return errors.New("invalid type string. field Username")
 			}
 			u.SetUsername(val)
-		case u.FieldPassword():
-			val, ok := value.(string)
-			if !ok {
-				return errors.New("invalid type string. field Password")
-			}
-			u.SetPassword(val)
 		default:
 			return errors.New("invalid column")
 		}

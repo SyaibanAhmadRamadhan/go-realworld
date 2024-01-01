@@ -16,6 +16,12 @@ https://github.com/gothinkster/realworld. and use https://github.com/SyaibanAhma
 
 - **OpenTelemetry (Otel)**: OpenTelemetry is used for observability to collect and manage telemetry data (metrics, logging, and traces) to provide insight into the application's behavior.
 
+## how to init replica set mongodb
+- running mongodb docker compose ```docker compose up```
+- after running ```docker compose up```. you must mongodb init replica set in another terminal and execute 
+   ```docker exec -it mongodb_realworld1 mongosh --eval "rs.initiate({_id:'dbrs', members:[{_id:0, host:'mongodb_realworld1'},{_id:1, host:'mongodb_realworld2'},{_id:2, host:'mongodb_realworld3'}]})"```
+- after init replica set mongodb, you could ensure mongodb replica set is initiated by running the ```docker exec -it mongodb_realworld1 mongosh --eval "rs.status()"```
+
 [//]: # (## Architecture)
 
 [//]: # ()
