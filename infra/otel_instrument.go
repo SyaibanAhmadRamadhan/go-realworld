@@ -1,4 +1,4 @@
-package telemetry
+package infra
 
 import (
 	"go.opentelemetry.io/otel"

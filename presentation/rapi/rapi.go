@@ -15,8 +15,7 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 
 	"realworld-go/conf"
-	ttrace "realworld-go/infra/telemetry/trace"
-	"realworld-go/infra/telemetry/trace/exporter"
+	"realworld-go/infra"
 	"realworld-go/internal"
 )
 
@@ -28,15 +27,15 @@ type Presenter struct {
 }
 
 func (p *Presenter) InitProviderAndStart(name string) {
-	p.rapiConf = conf.EnvRapiConf()
+	p.rapiConf = conf.LoadEnvRapiConf()
 
 	otelAgentAddr, ok := os.LookupEnv("OTEL_RECEIVER_OTLP_ENDPOINT")
 	if !ok {
 		log.Fatal().Msg("OTEL_RECEIVER_OTLP_ENDPOINT is not set")
 	}
 
-	spanExporter := exporter.NewOTLP(otelAgentAddr)
-	traceProvider, traceProviderCloseFn, err := ttrace.NewTraceProviderBuilder(name).SetExporter(spanExporter).Build()
+	spanExporter := infra.NewOTLP(otelAgentAddr)
+	traceProvider, traceProviderCloseFn, err := infra.NewTraceProviderBuilder(name).SetExporter(spanExporter).Build()
 	if err != nil {
 		log.Fatal().Err(err).Msgf("failed initializing the tracer provider")
 	}

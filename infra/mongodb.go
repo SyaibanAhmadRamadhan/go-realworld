@@ -1,4 +1,4 @@
-package db
+package infra
 
 import (
 	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
@@ -10,15 +10,23 @@ import (
 	"realworld-go/conf"
 )
 
-func NewMongoDbClient() (*mongo.Client, *mongo.Database) {
-	mongoConf := conf.EnvMongodb()
+type MongoDB struct {
+	Client   *mongo.Client
+	Database *mongo.Database
+}
+
+func NewMongoDbClient() *MongoDB {
+	mongoConf := conf.LoadEnvMongodb()
 
 	clientOpt := options.Client()
 	clientOpt.ApplyURI(mongoConf.URI())
-	clientOpt.Monitor = otelmongo.NewMonitor()
+	clientOpt.Monitor = otelmongo.NewMonitor(otelmongo.WithCommandAttributeDisabled(false))
 
 	mClient, err := gmongodb.OpenConnMongoClient(clientOpt)
 	gcommon.PanicIfError(err)
 
-	return mClient, mClient.Database(mongoConf.Database)
+	return &MongoDB{
+		Client:   mClient,
+		Database: mClient.Database(mongoConf.Database),
+	}
 }

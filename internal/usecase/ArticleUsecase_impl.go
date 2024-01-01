@@ -13,7 +13,7 @@ import (
 	"realworld-go/domain"
 	"realworld-go/domain/dto"
 	"realworld-go/domain/model"
-	"realworld-go/infra/telemetry"
+	"realworld-go/infra"
 )
 
 type articleUsecaseImpl struct {
@@ -44,7 +44,7 @@ func NewArticleUsecaseImpl(
 }
 
 func (a *articleUsecaseImpl) Create(ctx context.Context, req dto.RequestCreateArticle) (res dto.ResponseArticle, err error) {
-	ctx, span := telemetry.Trace.Start(ctx, "created article usecase")
+	ctx, span := infra.Trace.Start(ctx, "created article usecase")
 	defer span.End()
 
 	err = a.validate.StructM(req)

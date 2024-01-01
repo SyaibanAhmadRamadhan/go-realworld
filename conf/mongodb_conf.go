@@ -17,7 +17,7 @@ func (m *MongodbConf) URI() string {
 	return "mongodb://" + m.Host + ":" + m.Port + "/?replicaSet=" + m.ReplicaSet + "&directConnection=true"
 }
 
-func EnvMongodb() *MongodbConf {
+func LoadEnvMongodb() *MongodbConf {
 	return &MongodbConf{
 		Host:       genv.GetEnv("MONGO_HOST", "localhost"),
 		Port:       genv.GetEnv("MONGO_PORT", "27017"),
