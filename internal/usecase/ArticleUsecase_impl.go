@@ -11,6 +11,8 @@ import (
 	"github.com/SyaibanAhmadRamadhan/gocatch/gtypedata/gstr"
 	"github.com/SyaibanAhmadRamadhan/gocatch/gtypedata/gtime"
 	"github.com/SyaibanAhmadRamadhan/gocatch/gvalidation"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 
 	"realworld-go/domain"
 	"realworld-go/domain/dto"
@@ -52,7 +54,7 @@ func (a *articleUsecaseImpl) Create(ctx context.Context, req dto.RequestCreateAr
 
 	err = a.validate.StructM(req)
 	if err != nil {
-		span.RecordError(err)
+		span.RecordError(err, trace.WithAttributes(attribute.String("error info", "error input value validation")))
 		return
 	}
 
@@ -64,7 +66,7 @@ func (a *articleUsecaseImpl) Create(ctx context.Context, req dto.RequestCreateAr
 			Value:  slug,
 		},
 	}); err == nil {
-		span.RecordError(err)
+		span.RecordError(ErrTitleArticleIsAvailable)
 		return res, ErrTitleArticleIsAvailable
 	} else if err != nil && !errors.Is(err, repository.ErrDataNotFound) {
 		span.RecordError(err)
@@ -140,8 +142,12 @@ func (a *articleUsecaseImpl) Create(ctx context.Context, req dto.RequestCreateAr
 }
 
 func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateArticle) (res dto.ResponseArticle, err error) {
+	ctx, span := infra.Trace.Start(ctx, "updated article processed", trace.WithAttributes())
+	defer span.End()
+
 	err = a.validate.StructM(res)
 	if err != nil {
+		span.RecordError(err, trace.WithAttributes(attribute.String("error info", "error input value validation")))
 		return res, err
 	}
 
@@ -155,12 +161,14 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 			Column: "_id",
 			Value:  req.Id,
 		},
-	}, article.FieldId(), article.FieldAuthorId(), article.FieldCreatedAt()); err != nil {
+	}, article.FieldId(), article.FieldAuthorId(), article.FieldCreatedAt(), article.FieldSlug()); err != nil {
 		if errors.Is(err, repository.ErrDataNotFound) {
 			err = ErrDataNotFound
 		}
+		span.RecordError(err)
 		return res, err
 	} else if articleRes.Article.AuthorId != req.AuthorId {
+		span.RecordError(ErrAuthorIdMismatchInArticleId)
 		return res, ErrAuthorIdMismatchInArticleId
 	} else {
 		article.SetCreatedAt(articleRes.Article.CreatedAt)
@@ -174,8 +182,10 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 				Value:  slug,
 			},
 		}); err == nil {
+			span.RecordError(ErrTitleArticleIsAvailable)
 			return res, ErrTitleArticleIsAvailable
 		} else if err != nil && !errors.Is(err, repository.ErrDataNotFound) {
+			span.RecordError(err)
 			return res, err
 		}
 	}
@@ -220,6 +230,7 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 	})
 
 	if err != nil {
+		span.RecordError(err)
 		return res, err
 	}
 

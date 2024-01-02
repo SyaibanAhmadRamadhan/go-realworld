@@ -16,6 +16,12 @@ github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1812 h1:nxHfW4ZeGK2ubvqk+W3iI5
 github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1812/go.mod h1:wxMxMgb7UT/jqzUzkzwlPKVO2EiL2XIiTuiZzzdJ37U=
 github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1813-0.20240102003642-c69dcfb2d80a h1:NZiCorhqkksU28vyziayfkbkyCZWJ+yRHTlRSkl0T7E=
 github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1813-0.20240102003642-c69dcfb2d80a/go.mod h1:wxMxMgb7UT/jqzUzkzwlPKVO2EiL2XIiTuiZzzdJ37U=
+github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1813-0.20240102232344-ef44f1e92b3a h1:qBeIHsOZgmtMVAH9+8ou0N9PR98tpRGHDZF43KvfJ3Q=
+github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1813-0.20240102232344-ef44f1e92b3a/go.mod h1:wxMxMgb7UT/jqzUzkzwlPKVO2EiL2XIiTuiZzzdJ37U=
+github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1813-0.20240102233508-a566cc670da8 h1:mbRX1W3lmQSjtUJYAn+U+RA97t0UykAYSmBWwbQN2Ns=
+github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1813-0.20240102233508-a566cc670da8/go.mod h1:wxMxMgb7UT/jqzUzkzwlPKVO2EiL2XIiTuiZzzdJ37U=
+github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1813-0.20240102233723-7403f1e481d2 h1:MRVI4+APDdZikrgQasSqaTpJ4tV4jbCLbWi5xWZDv1w=
+github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1813-0.20240102233723-7403f1e481d2/go.mod h1:wxMxMgb7UT/jqzUzkzwlPKVO2EiL2XIiTuiZzzdJ37U=
 github.com/andybalholm/brotli v1.0.6 h1:Yf9fFpf49Zrxb9NlQaluyE92/+X7UVHlhMNJN2sxfOI=
 github.com/andybalholm/brotli v1.0.6/go.mod h1:fO7iG3H7G2nSZ7m0zPUDn85XEX2GTukHGRSepvi9Eig=
 github.com/brianvoe/gofakeit/v6 v6.26.0 h1:DzJHo4K6RrAbglU6cReh+XqoaunuUMZ8OAQGXrYsXt8=

@@ -3,7 +3,7 @@ module realworld-go
 go 1.21
 
 require (
-	github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1813-0.20240102003642-c69dcfb2d80a
+	github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1813-0.20240102233723-7403f1e481d2
 	github.com/brianvoe/gofakeit/v6 v6.26.0
 	github.com/gofiber/contrib/otelfiber/v2 v2.0.0-20231222143525-3f889574fe8d
 	github.com/gofiber/fiber/v2 v2.51.0

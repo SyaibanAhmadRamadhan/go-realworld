@@ -80,6 +80,7 @@ func NewPresenter(dependency *internal.Dependency) *Presenter {
 	}))
 
 	app.Post("/article", presenter.CreateArticle)
+	app.Put("/article/:id", presenter.UpdateArticle)
 
 	presenter.app = app
 	return presenter

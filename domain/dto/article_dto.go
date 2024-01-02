@@ -26,7 +26,7 @@ type ResponseArticle struct {
 	Id            string        `json:"id"`
 	Tags          []ResponseTag `json:"tags"`
 	Author        ResponseUser  `json:"author"`
-	TotalFavorite int64         `bson:"total_favorite,omitempty"`
+	TotalFavorite int64         `json:"total_favorite,omitempty"`
 	Slug          string        `json:"slug"`
 	Title         string        `json:"title"`
 	Description   string        `json:"description"`
