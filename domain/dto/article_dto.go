@@ -3,7 +3,6 @@ package dto
 type RequestCreateArticle struct {
 	TagNames    []string `json:"tag_names" validate:"required,dive,max=25"`
 	AuthorId    string   `json:"author_id" validate:"required,ulid"`
-	Slug        string   `json:"slug" validate:"required,max=80,min=10"`
 	Title       string   `json:"title" validate:"required,max=100,min=15"`
 	Description string   `json:"description" validate:"required,max=255,min=25"`
 	Body        string   `json:"body" validate:"required,min=50"`
@@ -13,7 +12,6 @@ type RequestUpdateArticle struct {
 	Id          string   `json:"-"            validate:"required,ulid"`
 	TagNames    []string `json:"tag_names"    validate:"required,dive,max=25"`
 	AuthorId    string   `json:"author_id"    validate:"required,ulid"`
-	Slug        string   `json:"slug"         validate:"required,max=80,min=10"`
 	Title       string   `json:"title"        validate:"required,max=100,min=15"`
 	Description string   `json:"description"  validate:"required,max=255,min=25"`
 	Body        string   `json:"body"         validate:"required,min=50"`

@@ -139,14 +139,14 @@ func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param domai
 	return
 }
 
-func (a *articleRepositoryImpl) FindOneById(ctx context.Context, param domain.FindOneByIdArticleParam, articleColumns ...string) (
+func (a *articleRepositoryImpl) FindOneByOneColumn(ctx context.Context, param domain.FindOneByIdArticleParam, articleColumns ...string) (
 	res domain.FindOneArticleResult, err error) {
 	pipeline := mongo.Pipeline{}
 
 	pipeline = append(pipeline,
 		bson.D{{Key: "$match", Value: bson.D{
-			{Key: "_id", Value: bson.D{
-				{Key: "$eq", Value: param.ArticleId},
+			{Key: param.Column.Column, Value: bson.D{
+				{Key: "$eq", Value: param.Column.Value},
 			}},
 		}}},
 	)

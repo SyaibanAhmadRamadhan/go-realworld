@@ -3,7 +3,7 @@ module realworld-go
 go 1.21
 
 require (
-	github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1812
+	github.com/SyaibanAhmadRamadhan/gocatch v1.240101.1813-0.20240102003642-c69dcfb2d80a
 	github.com/brianvoe/gofakeit/v6 v6.26.0
 	github.com/gofiber/contrib/otelfiber/v2 v2.0.0-20231222143525-3f889574fe8d
 	github.com/gofiber/fiber/v2 v2.51.0
@@ -57,6 +57,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
+	github.com/maxbrunsfeld/counterfeiter/v6 v6.7.0 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/minio-go/v7 v7.0.66 // indirect
 	github.com/minio/sha256-simd v1.0.1 // indirect

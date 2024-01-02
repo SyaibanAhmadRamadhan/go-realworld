@@ -46,7 +46,7 @@ func ArticleRepository_Create(t *testing.T) {
 func ArticleRepository_FindOneByID(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		for _, article := range articles {
-			res, err := articleRepository.FindOneById(context.Background(), domain.FindOneByIdArticleParam{
+			res, err := articleRepository.FindOneByOneColumn(context.Background(), domain.FindOneByIdArticleParam{
 				ArticleId: article.Id,
 				AggregationOpt: domain.FindArticleOpt{
 					Tag:      false,
@@ -57,7 +57,7 @@ func ArticleRepository_FindOneByID(t *testing.T) {
 			assert.Equal(t, article.Slug, res.Article.Slug)
 			assert.NotEqual(t, article, res.Article)
 
-			res1, err := articleRepository.FindOneById(context.Background(), domain.FindOneByIdArticleParam{
+			res1, err := articleRepository.FindOneByOneColumn(context.Background(), domain.FindOneByIdArticleParam{
 				ArticleId:      article.Id,
 				AggregationOpt: domain.FindArticleOpt{},
 			})
@@ -67,7 +67,7 @@ func ArticleRepository_FindOneByID(t *testing.T) {
 	})
 
 	t.Run("Failed", func(t *testing.T) {
-		_, err := articleRepository.FindOneById(context.Background(), domain.FindOneByIdArticleParam{
+		_, err := articleRepository.FindOneByOneColumn(context.Background(), domain.FindOneByIdArticleParam{
 			ArticleId: "article.Id",
 		})
 		assert.Equal(t, repository.ErrDataNotFound, err)
@@ -126,7 +126,7 @@ func ArticleRepository_UpdateByID(t *testing.T) {
 			err := articleRepository.UpdateById(context.Background(), articleUpdate.Article, columns)
 			assert.NoError(t, err)
 
-			res, err := articleRepository.FindOneById(context.Background(), domain.FindOneByIdArticleParam{
+			res, err := articleRepository.FindOneByOneColumn(context.Background(), domain.FindOneByIdArticleParam{
 				ArticleId: articleUpdate.Article.Id,
 			})
 			assert.NoError(t, err)
@@ -176,7 +176,7 @@ func ArticleRepository_DeleteByID(t *testing.T) {
 			err = articleRepository.DeleteById(context.Background(), articleDeleted)
 			assert.NoError(t, err)
 
-			_, err = articleRepository.FindOneById(context.Background(), domain.FindOneByIdArticleParam{
+			_, err = articleRepository.FindOneByOneColumn(context.Background(), domain.FindOneByIdArticleParam{
 				ArticleId: articleDeleted.Id,
 			})
 			assert.Equal(t, repository.ErrDataNotFound, err)

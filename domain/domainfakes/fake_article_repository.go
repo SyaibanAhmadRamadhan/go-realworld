@@ -48,18 +48,18 @@ type FakeArticleRepository struct {
 		result1 domain.FindAllArticleResult
 		result2 error
 	}
-	FindOneByIdStub        func(context.Context, domain.FindOneByIdArticleParam, ...string) (domain.FindOneArticleResult, error)
-	findOneByIdMutex       sync.RWMutex
-	findOneByIdArgsForCall []struct {
+	FindOneByOneColumnStub        func(context.Context, domain.FindOneByIdArticleParam, ...string) (domain.FindOneArticleResult, error)
+	findOneByOneColumnMutex       sync.RWMutex
+	findOneByOneColumnArgsForCall []struct {
 		arg1 context.Context
 		arg2 domain.FindOneByIdArticleParam
 		arg3 []string
 	}
-	findOneByIdReturns struct {
+	findOneByOneColumnReturns struct {
 		result1 domain.FindOneArticleResult
 		result2 error
 	}
-	findOneByIdReturnsOnCall map[int]struct {
+	findOneByOneColumnReturnsOnCall map[int]struct {
 		result1 domain.FindOneArticleResult
 		result2 error
 	}
@@ -270,18 +270,18 @@ func (fake *FakeArticleRepository) FindAllPaginateReturnsOnCall(i int, result1 d
 	}{result1, result2}
 }
 
-func (fake *FakeArticleRepository) FindOneById(arg1 context.Context, arg2 domain.FindOneByIdArticleParam, arg3 ...string) (domain.FindOneArticleResult, error) {
-	fake.findOneByIdMutex.Lock()
-	ret, specificReturn := fake.findOneByIdReturnsOnCall[len(fake.findOneByIdArgsForCall)]
-	fake.findOneByIdArgsForCall = append(fake.findOneByIdArgsForCall, struct {
+func (fake *FakeArticleRepository) FindOneByOneColumn(arg1 context.Context, arg2 domain.FindOneByIdArticleParam, arg3 ...string) (domain.FindOneArticleResult, error) {
+	fake.findOneByOneColumnMutex.Lock()
+	ret, specificReturn := fake.findOneByOneColumnReturnsOnCall[len(fake.findOneByOneColumnArgsForCall)]
+	fake.findOneByOneColumnArgsForCall = append(fake.findOneByOneColumnArgsForCall, struct {
 		arg1 context.Context
 		arg2 domain.FindOneByIdArticleParam
 		arg3 []string
 	}{arg1, arg2, arg3})
-	stub := fake.FindOneByIdStub
-	fakeReturns := fake.findOneByIdReturns
-	fake.recordInvocation("FindOneById", []interface{}{arg1, arg2, arg3})
-	fake.findOneByIdMutex.Unlock()
+	stub := fake.FindOneByOneColumnStub
+	fakeReturns := fake.findOneByOneColumnReturns
+	fake.recordInvocation("FindOneByOneColumn", []interface{}{arg1, arg2, arg3})
+	fake.findOneByOneColumnMutex.Unlock()
 	if stub != nil {
 		return stub(arg1, arg2, arg3...)
 	}
@@ -291,46 +291,46 @@ func (fake *FakeArticleRepository) FindOneById(arg1 context.Context, arg2 domain
 	return fakeReturns.result1, fakeReturns.result2
 }
 
-func (fake *FakeArticleRepository) FindOneByIdCallCount() int {
-	fake.findOneByIdMutex.RLock()
-	defer fake.findOneByIdMutex.RUnlock()
-	return len(fake.findOneByIdArgsForCall)
+func (fake *FakeArticleRepository) FindOneByOneColumnCallCount() int {
+	fake.findOneByOneColumnMutex.RLock()
+	defer fake.findOneByOneColumnMutex.RUnlock()
+	return len(fake.findOneByOneColumnArgsForCall)
 }
 
-func (fake *FakeArticleRepository) FindOneByIdCalls(stub func(context.Context, domain.FindOneByIdArticleParam, ...string) (domain.FindOneArticleResult, error)) {
-	fake.findOneByIdMutex.Lock()
-	defer fake.findOneByIdMutex.Unlock()
-	fake.FindOneByIdStub = stub
+func (fake *FakeArticleRepository) FindOneByOneColumnCalls(stub func(context.Context, domain.FindOneByIdArticleParam, ...string) (domain.FindOneArticleResult, error)) {
+	fake.findOneByOneColumnMutex.Lock()
+	defer fake.findOneByOneColumnMutex.Unlock()
+	fake.FindOneByOneColumnStub = stub
 }
 
-func (fake *FakeArticleRepository) FindOneByIdArgsForCall(i int) (context.Context, domain.FindOneByIdArticleParam, []string) {
-	fake.findOneByIdMutex.RLock()
-	defer fake.findOneByIdMutex.RUnlock()
-	argsForCall := fake.findOneByIdArgsForCall[i]
+func (fake *FakeArticleRepository) FindOneByOneColumnArgsForCall(i int) (context.Context, domain.FindOneByIdArticleParam, []string) {
+	fake.findOneByOneColumnMutex.RLock()
+	defer fake.findOneByOneColumnMutex.RUnlock()
+	argsForCall := fake.findOneByOneColumnArgsForCall[i]
 	return argsForCall.arg1, argsForCall.arg2, argsForCall.arg3
 }
 
-func (fake *FakeArticleRepository) FindOneByIdReturns(result1 domain.FindOneArticleResult, result2 error) {
-	fake.findOneByIdMutex.Lock()
-	defer fake.findOneByIdMutex.Unlock()
-	fake.FindOneByIdStub = nil
-	fake.findOneByIdReturns = struct {
+func (fake *FakeArticleRepository) FindOneByOneColumnReturns(result1 domain.FindOneArticleResult, result2 error) {
+	fake.findOneByOneColumnMutex.Lock()
+	defer fake.findOneByOneColumnMutex.Unlock()
+	fake.FindOneByOneColumnStub = nil
+	fake.findOneByOneColumnReturns = struct {
 		result1 domain.FindOneArticleResult
 		result2 error
 	}{result1, result2}
 }
 
-func (fake *FakeArticleRepository) FindOneByIdReturnsOnCall(i int, result1 domain.FindOneArticleResult, result2 error) {
-	fake.findOneByIdMutex.Lock()
-	defer fake.findOneByIdMutex.Unlock()
-	fake.FindOneByIdStub = nil
-	if fake.findOneByIdReturnsOnCall == nil {
-		fake.findOneByIdReturnsOnCall = make(map[int]struct {
+func (fake *FakeArticleRepository) FindOneByOneColumnReturnsOnCall(i int, result1 domain.FindOneArticleResult, result2 error) {
+	fake.findOneByOneColumnMutex.Lock()
+	defer fake.findOneByOneColumnMutex.Unlock()
+	fake.FindOneByOneColumnStub = nil
+	if fake.findOneByOneColumnReturnsOnCall == nil {
+		fake.findOneByOneColumnReturnsOnCall = make(map[int]struct {
 			result1 domain.FindOneArticleResult
 			result2 error
 		})
 	}
-	fake.findOneByIdReturnsOnCall[i] = struct {
+	fake.findOneByOneColumnReturnsOnCall[i] = struct {
 		result1 domain.FindOneArticleResult
 		result2 error
 	}{result1, result2}
@@ -413,8 +413,8 @@ func (fake *FakeArticleRepository) Invocations() map[string][][]interface{} {
 	defer fake.deleteByIdMutex.RUnlock()
 	fake.findAllPaginateMutex.RLock()
 	defer fake.findAllPaginateMutex.RUnlock()
-	fake.findOneByIdMutex.RLock()
-	defer fake.findOneByIdMutex.RUnlock()
+	fake.findOneByOneColumnMutex.RLock()
+	defer fake.findOneByOneColumnMutex.RUnlock()
 	fake.updateByIdMutex.RLock()
 	defer fake.updateByIdMutex.RUnlock()
 	copiedInvocations := map[string][][]interface{}{}

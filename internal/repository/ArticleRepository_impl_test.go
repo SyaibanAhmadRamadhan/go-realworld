@@ -78,7 +78,7 @@ func TestArticleRepositoryImpl_FindOneByID(t *testing.T) {
 					{Key: article.FieldUpdatedAt(), Value: article.UpdatedAt},
 				}},
 			}))
-			res, err := articleRepo.FindOneById(ctx, domain.FindOneByIdArticleParam{
+			res, err := articleRepo.FindOneByOneColumn(ctx, domain.FindOneByIdArticleParam{
 				ArticleId: article.Id,
 				AggregationOpt: domain.FindArticleOpt{
 					Tag:      true,

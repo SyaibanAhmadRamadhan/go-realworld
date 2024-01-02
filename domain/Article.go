@@ -14,7 +14,7 @@ import (
 //counterfeiter:generate . ArticleRepository
 type ArticleRepository interface {
 	FindAllPaginate(ctx context.Context, param FindAllPaginateArticleParam, articleColumns ...string) (res FindAllArticleResult, err error)
-	FindOneById(ctx context.Context, param FindOneByIdArticleParam, columns ...string) (res FindOneArticleResult, err error)
+	FindOneByOneColumn(ctx context.Context, param FindOneByIdArticleParam, columns ...string) (res FindOneArticleResult, err error)
 	Create(ctx context.Context, article model.Article) (err error)
 	UpdateById(ctx context.Context, article model.Article, columns []string) (err error)
 	DeleteById(ctx context.Context, article model.Article) (err error)
@@ -28,7 +28,7 @@ type FindAllPaginateArticleParam struct {
 }
 
 type FindOneByIdArticleParam struct {
-	ArticleId      string
+	Column         gdb.FindByOneColumnParam
 	AggregationOpt FindArticleOpt
 }
 

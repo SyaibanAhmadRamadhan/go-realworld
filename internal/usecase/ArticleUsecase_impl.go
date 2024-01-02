@@ -2,11 +2,13 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
 	"github.com/SyaibanAhmadRamadhan/gocatch/ginfra/gdb"
 	"github.com/SyaibanAhmadRamadhan/gocatch/gtypedata/garray"
+	"github.com/SyaibanAhmadRamadhan/gocatch/gtypedata/gstr"
 	"github.com/SyaibanAhmadRamadhan/gocatch/gtypedata/gtime"
 	"github.com/SyaibanAhmadRamadhan/gocatch/gvalidation"
 
@@ -14,6 +16,7 @@ import (
 	"realworld-go/domain/dto"
 	"realworld-go/domain/model"
 	"realworld-go/infra"
+	"realworld-go/internal/repository"
 )
 
 type articleUsecaseImpl struct {
@@ -53,6 +56,21 @@ func (a *articleUsecaseImpl) Create(ctx context.Context, req dto.RequestCreateAr
 		return
 	}
 
+	slug := gstr.ToSlug(req.Title)
+
+	if _, err = a.artileRepo.FindOneByOneColumn(ctx, domain.FindOneByIdArticleParam{
+		Column: gdb.FindByOneColumnParam{
+			Column: "slug",
+			Value:  slug,
+		},
+	}); err == nil {
+		span.RecordError(err)
+		return res, ErrTitleArticleIsAvailable
+	} else if err != nil && !errors.Is(err, repository.ErrDataNotFound) {
+		span.RecordError(err)
+		return res, err
+	}
+
 	timeNowMS := gtime.NormalizeTimeUnit(time.Now(), gtime.Milliseconds)
 	articleId := gcommon.NewUlid()
 	var articleTags []model.ArticleTag
@@ -62,7 +80,7 @@ func (a *articleUsecaseImpl) Create(ctx context.Context, req dto.RequestCreateAr
 		err = a.artileRepo.Create(c, model.Article{
 			Id:          articleId,
 			AuthorId:    req.AuthorId,
-			Slug:        req.Slug,
+			Slug:        slug,
 			Title:       req.Title,
 			Description: req.Description,
 			Body:        req.Body,
@@ -110,7 +128,7 @@ func (a *articleUsecaseImpl) Create(ctx context.Context, req dto.RequestCreateAr
 	res = dto.ResponseArticle{
 		Id:          articleId,
 		Tags:        resTags,
-		Slug:        req.Slug,
+		Slug:        slug,
 		Title:       req.Title,
 		Description: req.Description,
 		Body:        req.Body,
@@ -130,14 +148,36 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 	article := model.NewArticleWithOutPtr()
 	article.SetId(req.Id)
 
-	if articleRes, err := a.artileRepo.FindOneById(ctx, domain.FindOneByIdArticleParam{
-		ArticleId: article.Id,
+	slug := gstr.ToSlug(req.Title)
+
+	if articleRes, err := a.artileRepo.FindOneByOneColumn(ctx, domain.FindOneByIdArticleParam{
+		Column: gdb.FindByOneColumnParam{
+			Column: "_id",
+			Value:  req.Id,
+		},
 	}, article.FieldId(), article.FieldAuthorId(), article.FieldCreatedAt()); err != nil {
+		if errors.Is(err, repository.ErrDataNotFound) {
+			err = ErrDataNotFound
+		}
 		return res, err
-	} else if articleRes.Article.Id != req.AuthorId {
+	} else if articleRes.Article.AuthorId != req.AuthorId {
 		return res, ErrAuthorIdMismatchInArticleId
 	} else {
 		article.SetCreatedAt(articleRes.Article.CreatedAt)
+		article.SetSlug(articleRes.Article.Slug)
+	}
+
+	if article.Slug != gstr.ToSlug(req.Title) {
+		if _, err = a.artileRepo.FindOneByOneColumn(ctx, domain.FindOneByIdArticleParam{
+			Column: gdb.FindByOneColumnParam{
+				Column: "slug",
+				Value:  slug,
+			},
+		}); err == nil {
+			return res, ErrTitleArticleIsAvailable
+		} else if err != nil && !errors.Is(err, repository.ErrDataNotFound) {
+			return res, err
+		}
 	}
 
 	var tags []model.Tag
@@ -145,7 +185,7 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 
 	err = a.txRepo.DoTransaction(ctx, nil, func(c context.Context) (commit bool, err error) {
 		if err = a.artileRepo.UpdateById(c, article, []string{
-			article.SetSlug(req.Slug),
+			article.SetSlug(slug),
 			article.SetTitle(req.Title),
 			article.SetDescription(req.Description),
 			article.SetBody(req.Body),
@@ -194,7 +234,7 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 	res = dto.ResponseArticle{
 		Id:          article.Id,
 		Tags:        resTags,
-		Slug:        req.Slug,
+		Slug:        slug,
 		Title:       req.Title,
 		Description: req.Description,
 		Body:        req.Body,
@@ -229,8 +269,11 @@ func (a *articleUsecaseImpl) Delete(ctx context.Context, articleId string) (err 
 }
 
 func (a *articleUsecaseImpl) FindOne(ctx context.Context, articleId string) (res dto.ResponseArticle, err error) {
-	article, err := a.artileRepo.FindOneById(ctx, domain.FindOneByIdArticleParam{
-		ArticleId: articleId,
+	article, err := a.artileRepo.FindOneByOneColumn(ctx, domain.FindOneByIdArticleParam{
+		Column: gdb.FindByOneColumnParam{
+			Column: "_id",
+			Value:  articleId,
+		},
 		AggregationOpt: domain.FindArticleOpt{
 			Tag:      true,
 			Favorite: true,

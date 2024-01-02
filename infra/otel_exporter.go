@@ -2,6 +2,7 @@ package infra
 
 import (
 	"context"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
@@ -10,7 +11,8 @@ import (
 )
 
 func NewOTLP(endpoint string) *otlptrace.Exporter {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	traceClient := otlptracegrpc.NewClient(
 		otlptracegrpc.WithInsecure(),

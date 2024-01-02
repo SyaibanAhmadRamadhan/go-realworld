@@ -24,6 +24,6 @@ func LoadEnvMongodb() *MongodbConf {
 		Username:   genv.GetEnv("MONGO_USER", "root"),
 		Password:   genv.GetEnv("MONGO_PORT", "root"),
 		Database:   genv.GetEnv("MONGO_DB", "mongodb"),
-		ReplicaSet: genv.GetEnv("REPLICA_SET_NAME", "dbrs"),
+		ReplicaSet: genv.GetEnv("MONGO_DB_REPLICA_SET_NAME", "dbrs"),
 	}
 }

@@ -81,7 +81,7 @@ func initRepository() {
 func TestRun(t *testing.T) {
 	t.Run("TagRepository", func(t *testing.T) {
 		// t.Run("Create", TagRepository_Create)
-		// t.Run("FindOneById", TagRepository_FindByID)
+		// t.Run("FindOneByOneColumn", TagRepository_FindByID)
 		// t.Run("FindAllByIDs", TagRepository_FindAllByIDS)
 		// t.Run("UpdateById", TagRepository_UpdateByID)
 		// t.Run("DeleteById", TagRepository_DeleteByID)
@@ -111,7 +111,7 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("ArticleRepository", func(t *testing.T) {
-		t.Run("FindOneById", ArticleRepository_FindOneByID)
+		t.Run("FindOneByOneColumn", ArticleRepository_FindOneByID)
 		t.Run("FindAllPaginate", ArticleRepository_FindAllPaginate)
 		t.Run("UpdateById", ArticleRepository_UpdateByID)
 		t.Run("DeleteById", ArticleRepository_DeleteByID)
