@@ -150,15 +150,36 @@ func (a *articleRepositoryImpl) FindOneByOneColumn(ctx context.Context, param do
 			}},
 		}}},
 	)
-	if param.AggregationOpt.Tag || param.AggregationOpt.Favorite {
-		pipeline = append(pipeline,
-			bson.D{{Key: "$lookup", Value: bson.D{
-				{Key: "from", Value: model.ArticleTagTableName},
-				{Key: "localField", Value: "_id"},
-				{Key: "foreignField", Value: "articleId"},
-				{Key: "as", Value: "article_tag"},
+	if param.AggregationOpt.Tag {
+		pipeline = append(pipeline, bson.D{
+			{"$lookup", bson.D{
+				{"from", model.ArticleTagTableName},
+				{"localField", "_id"},
+				{"foreignField", "articleId"},
+				{"as", "article_tags"},
+			}}},
+			bson.D{{Key: "$unwind", Value: bson.D{
+				{Key: "path", Value: "$article_tags"},
 			}}},
 		)
+
+		pipeline = append(pipeline, bson.D{
+			{Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: model.TagTableName},
+				{Key: "let", Value: bson.D{
+					{Key: "tagId", Value: "$article_tags.tagId"},
+				}},
+				{Key: "pipeline", Value: mongo.Pipeline{
+					bson.D{{Key: "$match", Value: bson.D{{Key: "$expr", Value: bson.D{
+						{Key: "$eq", Value: bson.A{
+							bson.D{{Key: "$toString", Value: "$_id"}},
+							"$$tagId",
+						}},
+					}}}}},
+				}},
+				{Key: "as", Value: "tags"},
+			}},
+		})
 	}
 
 	if param.AggregationOpt.Author {
@@ -169,18 +190,13 @@ func (a *articleRepositoryImpl) FindOneByOneColumn(ctx context.Context, param do
 				{Key: "foreignField", Value: "_id"},
 				{Key: "as", Value: "author"},
 			}}},
-		)
-	}
-	if param.AggregationOpt.Tag {
-		pipeline = append(pipeline,
-			bson.D{{Key: "$lookup", Value: bson.D{
-				{Key: "from", Value: model.TagTableName},
-				{Key: "localField", Value: "article_tag.tagId"},
-				{Key: "foreignField", Value: "_id"},
-				{Key: "as", Value: "tags"},
+			bson.D{{Key: "$unwind", Value: bson.D{
+				{Key: "path", Value: "$author"},
+				{Key: "preserveNullAndEmptyArrays", Value: true},
 			}}},
 		)
 	}
+
 	if param.AggregationOpt.Favorite {
 		pipeline = append(pipeline,
 			bson.D{{Key: "$lookup", Value: bson.D{
@@ -197,14 +213,42 @@ func (a *articleRepositoryImpl) FindOneByOneColumn(ctx context.Context, param do
 
 	project := a.projectionArticle(true, articleColumns...)
 	project = garray.AppendUniqueVal(project, bson.E{Key: "_id", Value: "$$ROOT._id"})
+
+	articleGroup := bson.D{}
+	if len(articleColumns) > 0 {
+		for _, column := range articleColumns {
+			articleGroup = append(articleGroup, bson.E{Key: column, Value: "$" + column})
+		}
+	} else {
+		article := model.NewArticle()
+		for _, column := range article.AllField() {
+			articleGroup = append(articleGroup, bson.E{Key: column, Value: "$" + column})
+		}
+	}
+
 	pipeline = append(pipeline,
 		bson.D{
+			{Key: "$unwind", Value: "$tags"},
+		},
+		bson.D{
+			{Key: "$group", Value: bson.D{
+				{"_id", "$_id"},
+				{Key: "favorite", Value: bson.D{{Key: "$first", Value: "$userFavoritesCount"}}},
+				{Key: "author", Value: bson.D{{Key: "$first", Value: "$author"}}},
+				{Key: "article", Value: bson.D{
+					{"$first", articleGroup},
+				}},
+				{"tags", bson.D{{"$push", bson.D{
+					{"_id", "$tags._id"},
+					{"name", "$tags.name"},
+				}}}}},
+			}},
+		bson.D{
 			{Key: "$project", Value: bson.D{
-				{Key: "tags", Value: "$tags"},
-				{Key: "author", Value: "$author"},
-				{Key: "favorite", Value: "$userFavoritesCount"},
-				{Key: "_id", Value: 0},
-				{Key: "article", Value: project},
+				{Key: "favorite", Value: 1},
+				{Key: "author", Value: 1},
+				{Key: "article", Value: 1},
+				{Key: "tags", Value: 1},
 			}},
 		},
 		bson.D{{Key: "$limit", Value: 1}},
@@ -219,7 +263,6 @@ func (a *articleRepositoryImpl) FindOneByOneColumn(ctx context.Context, param do
 		if err = cur.Decode(&res); err != nil {
 			// return
 		}
-
 		return
 	}
 

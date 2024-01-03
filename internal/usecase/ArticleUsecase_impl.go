@@ -289,11 +289,16 @@ func (a *articleUsecaseImpl) Delete(ctx context.Context, articleId string) (err 
 	if err != nil {
 		span.RecordError(err)
 	}
-	
+
 	return err
 }
 
 func (a *articleUsecaseImpl) FindOne(ctx context.Context, articleId string) (res dto.ResponseArticle, err error) {
+	ctx, span := infra.Trace.Start(ctx, "find one article processed", trace.WithAttributes(
+		attribute.String("article_id", articleId),
+	))
+	defer span.End()
+
 	article, err := a.artileRepo.FindOneByOneColumn(ctx, domain.FindOneByIdArticleParam{
 		Column: gdb.FindByOneColumnParam{
 			Column: "_id",
@@ -306,6 +311,10 @@ func (a *articleUsecaseImpl) FindOne(ctx context.Context, articleId string) (res
 		},
 	})
 	if err != nil {
+		if errors.Is(err, repository.ErrDataNotFound) {
+			err = ErrDataNotFound
+		}
+		span.RecordError(err)
 		return res, err
 	}
 

@@ -151,3 +151,45 @@ func (p *Presenter) DeletedArticle(c *fiber.Ctx) error {
 		Paginate: nil,
 	})
 }
+
+func (p *Presenter) FindOneArticle(c *fiber.Ctx) error {
+	ctx, span := infra.Trace.Start(c.UserContext(), "FindOne article rest api")
+	defer span.End()
+
+	id := c.Params("id")
+	if _, err := gcommon.ParseUlid(id, false); err != nil {
+		span.RecordError(err, trace.WithAttributes(attribute.String("error info", "invalid id and cant parse ulid")))
+		err = &dto.ErrHttp{
+			Code:    404,
+			Message: "ARTICLE NOT FOUND",
+			Err:     "not found",
+		}
+		return exception.Err(c, err)
+	}
+
+	res, err := p.Dependency.ArticleUsecase.FindOne(ctx, id)
+	if err != nil {
+		if errors.Is(err, usecase.ErrDataNotFound) {
+			err = &dto.ErrHttp{
+				Code:    404,
+				Message: "ARTICLE NOT FOUND",
+				Err:     "not found",
+			}
+		}
+		return exception.Err(c, err)
+	}
+
+	resTracer, err := gstruct.MarshalAndCencoredTag(res, "cencored")
+	if err != nil {
+		span.RecordError(err)
+	}
+	span.SetAttributes(attribute.String("response", resTracer))
+
+	return c.Status(200).JSON(dto.Response{
+		Code:     200,
+		Message:  "DATA ARTICLE",
+		Data:     res,
+		Err:      nil,
+		Paginate: nil,
+	})
+}
