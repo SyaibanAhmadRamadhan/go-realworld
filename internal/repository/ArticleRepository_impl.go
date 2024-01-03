@@ -23,7 +23,11 @@ func NewArticleRepositoryImpl(db *mongo.Database) domain.ArticleRepository {
 
 func (a *articleRepositoryImpl) FindAllPaginate(ctx context.Context, param domain.FindAllPaginateArticleParam, articleColumns ...string) (
 	res domain.FindAllArticleResult, err error) {
-	pipeline := mongo.Pipeline{}
+	pipeline := mongo.Pipeline{
+		bson.D{{Key: "$match", Value: bson.D{
+			{Key: "$text", Value: bson.D{{Key: "$search", Value: param.Search}}},
+		}}},
+	}
 
 	if len(param.TagIds) > 0 {
 		pipeline = append(pipeline,

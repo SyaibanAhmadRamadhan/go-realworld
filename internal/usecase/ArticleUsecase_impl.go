@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
@@ -372,6 +371,7 @@ func (a *articleUsecaseImpl) FindAll(ctx context.Context, req dto.RequestFindAll
 
 	articles, err := a.artileRepo.FindAllPaginate(ctx, domain.FindAllPaginateArticleParam{
 		TagIds:     tagIds,
+		Search:     req.Search,
 		Orders:     gdb.OrderByParams{{Column: "_id", IsAscending: false}},
 		Pagination: gdb.PaginationParam{Limit: limit, Offset: offset},
 		AggregationOpt: domain.FindArticleOpt{
@@ -386,7 +386,6 @@ func (a *articleUsecaseImpl) FindAll(ctx context.Context, req dto.RequestFindAll
 		articleModel.FieldUpdatedAt(),
 	)
 	if err != nil {
-		fmt.Println("articles")
 		return res, err
 	}
 

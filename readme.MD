@@ -26,8 +26,9 @@ https://github.com/gothinkster/realworld. and use https://github.com/SyaibanAhma
 
 - **Minio**: Minio is used for object storage, providing a scalable and high-performance solution for storing and retrieving data.
 
-## how to init replica set mongodb
+## setup mongodb
 - running mongodb docker compose ```docker compose up```
 - after running ```docker compose up```. you must mongodb init replica set in another terminal and execute 
    ```docker exec -it mongodb_realworld1 mongosh --eval "rs.initiate({_id:'dbrs', members:[{_id:0, host:'mongodb_realworld1'},{_id:1, host:'mongodb_realworld2'},{_id:2, host:'mongodb_realworld3'}]})"```
 - after init replica set mongodb, you could ensure mongodb replica set is initiated by running the ```docker exec -it mongodb_realworld1 mongosh --eval "rs.status()"```
+- after check status replica set, you must be init indexing field article with command ```db.article.createIndex({body: "text", description: "text", slug: "text", title: "text"})```

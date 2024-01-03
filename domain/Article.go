@@ -22,6 +22,7 @@ type ArticleRepository interface {
 
 type FindAllPaginateArticleParam struct {
 	TagIds         []string
+	Search         string
 	Orders         gdb.OrderByParams
 	Pagination     gdb.PaginationParam
 	AggregationOpt FindArticleOpt

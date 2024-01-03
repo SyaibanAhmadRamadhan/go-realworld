@@ -51,15 +51,15 @@ func (p *Presenter) InitProviderAndStart(name string) {
 }
 
 func (p *Presenter) Closed(ctx context.Context) {
-	if err := p.app.ShutdownWithContext(ctx); err != nil {
-		log.Fatal().Err(err).Msgf("failed graceful shutdown app fiber")
-	}
-
 	for _, closeFn := range p.traceProviderCloseFn {
 		err := closeFn(ctx)
 		if err != nil {
 			log.Error().Err(err).Msgf("Unable to close trace provider")
 		}
+	}
+
+	if err := p.app.ShutdownWithContext(ctx); err != nil {
+		log.Fatal().Err(err).Msgf("failed graceful shutdown app fiber")
 	}
 }
 

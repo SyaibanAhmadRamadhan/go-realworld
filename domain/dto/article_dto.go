@@ -19,6 +19,7 @@ type RequestUpdateArticle struct {
 
 type RequestFindAllArticle struct {
 	Pagination RequestPaginate
+	Search     string
 	TagName    string
 }
 

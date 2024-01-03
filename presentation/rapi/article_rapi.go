@@ -202,9 +202,11 @@ func (p *Presenter) FindAllArticle(c *fiber.Ctx) error {
 	_ = c.QueryParser(req)
 
 	tagName := c.Query("tag-name")
+	search := c.Query("search")
 
 	res, err := p.Dependency.ArticleUsecase.FindAll(ctx, dto.RequestFindAllArticle{
 		Pagination: *req,
+		Search:     search,
 		TagName:    tagName,
 	})
 	if err != nil {
