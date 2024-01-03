@@ -81,6 +81,7 @@ func NewPresenter(dependency *internal.Dependency) *Presenter {
 
 	app.Post("/article", presenter.CreateArticle)
 	app.Put("/article/:id", presenter.UpdateArticle)
+	app.Delete("/article/:id", presenter.DeletedArticle)
 
 	presenter.app = app
 	return presenter

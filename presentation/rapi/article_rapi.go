@@ -3,9 +3,11 @@ package rapi
 import (
 	"errors"
 
+	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
 	"github.com/SyaibanAhmadRamadhan/gocatch/gtypedata/gstruct"
 	"github.com/gofiber/fiber/v2"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 
 	"realworld-go/domain/dto"
 	"realworld-go/infra"
@@ -109,6 +111,42 @@ func (p *Presenter) UpdateArticle(c *fiber.Ctx) error {
 		Code:     200,
 		Message:  "updated article successfully",
 		Data:     res,
+		Err:      nil,
+		Paginate: nil,
+	})
+}
+
+func (p *Presenter) DeletedArticle(c *fiber.Ctx) error {
+	ctx, span := infra.Trace.Start(c.UserContext(), "deleted article rest api")
+	defer span.End()
+
+	id := c.Params("id")
+	if _, err := gcommon.ParseUlid(id, false); err != nil {
+		span.RecordError(err, trace.WithAttributes(attribute.String("error info", "invalid id and cant parse ulid")))
+		err = &dto.ErrHttp{
+			Code:    404,
+			Message: "ARTICLE NOT FOUND",
+			Err:     "not found",
+		}
+		return exception.Err(c, err)
+	}
+
+	err := p.Dependency.ArticleUsecase.Delete(ctx, id)
+	if err != nil {
+		if errors.Is(err, usecase.ErrDataNotFound) {
+			err = &dto.ErrHttp{
+				Code:    404,
+				Message: "ARTICLE NOT FOUND",
+				Err:     "not found",
+			}
+		}
+		return exception.Err(c, err)
+	}
+
+	return c.Status(200).JSON(dto.Response{
+		Code:     200,
+		Message:  "DELETED ARTICLE SUCCESSFULLY",
+		Data:     nil,
 		Err:      nil,
 		Paginate: nil,
 	})

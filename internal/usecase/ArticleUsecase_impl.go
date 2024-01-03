@@ -142,7 +142,9 @@ func (a *articleUsecaseImpl) Create(ctx context.Context, req dto.RequestCreateAr
 }
 
 func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateArticle) (res dto.ResponseArticle, err error) {
-	ctx, span := infra.Trace.Start(ctx, "updated article processed", trace.WithAttributes())
+	ctx, span := infra.Trace.Start(ctx, "updated article processed", trace.WithAttributes(
+		attribute.String("article_id", req.Id),
+	))
 	defer span.End()
 
 	err = a.validate.StructM(res)
@@ -257,12 +259,20 @@ func (a *articleUsecaseImpl) Update(ctx context.Context, req dto.RequestUpdateAr
 }
 
 func (a *articleUsecaseImpl) Delete(ctx context.Context, articleId string) (err error) {
+	ctx, span := infra.Trace.Start(ctx, "deleted article processed", trace.WithAttributes(
+		attribute.String("article_id", articleId),
+	))
+	defer span.End()
+
 	article := model.NewArticleWithOutPtr()
 	article.SetId(articleId)
 
 	err = a.txRepo.DoTransaction(ctx, nil, func(c context.Context) (commit bool, err error) {
 		err = a.artileRepo.DeleteById(ctx, article)
 		if err != nil {
+			if errors.Is(err, repository.ErrDelDataNotFound) {
+				err = ErrDataNotFound
+			}
 			return commit, err
 		}
 
@@ -276,6 +286,10 @@ func (a *articleUsecaseImpl) Delete(ctx context.Context, articleId string) (err 
 		return commit, err
 	})
 
+	if err != nil {
+		span.RecordError(err)
+	}
+	
 	return err
 }
 
