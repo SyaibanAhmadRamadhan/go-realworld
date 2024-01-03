@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/SyaibanAhmadRamadhan/gocatch/gcommon"
@@ -356,7 +357,7 @@ func (a *articleUsecaseImpl) FindAll(ctx context.Context, req dto.RequestFindAll
 	}
 
 	offset := (req.Pagination.Page - 1) * req.Pagination.PageSize
-	limit := req.Pagination.Page
+	limit := req.Pagination.PageSize
 
 	var tagIds []string
 	if req.TagName != "" {
@@ -378,11 +379,14 @@ func (a *articleUsecaseImpl) FindAll(ctx context.Context, req dto.RequestFindAll
 			Author:   true,
 		},
 	}, articleModel.FieldSlug(),
+		articleModel.FieldId(),
 		articleModel.FieldTitle(),
+		articleModel.FieldBody(),
 		articleModel.FieldDescription(),
 		articleModel.FieldUpdatedAt(),
 	)
 	if err != nil {
+		fmt.Println("articles")
 		return res, err
 	}
 

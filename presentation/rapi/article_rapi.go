@@ -193,3 +193,35 @@ func (p *Presenter) FindOneArticle(c *fiber.Ctx) error {
 		Paginate: nil,
 	})
 }
+
+func (p *Presenter) FindAllArticle(c *fiber.Ctx) error {
+	ctx, span := infra.Trace.Start(c.UserContext(), "FindOne article rest api")
+	defer span.End()
+
+	req := new(dto.RequestPaginate)
+	_ = c.QueryParser(req)
+
+	tagName := c.Query("tag-name")
+
+	res, err := p.Dependency.ArticleUsecase.FindAll(ctx, dto.RequestFindAllArticle{
+		Pagination: *req,
+		TagName:    tagName,
+	})
+	if err != nil {
+		return exception.Err(c, err)
+	}
+
+	resTracer, err := gstruct.MarshalAndCencoredTag(res, "cencored")
+	if err != nil {
+		span.RecordError(err)
+	}
+	span.SetAttributes(attribute.String("response", resTracer))
+
+	return c.Status(200).JSON(dto.Response{
+		Code:     200,
+		Message:  "DATA ARTICLE",
+		Data:     res,
+		Err:      nil,
+		Paginate: nil,
+	})
+}

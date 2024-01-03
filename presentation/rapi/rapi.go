@@ -83,6 +83,7 @@ func NewPresenter(dependency *internal.Dependency) *Presenter {
 	app.Put("/article/:id", presenter.UpdateArticle)
 	app.Delete("/article/:id", presenter.DeletedArticle)
 	app.Get("/article/:id", presenter.FindOneArticle)
+	app.Get("article", presenter.FindAllArticle)
 
 	presenter.app = app
 	return presenter
